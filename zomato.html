@@ -1,0 +1,2231 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zomato Design System & UI Kitchen Sink</title>
+  
+  <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome 6 for Crisp Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Custom Tailwind Configuration & Brand CSS Variables -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+          },
+          colors: {
+            zomato: {
+              red: '#E23744',
+              redHover: '#CB202D',
+              redLight: '#FFF5F6',
+              redBorder: '#F8C6CB',
+              charcoal: '#1C1C1C',
+              slate: '#363636',
+              gray: '#696969',
+              muted: '#9C9C9C',
+              border: '#E8E8E8',
+              surface: '#F8F8F8',
+              green: '#24963F',
+              greenDark: '#1E7E34',
+              greenLight: '#E9F7EF',
+              gold: '#F5A623',
+              blue: '#256FEF',
+              blueLight: '#EEF4FF'
+            }
+          },
+          boxShadow: {
+            'z-sm': '0 2px 8px rgba(28, 28, 28, 0.06)',
+            'z-md': '0 4px 16px rgba(28, 28, 28, 0.08)',
+            'z-lg': '0 10px 28px rgba(28, 28, 28, 0.12)',
+            'z-card': '0 4px 18px rgba(0, 0, 0, 0.07)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --z-primary: #E23744;
+      --z-primary-hover: #CB202D;
+      --z-primary-tint: #FFF5F6;
+      --z-text-primary: #1C1C1C;
+      --z-text-secondary: #696969;
+      --z-text-muted: #9C9C9C;
+      --z-bg-canvas: #F8F8F8;
+      --z-bg-card: #FFFFFF;
+      --z-border: #E8E8E8;
+      --z-success: #24963F;
+      --z-rating: #267E3E;
+      --z-gold: #F5A623;
+    }
+
+    body {
+      background-color: var(--z-bg-canvas);
+      color: var(--z-text-primary);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Hide scrollbar for horizontal nav on mobile */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Indian FSSAI Dietary Symbols */
+    .fssai-veg {
+      width: 16px;
+      height: 16px;
+      border: 1.5px solid #24963F;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      flex-shrink: 0;
+    }
+    .fssai-veg::after {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: #24963F;
+    }
+
+    .fssai-nonveg {
+      width: 16px;
+      height: 16px;
+      border: 1.5px solid #E23744;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      flex-shrink: 0;
+    }
+    .fssai-nonveg::after {
+      content: '';
+      width: 0;
+      height: 0;
+      border-left: 4.5px solid transparent;
+      border-right: 4.5px solid transparent;
+      border-bottom: 8px solid #E23744;
+    }
+
+    .fssai-egg {
+      width: 16px;
+      height: 16px;
+      border: 1.5px solid #E59819;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      flex-shrink: 0;
+    }
+    .fssai-egg::after {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: #E59819;
+    }
+
+    /* Custom Toggle Switch */
+    .z-toggle-checkbox:checked {
+      right: 2px;
+      border-color: #E23744;
+    }
+    .z-toggle-checkbox:checked + .z-toggle-label {
+      background-color: #E23744;
+    }
+
+    /* Pulse Animation for Live Tracking */
+    @keyframes zPulse {
+      0% { box-shadow: 0 0 0 0 rgba(226, 55, 68, 0.55); }
+      70% { box-shadow: 0 0 0 10px rgba(226, 55, 68, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(226, 55, 68, 0); }
+    }
+    .pulse-crimson {
+      animation: zPulse 2s infinite;
+    }
+
+    /* Section Anchor Offset for Sticky Header */
+    section[id] {
+      scroll-margin-top: 84px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- ===================================================================== -->
+  <!-- STICKY TOP NAVIGATION & QUICK-JUMP BAR                                -->
+  <!-- ===================================================================== -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-zomato-border shadow-z-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 gap-4">
+        <!-- Brand Logo -->
+        <div class="flex items-center gap-3 shrink-0">
+          <a href="#" class="flex items-center gap-2 group">
+            <span class="font-display font-extrabold italic text-2xl sm:text-3xl tracking-tight text-zomato-charcoal group-hover:text-zomato-red transition-colors">
+              zomato
+            </span>
+            <span class="hidden sm:inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-zomato-redLight text-zomato-red border border-zomato-redBorder">
+              UI Kit v4.2
+            </span>
+          </a>
+        </div>
+
+        <!-- Quick-Jump Anchor Navigation -->
+        <nav aria-label="Kitchen Sink Sections" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-2 text-xs sm:text-sm font-medium">
+          <a href="#tokens" class="px-3 py-1.5 rounded-lg text-zomato-gray hover:text-zomato-charcoal hover:bg-zomato-surface whitespace-nowrap transition">1. Tokens</a>
+          <a href="#navigation" class="px-3 py-1.5 rounded-lg text-zomato-gray hover:text-zomato-charcoal hover:bg-zomato-surface whitespace-nowrap transition">2. Navigation</a>
+          <a href="#filters" class="px-3 py-1.5 rounded-lg text-zomato-gray hover:text-zomato-charcoal hover:bg-zomato-surface whitespace-nowrap transition">3. Pills & Badges</a>
+          <a href="#cards" class="px-3 py-1.5 rounded-lg text-zomato-gray hover:text-zomato-charcoal hover:bg-zomato-surface whitespace-nowrap transition">4. Cards</a>
+          <a href="#cart" class="px-3 py-1.5 rounded-lg text-zomato-gray hover:text-zomato-charcoal hover:bg-zomato-surface whitespace-nowrap transition">5. Cart & Checkout</a>
+          <a href="#reviews" class="px-3 py-1.5 rounded-lg text-zomato-gray hover:text-zomato-charcoal hover:bg-zomato-surface whitespace-nowrap transition">6. Reviews</a>
+          <a href="#tracking" class="px-3 py-1.5 rounded-lg text-zomato-gray hover:text-zomato-charcoal hover:bg-zomato-surface whitespace-nowrap transition">7. Tracking</a>
+          <a href="#forms" class="px-3 py-1.5 rounded-lg text-zomato-gray hover:text-zomato-charcoal hover:bg-zomato-surface whitespace-nowrap transition">8. Modals & Forms</a>
+        </nav>
+
+        <!-- Live Cart Pill Trigger -->
+        <div class="shrink-0">
+          <a href="#cart" class="inline-flex items-center gap-2 bg-zomato-red hover:bg-zomato-redHover text-white text-xs sm:text-sm font-semibold px-3.5 py-2 rounded-xl shadow-sm transition active:scale-95">
+            <i class="fa-solid fa-bag-shopping"></i>
+            <span class="hidden md:inline">Cart</span>
+            <span id="nav-cart-badge" class="bg-white text-zomato-red font-bold text-xs px-1.5 py-0.5 rounded-md">2</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================================================================== -->
+  <!-- HERO BANNER                                                           -->
+  <!-- ===================================================================== -->
+  <div class="bg-white border-b border-zomato-border">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div>
+          <div class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-zomato-red mb-2">
+            <span class="w-2 h-2 rounded-full bg-zomato-red"></span>
+            Consumer Food Delivery & Dining Out System
+          </div>
+          <h1 class="font-display text-2xl sm:text-4xl font-extrabold text-zomato-charcoal tracking-tight">
+            Zomato UI Component Kitchen Sink
+          </h1>
+          <p class="text-zomato-gray text-sm sm:text-base mt-2 max-w-2xl leading-relaxed">
+            A comprehensive, interactive design system and component library crafted for hyperlocal food discovery, live order tracking, and seamless checkout flows across Hyderabad & India.
+          </p>
+        </div>
+        <div class="flex flex-wrap gap-3 shrink-0">
+          <button onclick="openCustomizationModal()" class="px-4 py-2.5 rounded-xl bg-zomato-red hover:bg-zomato-redHover text-white text-sm font-semibold shadow-sm transition flex items-center gap-2">
+            <i class="fa-solid fa-sliders"></i> Preview Dish Modal
+          </button>
+          <button onclick="showToast('Design tokens copied to clipboard!', 'success')" class="px-4 py-2.5 rounded-xl bg-white hover:bg-zomato-surface text-zomato-charcoal border border-zomato-border text-sm font-semibold transition flex items-center gap-2">
+            <i class="fa-regular fa-copy"></i> Copy CSS Tokens
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MAIN CONTENT CONTAINER                                                -->
+  <!-- ===================================================================== -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-14 flex-1 w-full">
+
+    <!-- =================================================================== -->
+    <!-- SECTION 1: BRAND IDENTITY & DESIGN TOKENS                           -->
+    <!-- =================================================================== -->
+    <section id="tokens" class="space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between border-b border-zomato-border pb-3 gap-2">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-zomato-red">Section 01</span>
+          <h2 class="font-display text-xl sm:text-2xl font-bold text-zomato-charcoal">Brand Identity & Design Tokens</h2>
+        </div>
+        <p class="text-xs text-zomato-gray">Click any color swatch to copy its HEX token</p>
+      </div>
+
+      <!-- Color Palette Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+        <!-- Swatch 1 -->
+        <button onclick="copyHex('#E23744')" class="group text-left bg-white rounded-2xl border border-zomato-border overflow-hidden shadow-z-sm hover:shadow-z-md transition">
+          <div class="h-24 bg-[#E23744] flex items-end p-3">
+            <span class="text-[11px] font-medium text-white/90 bg-black/20 px-2 py-0.5 rounded-md opacity-0 group-hover:opacity-100 transition">Copy HEX</span>
+          </div>
+          <div class="p-3">
+            <p class="text-sm font-bold text-zomato-charcoal">Zomato Crimson</p>
+            <p class="text-xs font-mono text-zomato-gray mt-0.5">#E23744</p>
+            <p class="text-[11px] text-zomato-muted mt-1">Primary Brand & CTAs</p>
+          </div>
+        </button>
+
+        <!-- Swatch 2 -->
+        <button onclick="copyHex('#1C1C1C')" class="group text-left bg-white rounded-2xl border border-zomato-border overflow-hidden shadow-z-sm hover:shadow-z-md transition">
+          <div class="h-24 bg-[#1C1C1C] flex items-end p-3">
+            <span class="text-[11px] font-medium text-white/90 bg-white/20 px-2 py-0.5 rounded-md opacity-0 group-hover:opacity-100 transition">Copy HEX</span>
+          </div>
+          <div class="p-3">
+            <p class="text-sm font-bold text-zomato-charcoal">Dark Charcoal</p>
+            <p class="text-xs font-mono text-zomato-gray mt-0.5">#1C1C1C</p>
+            <p class="text-[11px] text-zomato-muted mt-1">Headings & Key Copy</p>
+          </div>
+        </button>
+
+        <!-- Swatch 3 -->
+        <button onclick="copyHex('#24963F')" class="group text-left bg-white rounded-2xl border border-zomato-border overflow-hidden shadow-z-sm hover:shadow-z-md transition">
+          <div class="h-24 bg-[#24963F] flex items-end p-3">
+            <span class="text-[11px] font-medium text-white/90 bg-black/20 px-2 py-0.5 rounded-md opacity-0 group-hover:opacity-100 transition">Copy HEX</span>
+          </div>
+          <div class="p-3">
+            <p class="text-sm font-bold text-zomato-charcoal">Success & Veg</p>
+            <p class="text-xs font-mono text-zomato-gray mt-0.5">#24963F</p>
+            <p class="text-[11px] text-zomato-muted mt-1">Ratings 4.0+ & Pure Veg</p>
+          </div>
+        </button>
+
+        <!-- Swatch 4 -->
+        <button onclick="copyHex('#F5A623')" class="group text-left bg-white rounded-2xl border border-zomato-border overflow-hidden shadow-z-sm hover:shadow-z-md transition">
+          <div class="h-24 bg-[#F5A623] flex items-end p-3">
+            <span class="text-[11px] font-medium text-white/90 bg-black/20 px-2 py-0.5 rounded-md opacity-0 group-hover:opacity-100 transition">Copy HEX</span>
+          </div>
+          <div class="p-3">
+            <p class="text-sm font-bold text-zomato-charcoal">Bestseller Gold</p>
+            <p class="text-xs font-mono text-zomato-gray mt-0.5">#F5A623</p>
+            <p class="text-[11px] text-zomato-muted mt-1">Stars & Gold Membership</p>
+          </div>
+        </button>
+
+        <!-- Swatch 5 -->
+        <button onclick="copyHex('#696969')" class="group text-left bg-white rounded-2xl border border-zomato-border overflow-hidden shadow-z-sm hover:shadow-z-md transition">
+          <div class="h-24 bg-[#696969] flex items-end p-3">
+            <span class="text-[11px] font-medium text-white/90 bg-black/20 px-2 py-0.5 rounded-md opacity-0 group-hover:opacity-100 transition">Copy HEX</span>
+          </div>
+          <div class="p-3">
+            <p class="text-sm font-bold text-zomato-charcoal">Muted Slate</p>
+            <p class="text-xs font-mono text-zomato-gray mt-0.5">#696969</p>
+            <p class="text-[11px] text-zomato-muted mt-1">Cuisines & Secondary Text</p>
+          </div>
+        </button>
+
+        <!-- Swatch 6 -->
+        <button onclick="copyHex('#F8F8F8')" class="group text-left bg-white rounded-2xl border border-zomato-border overflow-hidden shadow-z-sm hover:shadow-z-md transition">
+          <div class="h-24 bg-[#F8F8F8] border-b border-zomato-border flex items-end p-3">
+            <span class="text-[11px] font-medium text-zomato-charcoal bg-black/10 px-2 py-0.5 rounded-md opacity-0 group-hover:opacity-100 transition">Copy HEX</span>
+          </div>
+          <div class="p-3">
+            <p class="text-sm font-bold text-zomato-charcoal">Warm Canvas</p>
+            <p class="text-xs font-mono text-zomato-gray mt-0.5">#F8F8F8</p>
+            <p class="text-[11px] text-zomato-muted mt-1">App Surface Background</p>
+          </div>
+        </button>
+      </div>
+
+      <!-- Typography Hierarchy & Elevation Cards -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Typography Scale -->
+        <div class="lg:col-span-7 bg-white rounded-2xl border border-zomato-border p-6 shadow-z-sm space-y-5">
+          <div class="flex items-center justify-between border-b border-zomato-border pb-3">
+            <h3 class="text-sm font-bold uppercase tracking-wider text-zomato-gray">Typography Scale</h3>
+            <span class="text-xs font-mono text-zomato-muted">Plus Jakarta Sans / Inter</span>
+          </div>
+          <div class="space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 border-b border-dashed border-zomato-border pb-3">
+              <span class="font-display text-3xl font-extrabold text-zomato-charcoal">H1. Hyderabadi Dum Biryani</span>
+              <span class="text-xs font-mono text-zomato-muted">30px / ExtraBold (800)</span>
+            </div>
+            <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 border-b border-dashed border-zomato-border pb-3">
+              <span class="font-display text-2xl font-bold text-zomato-charcoal">H2. Best Food in Gachibowli</span>
+              <span class="text-xs font-mono text-zomato-muted">24px / Bold (700)</span>
+            </div>
+            <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 border-b border-dashed border-zomato-border pb-3">
+              <span class="font-sans text-lg font-semibold text-zomato-charcoal">H3. Paradise Biryani - Since 1953</span>
+              <span class="text-xs font-mono text-zomato-muted">18px / SemiBold (600)</span>
+            </div>
+            <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 border-b border-dashed border-zomato-border pb-3">
+              <span class="font-sans text-base font-medium text-zomato-charcoal">H4. Double Ka Meetha & Irani Chai</span>
+              <span class="text-xs font-mono text-zomato-muted">16px / Medium (500)</span>
+            </div>
+            <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 border-b border-dashed border-zomato-border pb-3">
+              <p class="text-sm text-zomato-gray">Body Copy: Slow-cooked basmati rice layered with marinated tender chicken, saffron milk, and caramelized onions.</p>
+              <span class="text-xs font-mono text-zomato-muted shrink-0">14px / Regular (400)</span>
+            </div>
+            <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
+              <span class="text-xs font-medium text-zomato-muted uppercase tracking-wider">CAPTION: 32 MINS • 2.4 KM • FREE DELIVERY</span>
+              <span class="text-xs font-mono text-zomato-muted">12px / Medium (500)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Elevation & Shadow Tokens -->
+        <div class="lg:col-span-5 bg-white rounded-2xl border border-zomato-border p-6 shadow-z-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between border-b border-zomato-border pb-3 mb-5">
+              <h3 class="text-sm font-bold uppercase tracking-wider text-zomato-gray">Elevation & Radius Tokens</h3>
+              <span class="text-xs font-mono text-zomato-muted">12px – 16px Radius</span>
+            </div>
+            <div class="space-y-4">
+              <div class="p-4 rounded-xl bg-zomato-surface border border-zomato-border flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-semibold text-zomato-charcoal">Flat Surface (Elevation 0)</p>
+                  <p class="text-xs text-zomato-gray">Filter pills, input fields, inline banners</p>
+                </div>
+                <code class="text-xs bg-white px-2 py-1 rounded border border-zomato-border">border-1</code>
+              </div>
+
+              <div class="p-4 rounded-2xl bg-white shadow-z-sm border border-zomato-border/60 flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-semibold text-zomato-charcoal">Card Resting (Elevation 1)</p>
+                  <p class="text-xs text-zomato-gray">Restaurant cards & dish containers</p>
+                </div>
+                <code class="text-xs bg-zomato-surface px-2 py-1 rounded">shadow-z-sm</code>
+              </div>
+
+              <div class="p-4 rounded-2xl bg-white shadow-z-md border border-zomato-border/40 flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-semibold text-zomato-charcoal">Card Hover / Sticky Bar (Elevation 2)</p>
+                  <p class="text-xs text-zomato-gray">Elevated active card & sticky checkout bar</p>
+                </div>
+                <code class="text-xs bg-zomato-surface px-2 py-1 rounded">shadow-z-md</code>
+              </div>
+
+              <div class="p-4 rounded-2xl bg-white shadow-z-lg border border-zomato-border/30 flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-semibold text-zomato-charcoal">Modal & Dropdown (Elevation 3)</p>
+                  <p class="text-xs text-zomato-gray">Search autocomplete & customization sheets</p>
+                </div>
+                <code class="text-xs bg-zomato-surface px-2 py-1 rounded">shadow-z-lg</code>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- SECTION 2: NAVIGATION & SEARCH HEADERS                              -->
+    <!-- =================================================================== -->
+    <section id="navigation" class="space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between border-b border-zomato-border pb-3 gap-2">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-zomato-red">Section 02</span>
+          <h2 class="font-display text-xl sm:text-2xl font-bold text-zomato-charcoal">Navigation & Search Headers</h2>
+        </div>
+        <p class="text-xs text-zomato-gray">Interactive location picker, live search autocomplete & mode switcher</p>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-zomato-border p-4 sm:p-6 shadow-z-sm space-y-6">
+        <!-- Combined Location + Search Bar -->
+        <div class="relative max-w-4xl">
+          <div class="flex flex-col md:flex-row items-stretch md:items-center bg-white border border-zomato-border rounded-2xl shadow-z-md divide-y md:divide-y-0 md:divide-x divide-zomato-border">
+            
+            <!-- Location Selector Dropdown -->
+            <div class="relative md:w-72 shrink-0">
+              <button id="location-dropdown-btn" type="button" onclick="toggleLocationDropdown()" class="w-full flex items-center justify-between px-4 py-3.5 text-left hover:bg-zomato-surface/60 rounded-t-2xl md:rounded-l-2xl md:rounded-tr-none transition">
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <i class="fa-solid fa-location-dot text-zomato-red text-lg shrink-0"></i>
+                  <div class="truncate">
+                    <p id="selected-location-title" class="text-sm font-semibold text-zomato-charcoal truncate">Gachibowli, Hyderabad</p>
+                    <p id="selected-location-sub" class="text-[11px] text-zomato-muted truncate">Financial District, Nanakramguda</p>
+                  </div>
+                </div>
+                <i id="location-chevron" class="fa-solid fa-caret-down text-zomato-slate text-xs ml-2 transition-transform"></i>
+              </button>
+
+              <!-- Location Dropdown Menu -->
+              <div id="location-dropdown-menu" class="hidden absolute left-0 mt-2 w-80 bg-white rounded-2xl border border-zomato-border shadow-z-lg z-30 overflow-hidden">
+                <button type="button" onclick="selectLocation('Detecting GPS...', 'Using high-accuracy location')" class="w-full px-4 py-3 flex items-center gap-3 text-left hover:bg-zomato-redLight border-b border-zomato-border transition">
+                  <i class="fa-solid fa-crosshairs text-zomato-red"></i>
+                  <div>
+                    <p class="text-sm font-semibold text-zomato-red">Detect current location</p>
+                    <p class="text-xs text-zomato-gray">Using GPS</p>
+                  </div>
+                </button>
+                <div class="p-2">
+                  <p class="px-2 py-1 text-[11px] font-bold uppercase tracking-wider text-zomato-muted">Saved Addresses</p>
+                  <button type="button" onclick="selectLocation('Gachibowli, Hyderabad', 'Financial District, Nanakramguda')" class="w-full px-3 py-2 rounded-xl flex items-start gap-2.5 text-left hover:bg-zomato-surface transition">
+                    <i class="fa-solid fa-briefcase text-zomato-gray mt-1 text-xs"></i>
+                    <div>
+                      <p class="text-sm font-medium text-zomato-charcoal">Work • Gachibowli</p>
+                      <p class="text-xs text-zomato-gray">Tower 2.1, Waverock SEZ, Hyderabad</p>
+                    </div>
+                  </button>
+                  <button type="button" onclick="selectLocation('Jubilee Hills, Hyderabad', 'Road No. 36, Peddamma Temple')" class="w-full px-3 py-2 rounded-xl flex items-start gap-2.5 text-left hover:bg-zomato-surface transition">
+                    <i class="fa-solid fa-house text-zomato-gray mt-1 text-xs"></i>
+                    <div>
+                      <p class="text-sm font-medium text-zomato-charcoal">Home • Jubilee Hills</p>
+                      <p class="text-xs text-zomato-gray">Plot 42, Road No. 36, Jubilee Hills</p>
+                    </div>
+                  </button>
+                  <button type="button" onclick="selectLocation('Banjara Hills, Hyderabad', 'Road No. 12, KBR Park')" class="w-full px-3 py-2 rounded-xl flex items-start gap-2.5 text-left hover:bg-zomato-surface transition">
+                    <i class="fa-solid fa-location-pin text-zomato-gray mt-1 text-xs"></i>
+                    <div>
+                      <p class="text-sm font-medium text-zomato-charcoal">Banjara Hills</p>
+                      <p class="text-xs text-zomato-gray">Road No. 12, Hyderabad</p>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Rich Search Input with Autocomplete -->
+            <div class="relative flex-1">
+              <div class="flex items-center px-4 py-3.5 gap-3">
+                <i class="fa-solid fa-magnifying-glass text-zomato-muted"></i>
+                <input
+                  id="zomato-search-input"
+                  type="text"
+                  onfocus="openSearchAutocomplete()"
+                  oninput="filterSearchSuggestions(this.value)"
+                  placeholder="Search for restaurant, cuisine or a dish (e.g. Biryani, Dosa)..."
+                  class="w-full text-sm text-zomato-charcoal placeholder-zomato-muted focus:outline-none bg-transparent"
+                />
+                <button id="clear-search-btn" type="button" onclick="clearSearchInput()" class="hidden text-zomato-muted hover:text-zomato-charcoal text-xs">
+                  <i class="fa-solid fa-circle-xmark"></i>
+                </button>
+              </div>
+
+              <!-- Search Autocomplete Dropdown -->
+              <div id="search-autocomplete-menu" class="hidden absolute left-0 right-0 mt-2 bg-white rounded-2xl border border-zomato-border shadow-z-lg z-30 overflow-hidden">
+                <div class="px-4 py-2.5 bg-zomato-surface border-b border-zomato-border flex items-center justify-between">
+                  <span class="text-xs font-bold uppercase tracking-wider text-zomato-gray">Popular Dishes & Restaurants in Hyderabad</span>
+                  <button type="button" onclick="closeSearchAutocomplete()" class="text-xs text-zomato-red font-semibold hover:underline">Close</button>
+                </div>
+                <div id="search-results-list" class="divide-y divide-zomato-border/60 max-h-72 overflow-y-auto">
+                  <!-- Item 1 -->
+                  <button type="button" onclick="selectSearchItem('Hyderabadi Chicken Dum Biryani')" class="search-item w-full px-4 py-3 flex items-center gap-3.5 hover:bg-zomato-surface text-left transition">
+                    <img src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=120&q=80" alt="Biryani" class="w-12 h-12 rounded-xl object-cover shrink-0" />
+                    <div class="flex-1 min-w-0">
+                      <p class="text-sm font-semibold text-zomato-charcoal truncate">Hyderabadi Chicken Dum Biryani</p>
+                      <p class="text-xs text-zomato-gray">Dish • Available at 142 restaurants</p>
+                    </div>
+                    <span class="text-xs font-semibold text-zomato-red bg-zomato-redLight px-2.5 py-1 rounded-lg">Dish</span>
+                  </button>
+                  <!-- Item 2 -->
+                  <button type="button" onclick="selectSearchItem('Shah Ghouse Hotel & Restaurant')" class="search-item w-full px-4 py-3 flex items-center gap-3.5 hover:bg-zomato-surface text-left transition">
+                    <img src="https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&fit=crop&w=120&q=80" alt="Shah Ghouse" class="w-12 h-12 rounded-xl object-cover shrink-0" />
+                    <div class="flex-1 min-w-0">
+                      <p class="text-sm font-semibold text-zomato-charcoal truncate">Shah Ghouse Hotel & Restaurant</p>
+                      <div class="flex items-center gap-2 text-xs text-zomato-gray mt-0.5">
+                        <span class="bg-zomato-green text-white font-bold px-1.5 py-0.2 rounded text-[11px]">4.3 ★</span>
+                        <span>Biryani, North Indian • Gachibowli</span>
+                      </div>
+                    </div>
+                    <span class="text-xs text-zomato-muted">28 mins</span>
+                  </button>
+                  <!-- Item 3 -->
+                  <button type="button" onclick="selectSearchItem('Ghee Karam Masala Dosa')" class="search-item w-full px-4 py-3 flex items-center gap-3.5 hover:bg-zomato-surface text-left transition">
+                    <img src="https://images.unsplash.com/photo-1668236543090-82eba5ee5976?auto=format&fit=crop&w=120&q=80" alt="Masala Dosa" class="w-12 h-12 rounded-xl object-cover shrink-0" />
+                    <div class="flex-1 min-w-0">
+                      <p class="text-sm font-semibold text-zomato-charcoal truncate">Ghee Karam Masala Dosa</p>
+                      <p class="text-xs text-zomato-gray">Dish • South Indian Tiffins</p>
+                    </div>
+                    <span class="text-xs font-semibold text-zomato-green bg-zomato-greenLight px-2.5 py-1 rounded-lg">Pure Veg</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Primary Mode Tabs: Delivery, Dining Out, Nightlife -->
+        <div class="pt-2">
+          <p class="text-xs font-semibold uppercase tracking-wider text-zomato-muted mb-3">Primary Experience Mode Switcher</p>
+          <div class="flex items-center gap-6 sm:gap-10 border-b border-zomato-border overflow-x-auto no-scrollbar">
+            <!-- Tab 1: Delivery -->
+            <button type="button" onclick="switchModeTab('delivery')" id="tab-delivery" class="mode-tab group flex items-center gap-3 pb-3.5 border-b-2 border-zomato-red text-zomato-red transition whitespace-nowrap">
+              <div id="tab-icon-delivery" class="w-12 h-12 rounded-full bg-[#FCEEC0] flex items-center justify-center text-xl shadow-xs transition">
+                🛵
+              </div>
+              <span class="font-display font-bold text-base sm:text-lg">Delivery</span>
+            </button>
+
+            <!-- Tab 2: Dining Out -->
+            <button type="button" onclick="switchModeTab('dining')" id="tab-dining" class="mode-tab group flex items-center gap-3 pb-3.5 border-b-2 border-transparent text-zomato-gray hover:text-zomato-charcoal transition whitespace-nowrap">
+              <div id="tab-icon-dining" class="w-12 h-12 rounded-full bg-zomato-surface flex items-center justify-center text-xl transition">
+                🍽️
+              </div>
+              <span class="font-display font-bold text-base sm:text-lg">Dining Out</span>
+            </button>
+
+            <!-- Tab 3: Nightlife -->
+            <button type="button" onclick="switchModeTab('nightlife')" id="tab-nightlife" class="mode-tab group flex items-center gap-3 pb-3.5 border-b-2 border-transparent text-zomato-gray hover:text-zomato-charcoal transition whitespace-nowrap">
+              <div id="tab-icon-nightlife" class="w-12 h-12 rounded-full bg-zomato-surface flex items-center justify-center text-xl transition">
+                🍻
+              </div>
+              <span class="font-display font-bold text-base sm:text-lg">Nightlife</span>
+            </button>
+          </div>
+
+          <!-- Dynamic Mode Context Banner -->
+          <div id="mode-context-banner" class="mt-4 p-3.5 rounded-xl bg-zomato-redLight/70 border border-zomato-redBorder/60 flex items-center justify-between text-xs sm:text-sm">
+            <span class="font-medium text-zomato-charcoal">
+              <i class="fa-solid fa-bolt text-zomato-red mr-1.5"></i>
+              Showing <strong>Food Delivery</strong> restaurants delivering hot meals to Gachibowli in under 35 mins.
+            </span>
+            <span class="hidden sm:inline font-semibold text-zomato-red">348 Restaurants Open</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- SECTION 3: FILTER PILLS, CHIPS & BADGES                             -->
+    <!-- =================================================================== -->
+    <section id="filters" class="space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between border-b border-zomato-border pb-3 gap-2">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-zomato-red">Section 03</span>
+          <h2 class="font-display text-xl sm:text-2xl font-bold text-zomato-charcoal">Filter Pills, Chips & Status Badges</h2>
+        </div>
+        <p class="text-xs text-zomato-gray">Toggle quick-filters to see active chip states</p>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-zomato-border p-6 shadow-z-sm space-y-6">
+        <!-- Quick Filter Pills Row -->
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <p class="text-xs font-bold uppercase tracking-wider text-zomato-muted">Interactive Discovery Filter Bar</p>
+            <button type="button" onclick="resetFilterPills()" class="text-xs font-semibold text-zomato-red hover:underline">Reset All</button>
+          </div>
+          <div class="flex flex-wrap items-center gap-2.5" id="filter-pills-container">
+            <button type="button" onclick="toggleFilterPill(this)" class="filter-pill inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium border border-zomato-border bg-white text-zomato-gray hover:bg-zomato-surface transition">
+              <i class="fa-solid fa-sliders text-xs"></i>
+              <span>Filters</span>
+              <span class="bg-zomato-red text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full">2</span>
+            </button>
+
+            <button type="button" onclick="toggleFilterPill(this)" data-active="true" class="filter-pill inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold border border-zomato-red bg-zomato-red text-white shadow-xs transition">
+              <span>Rating: 4.0+</span>
+              <i class="fa-solid fa-xmark text-xs"></i>
+            </button>
+
+            <button type="button" onclick="toggleFilterPill(this)" data-active="true" class="filter-pill inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold border border-zomato-red bg-zomato-red text-white shadow-xs transition">
+              <span class="w-2 h-2 rounded-full bg-white"></span>
+              <span>Pure Veg</span>
+              <i class="fa-solid fa-xmark text-xs"></i>
+            </button>
+
+            <button type="button" onclick="toggleFilterPill(this)" class="filter-pill inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium border border-zomato-border bg-white text-zomato-gray hover:bg-zomato-surface transition">
+              <i class="fa-solid fa-bolt text-zomato-gold text-xs"></i>
+              <span>Fast Delivery</span>
+            </button>
+
+            <button type="button" onclick="toggleFilterPill(this)" class="filter-pill inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium border border-zomato-border bg-white text-zomato-gray hover:bg-zomato-surface transition">
+              <span>Great Offers</span>
+            </button>
+
+            <button type="button" onclick="toggleFilterPill(this)" class="filter-pill inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium border border-zomato-border bg-white text-zomato-gray hover:bg-zomato-surface transition">
+              <span>Biryani</span>
+            </button>
+
+            <button type="button" onclick="toggleFilterPill(this)" class="filter-pill inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium border border-zomato-border bg-white text-zomato-gray hover:bg-zomato-surface transition">
+              <span>Sort by: Relevance</span>
+              <i class="fa-solid fa-chevron-down text-[10px]"></i>
+            </button>
+          </div>
+        </div>
+
+        <hr class="border-zomato-border" />
+
+        <!-- Dietary Indicators & Promotional Badges Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- FSSAI Dietary Indicators -->
+          <div class="space-y-3">
+            <p class="text-xs font-bold uppercase tracking-wider text-zomato-muted">FSSAI Dietary Classification Indicators</p>
+            <div class="flex flex-wrap items-center gap-4 p-4 rounded-xl bg-zomato-surface border border-zomato-border">
+              <div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-zomato-border shadow-2xs">
+                <span class="fssai-veg" aria-label="Vegetarian"></span>
+                <span class="text-xs font-semibold text-zomato-charcoal">100% Vegetarian</span>
+              </div>
+              <div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-zomato-border shadow-2xs">
+                <span class="fssai-nonveg" aria-label="Non-Vegetarian"></span>
+                <span class="text-xs font-semibold text-zomato-charcoal">Non-Vegetarian</span>
+              </div>
+              <div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-zomato-border shadow-2xs">
+                <span class="fssai-egg" aria-label="Contains Egg"></span>
+                <span class="text-xs font-semibold text-zomato-charcoal">Contains Egg</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Promo, Membership & Merchandising Badges -->
+          <div class="space-y-3">
+            <p class="text-xs font-bold uppercase tracking-wider text-zomato-muted">Promo, Gold & Merchandising Badges</p>
+            <div class="flex flex-wrap items-center gap-2.5 p-4 rounded-xl bg-zomato-surface border border-zomato-border">
+              <!-- Offer Blue Badge -->
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zomato-blue text-white text-xs font-bold shadow-2xs">
+                <i class="fa-solid fa-percent text-[10px]"></i> 50% OFF up to ₹100
+              </span>
+
+              <!-- Zomato Gold / Pro Badge -->
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-gradient-to-r from-[#1C1C1C] to-[#3B321C] text-[#F5C558] border border-[#F5C558]/40 text-xs font-extrabold tracking-wide">
+                <i class="fa-solid fa-crown text-[10px]"></i> GOLD FREE DELIVERY
+              </span>
+
+              <!-- Bestseller Badge -->
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#FFF4E5] text-[#D97706] border border-[#FDE68A] text-xs font-bold">
+                <i class="fa-solid fa-award text-[10px]"></i> Bestseller
+              </span>
+
+              <!-- Trending Badge -->
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-zomato-redLight text-zomato-red border border-zomato-redBorder text-xs font-bold">
+                <i class="fa-solid fa-fire text-[10px]"></i> Trending
+              </span>
+
+              <!-- Rating Pill -->
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-zomato-green text-white text-xs font-bold">
+                4.5 <i class="fa-solid fa-star text-[9px]"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- SECTION 4: RESTAURANT & DISH CARDS                                  -->
+    <!-- =================================================================== -->
+    <section id="cards" class="space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between border-b border-zomato-border pb-3 gap-2">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-zomato-red">Section 04</span>
+          <h2 class="font-display text-xl sm:text-2xl font-bold text-zomato-charcoal">Restaurant Discovery & Menu Dish Cards</h2>
+        </div>
+        <p class="text-xs text-zomato-gray">Interactive 'ADD' buttons update the live cart in Section 05</p>
+      </div>
+
+      <!-- Part A: Restaurant Discovery Cards Grid -->
+      <div class="space-y-3">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-zomato-muted">A. Restaurant Discovery Cards (Feed View)</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          
+          <!-- Restaurant Card 1 -->
+          <article class="group bg-white rounded-2xl border border-zomato-border/80 overflow-hidden shadow-z-sm hover:shadow-z-lg transition-all duration-300 flex flex-col">
+            <div class="relative h-52 overflow-hidden bg-zomato-surface">
+              <img
+                src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=800&q=80"
+                onerror="this.src='https://placehold.co/600x400/E23744/FFFFFF?text=Hyderabadi+Biryani'"
+                alt="Paradise Biryani"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <!-- Promoted Tag -->
+              <span class="absolute top-3 left-3 bg-black/55 backdrop-blur-xs text-white/90 text-[10px] font-medium px-2 py-0.5 rounded">
+                Promoted
+              </span>
+              <!-- Bookmark Button -->
+              <button type="button" onclick="toggleBookmark(this)" aria-label="Bookmark Restaurant" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 hover:bg-white text-zomato-charcoal flex items-center justify-center shadow-sm transition">
+                <i class="fa-regular fa-bookmark text-sm"></i>
+              </button>
+              <!-- Discount Overlay Ribbon -->
+              <div class="absolute bottom-3 left-0 bg-zomato-blue text-white text-xs font-bold px-3 py-1 rounded-r-lg shadow-sm">
+                50% OFF up to ₹100
+              </div>
+              <!-- Delivery ETA Pill -->
+              <span class="absolute bottom-3 right-3 bg-white/95 backdrop-blur-xs text-zomato-charcoal text-xs font-semibold px-2.5 py-1 rounded-lg shadow-xs">
+                28 mins
+              </span>
+            </div>
+
+            <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
+              <div>
+                <div class="flex items-start justify-between gap-2">
+                  <h4 class="font-display font-bold text-lg text-zomato-charcoal truncate group-hover:text-zomato-red transition-colors">
+                    Paradise Biryani - Since 1953
+                  </h4>
+                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-zomato-green text-white text-xs font-bold shrink-0">
+                    4.4 <i class="fa-solid fa-star text-[9px]"></i>
+                  </span>
+                </div>
+                <div class="flex items-center justify-between text-xs sm:text-sm text-zomato-gray mt-1">
+                  <p class="truncate">Biryani, North Indian, Kebabs, Mughlai</p>
+                  <p class="font-medium text-zomato-slate shrink-0 ml-2">₹600 for two</p>
+                </div>
+              </div>
+
+              <!-- Max Safety Footer -->
+              <div class="pt-3 border-t border-zomato-border flex items-center gap-2.5">
+                <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-[#E8F4FD] text-[#0277BD] text-[10px] font-extrabold uppercase tracking-tight shrink-0">
+                  <i class="fa-solid fa-shield-halved"></i> MAX SAFETY
+                </span>
+                <p class="text-[11px] text-zomato-muted truncate">Follows all WHO & FSSAI hygiene measures</p>
+              </div>
+            </div>
+          </article>
+
+          <!-- Restaurant Card 2 -->
+          <article class="group bg-white rounded-2xl border border-zomato-border/80 overflow-hidden shadow-z-sm hover:shadow-z-lg transition-all duration-300 flex flex-col">
+            <div class="relative h-52 overflow-hidden bg-zomato-surface">
+              <img
+                src="https://images.unsplash.com/photo-1668236543090-82eba5ee5976?auto=format&fit=crop&w=800&q=80"
+                onerror="this.src='https://placehold.co/600x400/24963F/FFFFFF?text=Chutneys+South+Indian'"
+                alt="Chutneys Pure Veg"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <!-- Pure Veg Ribbon -->
+              <span class="absolute top-3 left-3 bg-zomato-green text-white text-[11px] font-bold px-2.5 py-0.5 rounded-md shadow-xs flex items-center gap-1">
+                <i class="fa-solid fa-leaf text-[10px]"></i> PURE VEG
+              </span>
+              <button type="button" onclick="toggleBookmark(this)" aria-label="Bookmark Restaurant" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 hover:bg-white text-zomato-charcoal flex items-center justify-center shadow-sm transition">
+                <i class="fa-regular fa-bookmark text-sm"></i>
+              </button>
+              <div class="absolute bottom-3 left-0 bg-zomato-blue text-white text-xs font-bold px-3 py-1 rounded-r-lg shadow-sm">
+                FLAT ₹125 OFF
+              </div>
+              <span class="absolute bottom-3 right-3 bg-white/95 backdrop-blur-xs text-zomato-charcoal text-xs font-semibold px-2.5 py-1 rounded-lg shadow-xs">
+                22 mins
+              </span>
+            </div>
+
+            <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
+              <div>
+                <div class="flex items-start justify-between gap-2">
+                  <h4 class="font-display font-bold text-lg text-zomato-charcoal truncate group-hover:text-zomato-red transition-colors">
+                    Chutneys - Jubilee Hills
+                  </h4>
+                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-zomato-green text-white text-xs font-bold shrink-0">
+                    4.6 <i class="fa-solid fa-star text-[9px]"></i>
+                  </span>
+                </div>
+                <div class="flex items-center justify-between text-xs sm:text-sm text-zomato-gray mt-1">
+                  <p class="truncate">South Indian, Guntur Idli, Filter Coffee</p>
+                  <p class="font-medium text-zomato-slate shrink-0 ml-2">₹500 for two</p>
+                </div>
+              </div>
+
+              <div class="pt-3 border-t border-zomato-border flex items-center gap-2.5">
+                <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-zomato-redLight text-zomato-red text-[10px] font-extrabold uppercase shrink-0">
+                  <i class="fa-solid fa-arrow-trend-up"></i> 4,200+ ORDERS
+                </span>
+                <p class="text-[11px] text-zomato-muted truncate">Top rated breakfast & tiffin spot</p>
+              </div>
+            </div>
+          </article>
+
+          <!-- Restaurant Card 3 -->
+          <article class="group bg-white rounded-2xl border border-zomato-border/80 overflow-hidden shadow-z-sm hover:shadow-z-lg transition-all duration-300 flex flex-col">
+            <div class="relative h-52 overflow-hidden bg-zomato-surface">
+              <img
+                src="https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?auto=format&fit=crop&w=800&q=80"
+                onerror="this.src='https://placehold.co/600x400/1C1C1C/FFFFFF?text=Butter+Chicken'"
+                alt="Peshawri North Indian"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <span class="absolute top-3 left-3 bg-gradient-to-r from-[#1C1C1C] to-[#3B321C] text-[#F5C558] text-[11px] font-extrabold px-2.5 py-0.5 rounded-md shadow-xs">
+                <i class="fa-solid fa-crown text-[10px] mr-1"></i>GOLD PARTNER
+              </span>
+              <button type="button" onclick="toggleBookmark(this)" aria-label="Bookmark Restaurant" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 hover:bg-white text-zomato-charcoal flex items-center justify-center shadow-sm transition">
+                <i class="fa-solid fa-bookmark text-sm text-zomato-red"></i>
+              </button>
+              <div class="absolute bottom-3 left-0 bg-zomato-blue text-white text-xs font-bold px-3 py-1 rounded-r-lg shadow-sm">
+                20% OFF + Free Dessert
+              </div>
+              <span class="absolute bottom-3 right-3 bg-white/95 backdrop-blur-xs text-zomato-charcoal text-xs font-semibold px-2.5 py-1 rounded-lg shadow-xs">
+                36 mins
+              </span>
+            </div>
+
+            <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
+              <div>
+                <div class="flex items-start justify-between gap-2">
+                  <h4 class="font-display font-bold text-lg text-zomato-charcoal truncate group-hover:text-zomato-red transition-colors">
+                    Dum Pukht Begum's
+                  </h4>
+                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-zomato-green text-white text-xs font-bold shrink-0">
+                    4.7 <i class="fa-solid fa-star text-[9px]"></i>
+                  </span>
+                </div>
+                <div class="flex items-center justify-between text-xs sm:text-sm text-zomato-gray mt-1">
+                  <p class="truncate">Awadhi, Butter Chicken, Dal Bukhara</p>
+                  <p class="font-medium text-zomato-slate shrink-0 ml-2">₹1,400 for two</p>
+                </div>
+              </div>
+
+              <div class="pt-3 border-t border-zomato-border flex items-center gap-2.5">
+                <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-[#E8F4FD] text-[#0277BD] text-[10px] font-extrabold uppercase shrink-0">
+                  <i class="fa-solid fa-shield-halved"></i> MAX SAFETY
+                </span>
+                <p class="text-[11px] text-zomato-muted truncate">Tamper-proof sealed packaging</p>
+              </div>
+            </div>
+          </article>
+
+        </div>
+      </div>
+
+      <!-- Part B: Interactive Menu Dish Item Cards -->
+      <div class="space-y-3 pt-2">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-zomato-muted">B. Menu Dish Item Cards (Interactive Add / Stepper Morph)</h3>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+
+          <!-- Dish Card 1 (Already in Cart with Stepper) -->
+          <div class="bg-white rounded-2xl border border-zomato-border p-4 sm:p-5 shadow-z-sm flex justify-between gap-4">
+            <div class="flex-1 min-w-0 space-y-1.5">
+              <div class="flex items-center gap-2">
+                <span class="fssai-nonveg" title="Non-Vegetarian"></span>
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-[#FFF4E5] text-[#D97706] text-[11px] font-bold">
+                  <i class="fa-solid fa-award text-[10px]"></i> Bestseller
+                </span>
+              </div>
+              <h4 class="font-display font-bold text-base sm:text-lg text-zomato-charcoal">
+                Royal Hyderabadi Chicken Dum Biryani [1 Full]
+              </h4>
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-sm sm:text-base text-zomato-charcoal">₹349</span>
+                <span class="text-xs text-zomato-muted line-through">₹399</span>
+              </div>
+              <!-- Star Rating Pill -->
+              <div class="flex items-center gap-1.5 pt-0.5">
+                <div class="inline-flex items-center text-zomato-gold text-xs bg-[#FFFBEB] border border-[#FDE68A] px-1.5 py-0.5 rounded">
+                  <i class="fa-solid fa-star text-[10px] mr-1"></i>
+                  <span class="font-bold text-zomato-charcoal">4.6</span>
+                </div>
+                <span class="text-xs text-zomato-muted">(1,842 ratings)</span>
+              </div>
+              <!-- Expandable Description -->
+              <p class="text-xs sm:text-sm text-zomato-gray leading-relaxed pt-1">
+                Served with Mirchi ka Salan & Burani Raita. Authentic saffron-infused long-grain basmati rice dum-cooked with tender chicken<span id="desc-dots-1">...</span><span id="desc-more-1" class="hidden"> marinated overnight in freshly ground Deccani spices, mint, and caramelized onions.</span>
+                <button type="button" onclick="toggleReadMore(1)" id="read-more-btn-1" class="font-semibold text-zomato-charcoal hover:text-zomato-red ml-1">read more</button>
+              </p>
+            </div>
+
+            <!-- Dish Image & Morphing ADD / Stepper Button -->
+            <div class="relative w-32 sm:w-36 shrink-0 flex flex-col items-center">
+              <img
+                src="https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&fit=crop&w=400&q=80"
+                onerror="this.src='https://placehold.co/300x300/E23744/FFFFFF?text=Chicken+Biryani'"
+                alt="Chicken Dum Biryani"
+                class="w-32 h-32 sm:w-36 sm:h-36 rounded-2xl object-cover border border-zomato-border"
+              />
+              <!-- Morphing Button Container -->
+              <div id="dish-btn-wrapper-biryani" class="-mt-5 z-10">
+                <!-- Rendered via JS based on cart state -->
+              </div>
+              <span class="text-[11px] text-zomato-muted mt-1.5">Customisable</span>
+            </div>
+          </div>
+
+          <!-- Dish Card 2 (Starts with ADD button) -->
+          <div class="bg-white rounded-2xl border border-zomato-border p-4 sm:p-5 shadow-z-sm flex justify-between gap-4">
+            <div class="flex-1 min-w-0 space-y-1.5">
+              <div class="flex items-center gap-2">
+                <span class="fssai-veg" title="Vegetarian"></span>
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-zomato-redLight text-zomato-red text-[11px] font-bold">
+                  <i class="fa-solid fa-fire text-[10px]"></i> Must Try
+                </span>
+              </div>
+              <h4 class="font-display font-bold text-base sm:text-lg text-zomato-charcoal">
+                Paneer Tikka Masala + 2 Butter Naan Combo
+              </h4>
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-sm sm:text-base text-zomato-charcoal">₹269</span>
+              </div>
+              <!-- Star Rating Pill -->
+              <div class="flex items-center gap-1.5 pt-0.5">
+                <div class="inline-flex items-center text-zomato-gold text-xs bg-[#FFFBEB] border border-[#FDE68A] px-1.5 py-0.5 rounded">
+                  <i class="fa-solid fa-star text-[10px] mr-1"></i>
+                  <span class="font-bold text-zomato-charcoal">4.4</span>
+                </div>
+                <span class="text-xs text-zomato-muted">(915 ratings)</span>
+              </div>
+              <p class="text-xs sm:text-sm text-zomato-gray leading-relaxed pt-1">
+                Chargrilled cottage cheese cubes simmered in a velvety tomato-cashew gravy, paired with two soft tandoori butter naans & pickled onions.
+              </p>
+            </div>
+
+            <!-- Dish Image & Morphing ADD / Stepper Button -->
+            <div class="relative w-32 sm:w-36 shrink-0 flex flex-col items-center">
+              <img
+                src="https://images.unsplash.com/photo-1631452180519-c014fe946bc7?auto=format&fit=crop&w=400&q=80"
+                onerror="this.src='https://placehold.co/300x300/24963F/FFFFFF?text=Paneer+Tikka'"
+                alt="Paneer Tikka Masala"
+                class="w-32 h-32 sm:w-36 sm:h-36 rounded-2xl object-cover border border-zomato-border"
+              />
+              <div id="dish-btn-wrapper-paneer" class="-mt-5 z-10">
+                <!-- Rendered via JS based on cart state -->
+              </div>
+              <span class="text-[11px] text-zomato-muted mt-1.5">Customisable</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- SECTION 5: CART, CHECKOUT & PROMO COMPONENTS                        -->
+    <!-- =================================================================== -->
+    <section id="cart" class="space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between border-b border-zomato-border pb-3 gap-2">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-zomato-red">Section 05</span>
+          <h2 class="font-display text-xl sm:text-2xl font-bold text-zomato-charcoal">Cart, Checkout & Promo Components</h2>
+        </div>
+        <p class="text-xs text-zomato-gray">Live bill calculation with quantity steppers, delivery tips & coupon codes</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <!-- Left Column: Cart Items, Cooking Instructions & Promo Box -->
+        <div class="lg:col-span-7 space-y-5">
+          <!-- Cart Items Card -->
+          <div class="bg-white rounded-2xl border border-zomato-border p-5 shadow-z-sm space-y-4">
+            <div class="flex items-center justify-between border-b border-zomato-border pb-3">
+              <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl bg-zomato-redLight text-zomato-red flex items-center justify-center font-bold">
+                  <i class="fa-solid fa-store"></i>
+                </div>
+                <div>
+                  <h3 class="font-display font-bold text-base text-zomato-charcoal">Paradise Biryani - Gachibowli</h3>
+                  <p class="text-xs text-zomato-muted">Delivery in 28 mins • 2.4 km away</p>
+                </div>
+              </div>
+              <span class="text-xs font-semibold text-zomato-green bg-zomato-greenLight px-2.5 py-1 rounded-lg">
+                <i class="fa-solid fa-shield-check mr-1"></i> Gold Free Delivery
+              </span>
+            </div>
+
+            <!-- Dynamic Cart Line Items -->
+            <div id="cart-items-list" class="divide-y divide-zomato-border">
+              <!-- Populated dynamically via JS -->
+            </div>
+
+            <!-- Cooking Request Input -->
+            <div class="pt-2">
+              <div class="flex items-center gap-2.5 bg-zomato-surface border border-zomato-border rounded-xl px-3.5 py-2.5">
+                <i class="fa-regular fa-note-sticky text-zomato-muted"></i>
+                <input type="text" placeholder="Add cooking requests (e.g., Extra salan, less spicy, ring doorbell)..." class="w-full bg-transparent text-xs sm:text-sm text-zomato-charcoal placeholder-zomato-muted focus:outline-none" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Offers & Coupon Box -->
+          <div class="bg-white rounded-2xl border border-zomato-border p-5 shadow-z-sm space-y-3">
+            <div class="flex items-center justify-between">
+              <h4 class="text-xs font-bold uppercase tracking-wider text-zomato-muted">Offers & Benefits</h4>
+              <span class="text-xs font-semibold text-zomato-blue">3 coupons available</span>
+            </div>
+
+            <!-- Applied Coupon Banner -->
+            <div id="coupon-applied-banner" class="p-3.5 rounded-xl bg-zomato-blueLight border border-zomato-blue/30 flex items-center justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-zomato-blue text-white flex items-center justify-center shrink-0">
+                  <i class="fa-solid fa-tag text-xs"></i>
+                </div>
+                <div>
+                  <p class="text-sm font-bold text-zomato-charcoal">
+                    'TRYNEW' applied
+                    <span class="text-xs font-semibold text-zomato-green ml-1.5">You saved ₹80!</span>
+                  </p>
+                  <p class="text-xs text-zomato-gray">Flat ₹80 off on orders above ₹299</p>
+                </div>
+              </div>
+              <button type="button" onclick="removeCoupon()" class="text-xs font-bold text-zomato-red hover:underline shrink-0">
+                REMOVE
+              </button>
+            </div>
+
+            <!-- Manual Coupon Input (Shown when removed or for testing) -->
+            <div class="flex items-center gap-2 pt-1">
+              <input id="coupon-code-input" type="text" value="ZOMATO100" placeholder="Enter promo code (e.g. TRYNEW, ZOMATO100)" class="flex-1 px-3.5 py-2.5 rounded-xl border border-zomato-border text-xs sm:text-sm font-semibold uppercase tracking-wide focus:outline-none focus:border-zomato-red" />
+              <button type="button" onclick="applyCouponFromInput()" class="px-4 py-2.5 rounded-xl bg-zomato-charcoal hover:bg-black text-white text-xs sm:text-sm font-bold transition">
+                APPLY
+              </button>
+            </div>
+          </div>
+
+          <!-- Delivery Partner Tip Selector -->
+          <div class="bg-white rounded-2xl border border-zomato-border p-5 shadow-z-sm space-y-3">
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <h4 class="font-display font-bold text-sm sm:text-base text-zomato-charcoal">Tip your delivery partner</h4>
+                <p class="text-xs text-zomato-gray mt-0.5">Your kindness means a lot! 100% of your tip goes directly to your delivery valet.</p>
+              </div>
+              <span class="text-2xl">🛵</span>
+            </div>
+            <div class="flex flex-wrap items-center gap-2.5 pt-1" id="tip-selector-group">
+              <button type="button" onclick="selectTip(0, this)" class="tip-pill px-4 py-2 rounded-xl border border-zomato-border bg-white text-zomato-charcoal text-xs sm:text-sm font-semibold hover:bg-zomato-surface transition">
+                No Tip
+              </button>
+              <button type="button" onclick="selectTip(20, this)" class="tip-pill px-4 py-2 rounded-xl border border-zomato-border bg-white text-zomato-charcoal text-xs sm:text-sm font-semibold hover:bg-zomato-surface transition">
+                ₹20
+              </button>
+              <button type="button" onclick="selectTip(30, this)" class="tip-pill relative px-4 py-2 rounded-xl border-2 border-zomato-red bg-zomato-redLight text-zomato-red text-xs sm:text-sm font-bold transition">
+                ₹30
+                <span class="block text-[9px] font-extrabold uppercase tracking-wider text-zomato-red">Most Tipped</span>
+              </button>
+              <button type="button" onclick="selectTip(50, this)" class="tip-pill px-4 py-2 rounded-xl border border-zomato-border bg-white text-zomato-charcoal text-xs sm:text-sm font-semibold hover:bg-zomato-surface transition">
+                ₹50
+              </button>
+              <button type="button" onclick="selectTip(100, this)" class="tip-pill px-4 py-2 rounded-xl border border-zomato-border bg-white text-zomato-charcoal text-xs sm:text-sm font-semibold hover:bg-zomato-surface transition">
+                ₹100
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Bill Summary & Sticky Checkout CTA -->
+        <div class="lg:col-span-5 bg-white rounded-2xl border border-zomato-border p-5 sm:p-6 shadow-z-md space-y-5">
+          <div class="flex items-center justify-between border-b border-zomato-border pb-3">
+            <h3 class="font-display font-bold text-base sm:text-lg text-zomato-charcoal">Bill Details</h3>
+            <span class="text-xs font-medium text-zomato-muted">Invoice #ZMT-98412</span>
+          </div>
+
+          <div class="space-y-3 text-xs sm:text-sm">
+            <div class="flex items-center justify-between text-zomato-slate">
+              <span>Item Total</span>
+              <span id="bill-item-total" class="font-semibold text-zomato-charcoal">₹698.00</span>
+            </div>
+
+            <div class="flex items-center justify-between text-zomato-slate">
+              <span class="flex items-center gap-1.5">
+                Delivery Fee | 2.4 kms
+                <i class="fa-solid fa-circle-info text-zomato-muted text-xs" title="Free with Zomato Gold"></i>
+              </span>
+              <div>
+                <span class="line-through text-zomato-muted mr-1.5">₹35.00</span>
+                <span class="font-bold text-zomato-green">FREE</span>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between text-zomato-slate">
+              <span>Delivery Partner Tip</span>
+              <span id="bill-tip-amount" class="font-medium text-zomato-charcoal">₹30.00</span>
+            </div>
+
+            <div class="flex items-center justify-between text-zomato-slate">
+              <span>Platform Fee</span>
+              <span class="font-medium text-zomato-charcoal">₹6.00</span>
+            </div>
+
+            <div class="flex items-center justify-between text-zomato-slate">
+              <span>GST and Restaurant Charges</span>
+              <span id="bill-gst-amount" class="font-medium text-zomato-charcoal">₹34.90</span>
+            </div>
+
+            <div id="bill-discount-row" class="flex items-center justify-between text-zomato-blue font-semibold">
+              <span>Coupon Discount (TRYNEW)</span>
+              <span id="bill-discount-amount">- ₹80.00</span>
+            </div>
+          </div>
+
+          <div class="border-t border-dashed border-zomato-border pt-4 flex items-center justify-between">
+            <div>
+              <p class="font-display font-extrabold text-base sm:text-lg text-zomato-charcoal">To Pay</p>
+              <p class="text-[11px] text-zomato-muted">Inclusive of all taxes</p>
+            </div>
+            <p id="bill-grand-total" class="font-display font-extrabold text-xl sm:text-2xl text-zomato-charcoal">₹688.90</p>
+          </div>
+
+          <!-- Savings Callout -->
+          <div class="p-3 rounded-xl bg-zomato-greenLight border border-zomato-green/25 flex items-center gap-2.5 text-xs font-semibold text-zomato-greenDark">
+            <i class="fa-solid fa-party-horn text-sm"></i>
+            <span id="bill-total-savings">Total savings of ₹115.00 on this order!</span>
+          </div>
+
+          <!-- Primary Checkout CTA Button -->
+          <button type="button" onclick="placeDemoOrder()" class="w-full py-3.5 px-5 rounded-2xl bg-zomato-red hover:bg-zomato-redHover text-white font-display font-bold text-base shadow-z-md hover:shadow-z-lg transition flex items-center justify-between active:scale-[0.99]">
+            <div class="text-left">
+              <span id="cta-pay-amount" class="block text-base font-extrabold leading-tight">₹688.90</span>
+              <span class="block text-[10px] font-medium text-white/85 uppercase tracking-wider">TOTAL • UPI / CARD</span>
+            </div>
+            <span class="flex items-center gap-2">
+              Place Order <i class="fa-solid fa-caret-right"></i>
+            </span>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- SECTION 6: REVIEWS, RATINGS & FEEDBACK                              -->
+    <!-- =================================================================== -->
+    <section id="reviews" class="space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between border-b border-zomato-border pb-3 gap-2">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-zomato-red">Section 06</span>
+          <h2 class="font-display text-xl sm:text-2xl font-bold text-zomato-charcoal">Reviews, Ratings & Customer Feedback</h2>
+        </div>
+        <p class="text-xs text-zomato-gray">Rating breakdown bars, interactive star selector & verified diner review card</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Rating Distribution & Interactive Star Rate Box -->
+        <div class="lg:col-span-5 bg-white rounded-2xl border border-zomato-border p-6 shadow-z-sm space-y-6">
+          <!-- Aggregate Rating Header -->
+          <div class="flex items-center gap-5">
+            <div class="bg-zomato-green text-white rounded-2xl px-4 py-3 text-center shrink-0 shadow-xs">
+              <div class="text-3xl font-display font-extrabold flex items-center justify-center gap-1">
+                4.4 <i class="fa-solid fa-star text-lg"></i>
+              </div>
+              <p class="text-[10px] font-semibold uppercase tracking-wider mt-1 opacity-90">Delivery Rating</p>
+            </div>
+            <div>
+              <p class="font-display font-bold text-base text-zomato-charcoal">14,820 Verified Ratings</p>
+              <p class="text-xs text-zomato-gray mt-0.5">Based on recent delivery orders in Gachibowli & Madhapur</p>
+            </div>
+          </div>
+
+          <!-- 5-Star to 1-Star Progress Bars -->
+          <div class="space-y-2.5 text-xs font-medium">
+            <div class="flex items-center gap-3">
+              <span class="w-8 text-zomato-charcoal font-bold">5 ★</span>
+              <div class="flex-1 h-2 bg-zomato-surface rounded-full overflow-hidden">
+                <div class="h-full bg-zomato-green rounded-full" style="width: 68%"></div>
+              </div>
+              <span class="w-10 text-right text-zomato-gray">68%</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="w-8 text-zomato-charcoal font-bold">4 ★</span>
+              <div class="flex-1 h-2 bg-zomato-surface rounded-full overflow-hidden">
+                <div class="h-full bg-zomato-green/80 rounded-full" style="width: 21%"></div>
+              </div>
+              <span class="w-10 text-right text-zomato-gray">21%</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="w-8 text-zomato-charcoal font-bold">3 ★</span>
+              <div class="flex-1 h-2 bg-zomato-surface rounded-full overflow-hidden">
+                <div class="h-full bg-zomato-gold rounded-full" style="width: 6%"></div>
+              </div>
+              <span class="w-10 text-right text-zomato-gray">6%</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="w-8 text-zomato-charcoal font-bold">2 ★</span>
+              <div class="flex-1 h-2 bg-zomato-surface rounded-full overflow-hidden">
+                <div class="h-full bg-orange-500 rounded-full" style="width: 3%"></div>
+              </div>
+              <span class="w-10 text-right text-zomato-gray">3%</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="w-8 text-zomato-charcoal font-bold">1 ★</span>
+              <div class="flex-1 h-2 bg-zomato-surface rounded-full overflow-hidden">
+                <div class="h-full bg-zomato-red rounded-full" style="width: 2%"></div>
+              </div>
+              <span class="w-10 text-right text-zomato-gray">2%</span>
+            </div>
+          </div>
+
+          <hr class="border-zomato-border" />
+
+          <!-- Interactive Star Rating Selector -->
+          <div class="space-y-2.5">
+            <div class="flex items-center justify-between">
+              <p class="text-sm font-bold text-zomato-charcoal">Rate your last Biryani order</p>
+              <span id="star-rating-label" class="text-xs font-bold text-zomato-green">Loved it! (5/5)</span>
+            </div>
+            <div class="flex items-center gap-2" id="interactive-star-group">
+              <button type="button" onclick="setStarRating(1)" class="star-btn w-10 h-10 rounded-xl border border-zomato-border bg-[#FFFBEB] text-zomato-gold text-lg hover:scale-105 transition">
+                <i class="fa-solid fa-star"></i>
+              </button>
+              <button type="button" onclick="setStarRating(2)" class="star-btn w-10 h-10 rounded-xl border border-zomato-border bg-[#FFFBEB] text-zomato-gold text-lg hover:scale-105 transition">
+                <i class="fa-solid fa-star"></i>
+              </button>
+              <button type="button" onclick="setStarRating(3)" class="star-btn w-10 h-10 rounded-xl border border-zomato-border bg-[#FFFBEB] text-zomato-gold text-lg hover:scale-105 transition">
+                <i class="fa-solid fa-star"></i>
+              </button>
+              <button type="button" onclick="setStarRating(4)" class="star-btn w-10 h-10 rounded-xl border border-zomato-border bg-[#FFFBEB] text-zomato-gold text-lg hover:scale-105 transition">
+                <i class="fa-solid fa-star"></i>
+              </button>
+              <button type="button" onclick="setStarRating(5)" class="star-btn w-10 h-10 rounded-xl border border-zomato-border bg-[#FFFBEB] text-zomato-gold text-lg hover:scale-105 transition">
+                <i class="fa-solid fa-star"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- User Review Card -->
+        <div class="lg:col-span-7 bg-white rounded-2xl border border-zomato-border p-6 shadow-z-sm flex flex-col justify-between space-y-5">
+          <div class="space-y-4">
+            <!-- Reviewer Header -->
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80" alt="Karthik Reddy" class="w-11 h-11 rounded-full object-cover border border-zomato-border" />
+                <div>
+                  <div class="flex items-center gap-2">
+                    <h4 class="font-bold text-sm sm:text-base text-zomato-charcoal">Karthik Reddy</h4>
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-zomato-greenLight text-zomato-green text-[10px] font-bold">
+                      <i class="fa-solid fa-circle-check"></i> Verified Order
+                    </span>
+                  </div>
+                  <p class="text-xs text-zomato-muted">48 Reviews • 312 Followers • 2 days ago</p>
+                </div>
+              </div>
+
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-zomato-green text-white text-xs font-extrabold">
+                5.0 <i class="fa-solid fa-star text-[10px]"></i>
+              </span>
+            </div>
+
+            <!-- Ordered Dish Tags -->
+            <div class="flex flex-wrap gap-2">
+              <span class="text-[11px] font-medium bg-zomato-surface text-zomato-slate px-2.5 py-1 rounded-lg border border-zomato-border">
+                👍 Royal Chicken Dum Biryani
+              </span>
+              <span class="text-[11px] font-medium bg-zomato-surface text-zomato-slate px-2.5 py-1 rounded-lg border border-zomato-border">
+                👍 Double Ka Meetha
+              </span>
+            </div>
+
+            <!-- Review Text -->
+            <p class="text-sm text-zomato-slate leading-relaxed">
+              "Hands down the most authentic dum biryani in Gachibowli! The aroma when we broke the handi seal was unreal. Generous masala coating at the bottom, tender chicken pieces, and the mirchi ka salan had the exact nutty roast balance. Delivered piping hot in 26 minutes."
+            </p>
+
+            <!-- Photo Thumbnails -->
+            <div class="flex items-center gap-3 pt-1">
+              <img src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=200&q=80" alt="Review photo 1" class="w-20 h-20 rounded-xl object-cover border border-zomato-border hover:opacity-90 cursor-pointer transition" />
+              <img src="https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&fit=crop&w=200&q=80" alt="Review photo 2" class="w-20 h-20 rounded-xl object-cover border border-zomato-border hover:opacity-90 cursor-pointer transition" />
+              <div class="w-20 h-20 rounded-xl bg-zomato-surface border border-zomato-border flex flex-col items-center justify-center text-zomato-gray text-xs font-semibold">
+                <span>+3</span>
+                <span class="text-[10px]">Photos</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Helpful Upvote Footer -->
+          <div class="pt-4 border-t border-zomato-border flex items-center justify-between text-xs text-zomato-gray">
+            <div class="flex items-center gap-4">
+              <button type="button" onclick="toggleHelpful(this)" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-zomato-border hover:bg-zomato-surface text-zomato-slate font-semibold transition">
+                <i class="fa-regular fa-thumbs-up"></i>
+                <span>Helpful (<span id="helpful-count">42</span>)</span>
+              </button>
+              <button type="button" onclick="showToast('Comment box opened', 'info')" class="inline-flex items-center gap-1.5 hover:text-zomato-charcoal font-medium transition">
+                <i class="fa-regular fa-comment"></i> Comment
+              </button>
+            </div>
+            <button type="button" onclick="showToast('Review link copied!', 'success')" class="inline-flex items-center gap-1.5 hover:text-zomato-charcoal font-medium transition">
+              <i class="fa-solid fa-share-nodes"></i> Share
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- SECTION 7: ORDER TRACKING & STATUS TIMELINE                         -->
+    <!-- =================================================================== -->
+    <section id="tracking" class="space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between border-b border-zomato-border pb-3 gap-2">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-zomato-red">Section 07</span>
+          <h2 class="font-display text-xl sm:text-2xl font-bold text-zomato-charcoal">Live Order Tracking & Status Timeline</h2>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="advanceOrderStage()" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-zomato-redLight text-zomato-red border border-zomato-redBorder hover:bg-zomato-red hover:text-white transition">
+            Simulate Next Stage <i class="fa-solid fa-forward-step ml-1"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-zomato-border overflow-hidden shadow-z-sm">
+        <!-- Top Status Header Banner -->
+        <div class="bg-gradient-to-r from-[#1C1C1C] to-[#2E2E2E] text-white p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-white/15 text-xs font-semibold mb-2">
+              <span class="w-2 h-2 rounded-full bg-zomato-green animate-ping"></span>
+              LIVE ORDER #ZMT-98412
+            </div>
+            <h3 id="tracking-headline" class="font-display text-xl sm:text-2xl font-extrabold">Valet is on the way to your location</h3>
+            <p id="tracking-subtext" class="text-xs sm:text-sm text-white/75 mt-1">Picked up from Paradise Biryani • 1.2 km away from Waverock SEZ</p>
+          </div>
+
+          <!-- ETA Badge -->
+          <div class="bg-zomato-green text-white px-5 py-3 rounded-2xl text-center shrink-0 shadow-md">
+            <span class="block text-[10px] font-bold uppercase tracking-wider opacity-90">Arriving In</span>
+            <span id="tracking-eta" class="font-display text-2xl sm:text-3xl font-extrabold">12 mins</span>
+          </div>
+        </div>
+
+        <div class="p-5 sm:p-6 space-y-6">
+          <!-- 4-Step Horizontal Timeline -->
+          <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 relative">
+            <!-- Step 1 -->
+            <div id="step-1" class="flex sm:flex-col items-start sm:items-center sm:text-center gap-3 p-3 rounded-xl bg-zomato-greenLight/50 border border-zomato-green/20">
+              <div class="w-9 h-9 rounded-full bg-zomato-green text-white flex items-center justify-center shrink-0 font-bold text-sm">
+                <i class="fa-solid fa-check"></i>
+              </div>
+              <div>
+                <p class="text-xs sm:text-sm font-bold text-zomato-charcoal">Order Placed</p>
+                <p class="text-[11px] text-zomato-gray">6:08 PM • Confirmed</p>
+              </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div id="step-2" class="flex sm:flex-col items-start sm:items-center sm:text-center gap-3 p-3 rounded-xl bg-zomato-greenLight/50 border border-zomato-green/20">
+              <div class="w-9 h-9 rounded-full bg-zomato-green text-white flex items-center justify-center shrink-0 font-bold text-sm">
+                <i class="fa-solid fa-check"></i>
+              </div>
+              <div>
+                <p class="text-xs sm:text-sm font-bold text-zomato-charcoal">Preparing Food</p>
+                <p class="text-[11px] text-zomato-gray">6:14 PM • Packed & Sealed</p>
+              </div>
+            </div>
+
+            <!-- Step 3 (Active Pulse) -->
+            <div id="step-3" class="flex sm:flex-col items-start sm:items-center sm:text-center gap-3 p-3 rounded-xl bg-zomato-redLight border border-zomato-redBorder">
+              <div class="w-9 h-9 rounded-full bg-zomato-red text-white flex items-center justify-center shrink-0 font-bold text-sm pulse-crimson">
+                <i class="fa-solid fa-motorcycle"></i>
+              </div>
+              <div>
+                <p class="text-xs sm:text-sm font-bold text-zomato-red">Valet on the way</p>
+                <p class="text-[11px] text-zomato-slate">Out for delivery via ISB Rd</p>
+              </div>
+            </div>
+
+            <!-- Step 4 (Pending) -->
+            <div id="step-4" class="flex sm:flex-col items-start sm:items-center sm:text-center gap-3 p-3 rounded-xl bg-zomato-surface border border-zomato-border opacity-65">
+              <div class="w-9 h-9 rounded-full bg-white border border-zomato-border text-zomato-muted flex items-center justify-center shrink-0 font-bold text-sm">
+                <i class="fa-solid fa-house-circle-check"></i>
+              </div>
+              <div>
+                <p class="text-xs sm:text-sm font-bold text-zomato-charcoal">Delivered</p>
+                <p class="text-[11px] text-zomato-muted">Est. 6:35 PM</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Delivery Partner Card -->
+          <div class="p-4 rounded-2xl bg-zomato-surface border border-zomato-border flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="flex items-center gap-3.5">
+              <div class="relative">
+                <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=120&q=80" alt="Delivery Partner" class="w-12 h-12 rounded-full object-cover border-2 border-white shadow-xs" />
+                <span class="absolute -bottom-1 -right-1 bg-zomato-green text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full">
+                  4.9 ★
+                </span>
+              </div>
+              <div>
+                <p class="text-sm font-bold text-zomato-charcoal">Ramesh Kumar is your delivery partner</p>
+                <p class="text-xs text-zomato-gray mt-0.5">Vaccinated • 2,450+ safe deliveries • Hero Splendor (TS 07 EJ 4821)</p>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2.5 shrink-0">
+              <button type="button" onclick="showToast('In-app chat opened with Ramesh Kumar', 'info')" class="px-4 py-2.5 rounded-xl bg-white hover:bg-zomato-border/40 border border-zomato-border text-zomato-charcoal text-xs sm:text-sm font-semibold flex items-center gap-2 transition">
+                <i class="fa-regular fa-message text-zomato-red"></i> Chat
+              </button>
+              <button type="button" onclick="showToast('Connecting masked VoIP call to Ramesh...', 'success')" class="px-4 py-2.5 rounded-xl bg-zomato-red hover:bg-zomato-redHover text-white text-xs sm:text-sm font-semibold flex items-center gap-2 shadow-xs transition">
+                <i class="fa-solid fa-phone"></i> Call Valet
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- SECTION 8: FORMS, MODALS & NOTIFICATIONS                            -->
+    <!-- =================================================================== -->
+    <section id="forms" class="space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between border-b border-zomato-border pb-3 gap-2">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-zomato-red">Section 08</span>
+          <h2 class="font-display text-xl sm:text-2xl font-bold text-zomato-charcoal">Forms, Preferences, Modals & Notifications</h2>
+        </div>
+        <p class="text-xs text-zomato-gray">Address tagging, delivery toggles, customization sheet & toast alerts</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left: Delivery Address Form -->
+        <div class="lg:col-span-6 bg-white rounded-2xl border border-zomato-border p-6 shadow-z-sm space-y-5">
+          <h3 class="font-display font-bold text-base sm:text-lg text-zomato-charcoal">Save Delivery Address Form</h3>
+
+          <!-- Address Tag Selector Pills -->
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-zomato-muted mb-2">Save Address As</label>
+            <div class="flex items-center gap-2.5" id="address-tag-group">
+              <button type="button" onclick="selectAddressTag(this)" class="addr-tag px-4 py-2 rounded-xl border-2 border-zomato-red bg-zomato-redLight text-zomato-red text-xs sm:text-sm font-bold flex items-center gap-2 transition">
+                <i class="fa-solid fa-house"></i> Home
+              </button>
+              <button type="button" onclick="selectAddressTag(this)" class="addr-tag px-4 py-2 rounded-xl border border-zomato-border bg-white text-zomato-gray text-xs sm:text-sm font-semibold flex items-center gap-2 hover:bg-zomato-surface transition">
+                <i class="fa-solid fa-briefcase"></i> Work
+              </button>
+              <button type="button" onclick="selectAddressTag(this)" class="addr-tag px-4 py-2 rounded-xl border border-zomato-border bg-white text-zomato-gray text-xs sm:text-sm font-semibold flex items-center gap-2 hover:bg-zomato-surface transition">
+                <i class="fa-solid fa-location-dot"></i> Other
+              </button>
+            </div>
+          </div>
+
+          <!-- Input Fields -->
+          <div class="space-y-3.5">
+            <div>
+              <label class="block text-xs font-semibold text-zomato-slate mb-1">Flat / House No. / Floor / Building *</label>
+              <input type="text" value="Flat 402, My Home Avatar, Block B" class="w-full px-3.5 py-2.5 rounded-xl border border-zomato-border text-sm text-zomato-charcoal focus:outline-none focus:border-zomato-red focus:ring-2 focus:ring-zomato-red/15 transition" />
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div>
+                <label class="block text-xs font-semibold text-zomato-slate mb-1">Area / Sector / Locality</label>
+                <input type="text" value="Narsingi, Puppalaguda" class="w-full px-3.5 py-2.5 rounded-xl border border-zomato-border text-sm text-zomato-charcoal focus:outline-none focus:border-zomato-red transition" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-zomato-slate mb-1">Nearby Landmark (Optional)</label>
+                <input type="text" placeholder="e.g. Near ORR Exit 18" class="w-full px-3.5 py-2.5 rounded-xl border border-zomato-border text-sm text-zomato-charcoal focus:outline-none focus:border-zomato-red transition" />
+              </div>
+            </div>
+          </div>
+
+          <button type="button" onclick="showToast('Address saved to your Hyderabad profile!', 'success')" class="w-full py-3 rounded-xl bg-zomato-red hover:bg-zomato-redHover text-white text-sm font-bold shadow-xs transition">
+            Save Address & Proceed
+          </button>
+        </div>
+
+        <!-- Right: Toggles, Alert Banners, Modal & Toast Triggers -->
+        <div class="lg:col-span-6 space-y-5">
+          <!-- Eco & Delivery Preference Toggles -->
+          <div class="bg-white rounded-2xl border border-zomato-border p-6 shadow-z-sm space-y-4">
+            <h3 class="font-display font-bold text-base sm:text-lg text-zomato-charcoal">Delivery Preferences & Toggles</h3>
+
+            <!-- Toggle 1: Cutlery -->
+            <div class="flex items-center justify-between gap-4 py-1">
+              <div class="flex items-start gap-3">
+                <div class="w-9 h-9 rounded-xl bg-zomato-greenLight text-zomato-green flex items-center justify-center shrink-0 mt-0.5">
+                  <i class="fa-solid fa-utensils"></i>
+                </div>
+                <div>
+                  <p class="text-sm font-semibold text-zomato-charcoal">Don't send cutlery, tissues & straws</p>
+                  <p class="text-xs text-zomato-gray">Thank you for reducing single-use plastic waste</p>
+                </div>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                <input type="checkbox" checked onchange="showToast(this.checked ? 'Eco-friendly: Cutlery opted out' : 'Cutlery will be included', 'info')" class="sr-only peer">
+                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-zomato-green"></div>
+              </label>
+            </div>
+
+            <hr class="border-zomato-border" />
+
+            <!-- Toggle 2: No-Contact Delivery -->
+            <div class="flex items-center justify-between gap-4 py-1">
+              <div class="flex items-start gap-3">
+                <div class="w-9 h-9 rounded-xl bg-zomato-redLight text-zomato-red flex items-center justify-center shrink-0 mt-0.5">
+                  <i class="fa-solid fa-door-closed"></i>
+                </div>
+                <div>
+                  <p class="text-sm font-semibold text-zomato-charcoal">Leave order at the door / security gate</p>
+                  <p class="text-xs text-zomato-gray">Valet will leave package safely and send a photo</p>
+                </div>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                <input type="checkbox" onchange="showToast(this.checked ? 'No-contact dropoff enabled' : 'Hand-to-hand delivery selected', 'info')" class="sr-only peer">
+                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-zomato-red"></div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Alert Banners & Interactive Triggers -->
+          <div class="bg-white rounded-2xl border border-zomato-border p-6 shadow-z-sm space-y-4">
+            <h3 class="font-display font-bold text-base sm:text-lg text-zomato-charcoal">System Alerts, Modals & Toasts</h3>
+
+            <!-- Rain Surge / Delay Alert Banner -->
+            <div class="p-3.5 rounded-xl bg-[#FFF8E7] border border-[#FCD34D] flex items-start gap-3 text-xs">
+              <i class="fa-solid fa-cloud-showers-heavy text-[#D97706] text-base mt-0.5"></i>
+              <div>
+                <p class="font-bold text-zomato-charcoal">Light drizzle in Gachibowli</p>
+                <p class="text-zomato-slate mt-0.5">Delivery partners are riding safely in the rain. Delivery times may be extended by 5–8 mins.</p>
+              </div>
+            </div>
+
+            <!-- Interactive Modal & Toast Buttons -->
+            <div class="flex flex-wrap gap-2.5 pt-1">
+              <button type="button" onclick="openCustomizationModal()" class="px-4 py-2.5 rounded-xl bg-zomato-charcoal hover:bg-black text-white text-xs sm:text-sm font-semibold flex items-center gap-2 transition">
+                <i class="fa-solid fa-up-right-from-square"></i> Open Dish Customization Modal
+              </button>
+              <button type="button" onclick="showToast('Item added to your Paradise Biryani cart!', 'success')" class="px-3.5 py-2.5 rounded-xl bg-zomato-greenLight text-zomato-green border border-zomato-green/30 text-xs sm:text-sm font-semibold hover:bg-zomato-green hover:text-white transition">
+                Trigger Success Toast
+              </button>
+              <button type="button" onclick="showToast('Coupon TRYNEW is only valid on orders above ₹299', 'error')" class="px-3.5 py-2.5 rounded-xl bg-zomato-redLight text-zomato-red border border-zomato-redBorder text-xs sm:text-sm font-semibold hover:bg-zomato-red hover:text-white transition">
+                Trigger Error Toast
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===================================================================== -->
+  <!-- FOOTER                                                                -->
+  <!-- ===================================================================== -->
+  <footer class="bg-white border-t border-zomato-border mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zomato-gray">
+      <div class="flex items-center gap-3">
+        <span class="font-display font-extrabold italic text-xl text-zomato-charcoal">zomato</span>
+        <span>•</span>
+        <span>Design System & UI Kitchen Sink Showcase</span>
+      </div>
+      <p>Crafted with Zomato Crimson (<code class="font-mono text-zomato-red">#E23744</code>) • Hyderabad, India</p>
+    </div>
+  </footer>
+
+  <!-- ===================================================================== -->
+  <!-- INTERACTIVE DISH CUSTOMIZATION MODAL                                  -->
+  <!-- ===================================================================== -->
+  <div id="customization-modal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-xs p-0 sm:p-4">
+    <div class="bg-white w-full max-w-lg rounded-t-3xl sm:rounded-3xl shadow-z-lg overflow-hidden animate-[fadeIn_0.2s_ease-out]">
+      <!-- Modal Header -->
+      <div class="p-5 border-b border-zomato-border flex items-start justify-between gap-4 bg-zomato-surface/60">
+        <div class="flex items-center gap-3">
+          <img src="https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&fit=crop&w=120&q=80" alt="Biryani" class="w-12 h-12 rounded-xl object-cover border border-zomato-border" />
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="fssai-nonveg"></span>
+              <span class="text-[11px] font-bold text-zomato-muted uppercase">Paradise Biryani</span>
+            </div>
+            <h3 class="font-display font-bold text-base sm:text-lg text-zomato-charcoal">Customize Hyderabadi Dum Biryani</h3>
+          </div>
+        </div>
+        <button type="button" onclick="closeCustomizationModal()" class="w-8 h-8 rounded-full bg-white border border-zomato-border text-zomato-charcoal hover:bg-zomato-surface flex items-center justify-center transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Modal Scrollable Body -->
+      <div class="p-5 max-h-[65vh] overflow-y-auto space-y-5">
+        <!-- Required Radio Group: Portion Size -->
+        <div class="space-y-2.5">
+          <div class="flex items-center justify-between">
+            <h4 class="font-bold text-sm text-zomato-charcoal">Portion Size</h4>
+            <span class="text-[11px] font-bold bg-zomato-redLight text-zomato-red px-2 py-0.5 rounded">Required</span>
+          </div>
+          <div class="space-y-2 border border-zomato-border rounded-2xl p-3 bg-zomato-surface/40">
+            <label class="flex items-center justify-between p-2 rounded-xl hover:bg-white cursor-pointer transition">
+              <div class="flex items-center gap-2.5">
+                <span class="fssai-nonveg"></span>
+                <span class="text-sm font-medium text-zomato-charcoal">Single Pack (Serves 1)</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-sm font-semibold text-zomato-charcoal">₹249</span>
+                <input type="radio" name="portion" value="249" onchange="updateModalTotal()" class="accent-[#E23744] w-4 h-4" />
+              </div>
+            </label>
+            <label class="flex items-center justify-between p-2 rounded-xl bg-white border border-zomato-redBorder cursor-pointer transition">
+              <div class="flex items-center gap-2.5">
+                <span class="fssai-nonveg"></span>
+                <span class="text-sm font-bold text-zomato-charcoal">Full Handi (Serves 2)</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-sm font-bold text-zomato-charcoal">₹349</span>
+                <input type="radio" name="portion" value="349" checked onchange="updateModalTotal()" class="accent-[#E23744] w-4 h-4" />
+              </div>
+            </label>
+            <label class="flex items-center justify-between p-2 rounded-xl hover:bg-white cursor-pointer transition">
+              <div class="flex items-center gap-2.5">
+                <span class="fssai-nonveg"></span>
+                <span class="text-sm font-medium text-zomato-charcoal">Jumbo Family Pack (Serves 4-5)</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-sm font-semibold text-zomato-charcoal">₹649</span>
+                <input type="radio" name="portion" value="649" onchange="updateModalTotal()" class="accent-[#E23744] w-4 h-4" />
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Optional Checkboxes: Add-ons -->
+        <div class="space-y-2.5">
+          <div class="flex items-center justify-between">
+            <h4 class="font-bold text-sm text-zomato-charcoal">Accompaniments & Desserts</h4>
+            <span class="text-[11px] font-medium text-zomato-muted">Optional (Up to 3)</span>
+          </div>
+          <div class="space-y-2 border border-zomato-border rounded-2xl p-3 bg-zomato-surface/40">
+            <label class="flex items-center justify-between p-2 rounded-xl hover:bg-white cursor-pointer transition">
+              <div class="flex items-center gap-2.5">
+                <span class="fssai-egg"></span>
+                <span class="text-sm text-zomato-charcoal">Extra Boiled Masala Egg (2 pcs)</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-sm text-zomato-slate">+ ₹40</span>
+                <input type="checkbox" value="40" onchange="updateModalTotal()" class="addon-cb accent-[#E23744] w-4 h-4 rounded" />
+              </div>
+            </label>
+            <label class="flex items-center justify-between p-2 rounded-xl hover:bg-white cursor-pointer transition">
+              <div class="flex items-center gap-2.5">
+                <span class="fssai-veg"></span>
+                <span class="text-sm text-zomato-charcoal">Double Ka Meetha (150g)</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-sm text-zomato-slate">+ ₹89</span>
+                <input type="checkbox" value="89" checked onchange="updateModalTotal()" class="addon-cb accent-[#E23744] w-4 h-4 rounded" />
+              </div>
+            </label>
+            <label class="flex items-center justify-between p-2 rounded-xl hover:bg-white cursor-pointer transition">
+              <div class="flex items-center gap-2.5">
+                <span class="fssai-veg"></span>
+                <span class="text-sm text-zomato-charcoal">Extra Mirchi Ka Salan & Raita</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-sm text-zomato-slate">+ ₹30</span>
+                <input type="checkbox" value="30" onchange="updateModalTotal()" class="addon-cb accent-[#E23744] w-4 h-4 rounded" />
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer CTA -->
+      <div class="p-4 sm:p-5 border-t border-zomato-border bg-white flex items-center gap-3">
+        <button type="button" onclick="confirmModalAdd()" class="w-full py-3.5 px-5 rounded-2xl bg-zomato-red hover:bg-zomato-redHover text-white font-display font-bold text-sm sm:text-base shadow-z-md transition flex items-center justify-between">
+          <span>Add Customized Item</span>
+          <span id="modal-total-price">₹438</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- FLOATING TOAST NOTIFICATION CONTAINER                                 -->
+  <!-- ===================================================================== -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2.5 max-w-sm w-[calc(100%-2.5rem)] pointer-events-none"></div>
+
+  <!-- ===================================================================== -->
+  <!-- JAVASCRIPT INTERACTIVITY ENGINE                                       -->
+  <!-- ===================================================================== -->
+  <script>
+    // -----------------------------------------------------------------------
+    // 1. STATE MANAGEMENT FOR CART, DISHES, COUPONS & TRACKING
+    // -----------------------------------------------------------------------
+    const state = {
+      cart: {
+        biryani: {
+          id: 'biryani',
+          name: 'Royal Hyderabadi Chicken Dum Biryani [1 Full]',
+          price: 349,
+          qty: 2,
+          type: 'nonveg',
+          customText: 'Full Handi • Extra Salan'
+        },
+        paneer: {
+          id: 'paneer',
+          name: 'Paneer Tikka Masala + 2 Butter Naan Combo',
+          price: 269,
+          qty: 0,
+          type: 'veg',
+          customText: 'Medium Spicy'
+        }
+      },
+      tip: 30,
+      couponCode: 'TRYNEW',
+      couponDiscount: 80,
+      trackingStage: 3
+    };
+
+    // -----------------------------------------------------------------------
+    // 2. INITIALIZE ON LOAD
+    // -----------------------------------------------------------------------
+    document.addEventListener('DOMContentLoaded', () => {
+      renderDishButtons();
+      renderCartAndBill();
+    });
+
+    // -----------------------------------------------------------------------
+    // 3. TOAST NOTIFICATION & CLIPBOARD HELPERS
+    // -----------------------------------------------------------------------
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      
+      let iconClass = 'fa-circle-check text-zomato-green';
+      let borderClass = 'border-zomato-green/40';
+      if (type === 'error') {
+        iconClass = 'fa-circle-exclamation text-zomato-red';
+        borderClass = 'border-zomato-red/40';
+      } else if (type === 'info') {
+        iconClass = 'fa-circle-info text-zomato-blue';
+        borderClass = 'border-zomato-blue/40';
+      }
+
+      toast.className = `pointer-events-auto bg-zomato-charcoal text-white px-4 py-3 rounded-2xl shadow-z-lg border ${borderClass} flex items-center justify-between gap-3 text-xs sm:text-sm font-medium transform transition-all duration-300 translate-y-2 opacity-0`;
+      toast.innerHTML = `
+        <div class="flex items-center gap-2.5">
+          <i class="fa-solid ${iconClass} text-base"></i>
+          <span>${message}</span>
+        </div>
+        <button type="button" onclick="this.parentElement.remove()" class="text-white/60 hover:text-white ml-2">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      `;
+
+      container.appendChild(toast);
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      });
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 3200);
+    }
+
+    function copyHex(hex) {
+      const tempInput = document.createElement('input');
+      tempInput.value = hex;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      try {
+        document.execCommand('copy');
+        showToast(`Copied color token ${hex} to clipboard!`, 'success');
+      } catch (err) {
+        showToast(`Token ${hex} selected`, 'info');
+      }
+      document.body.removeChild(tempInput);
+    }
+
+    // -----------------------------------------------------------------------
+    // 4. LOCATION DROPDOWN, SEARCH AUTOCOMPLETE & MODE TABS
+    // -----------------------------------------------------------------------
+    function toggleLocationDropdown() {
+      const menu = document.getElementById('location-dropdown-menu');
+      const chevron = document.getElementById('location-chevron');
+      menu.classList.toggle('hidden');
+      chevron.classList.toggle('rotate-180');
+      document.getElementById('search-autocomplete-menu').classList.add('hidden');
+    }
+
+    function selectLocation(title, sub) {
+      document.getElementById('selected-location-title').textContent = title;
+      document.getElementById('selected-location-sub').textContent = sub;
+      document.getElementById('location-dropdown-menu').classList.add('hidden');
+      document.getElementById('location-chevron').classList.remove('rotate-180');
+      showToast(`Delivery location updated to ${title}`, 'success');
+    }
+
+    function openSearchAutocomplete() {
+      document.getElementById('search-autocomplete-menu').classList.remove('hidden');
+      document.getElementById('location-dropdown-menu').classList.add('hidden');
+    }
+
+    function closeSearchAutocomplete() {
+      document.getElementById('search-autocomplete-menu').classList.add('hidden');
+    }
+
+    function filterSearchSuggestions(query) {
+      const clearBtn = document.getElementById('clear-search-btn');
+      clearBtn.classList.toggle('hidden', query.trim().length === 0);
+      openSearchAutocomplete();
+
+      const items = document.querySelectorAll('.search-item');
+      const q = query.toLowerCase();
+      items.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        item.style.display = text.includes(q) ? 'flex' : 'none';
+      });
+    }
+
+    function clearSearchInput() {
+      const input = document.getElementById('zomato-search-input');
+      input.value = '';
+      filterSearchSuggestions('');
+      input.focus();
+    }
+
+    function selectSearchItem(label) {
+      document.getElementById('zomato-search-input').value = label;
+      document.getElementById('clear-search-btn').classList.remove('hidden');
+      closeSearchAutocomplete();
+      showToast(`Searching for "${label}" in Hyderabad...`, 'info');
+    }
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('#location-dropdown-btn') && !e.target.closest('#location-dropdown-menu')) {
+        document.getElementById('location-dropdown-menu')?.classList.add('hidden');
+      }
+      if (!e.target.closest('#zomato-search-input') && !e.target.closest('#search-autocomplete-menu')) {
+        document.getElementById('search-autocomplete-menu')?.classList.add('hidden');
+      }
+    });
+
+    function switchModeTab(mode) {
+      const modes = ['delivery', 'dining', 'nightlife'];
+      const iconBg = {
+        delivery: 'bg-[#FCEEC0]',
+        dining: 'bg-[#E5F3F3]',
+        nightlife: 'bg-[#EDF4FF]'
+      };
+      const descriptions = {
+        delivery: '<i class="fa-solid fa-bolt text-zomato-red mr-1.5"></i>Showing <strong>Food Delivery</strong> restaurants delivering hot meals to Gachibowli in under 35 mins.',
+        dining: '<i class="fa-solid fa-utensils text-zomato-red mr-1.5"></i>Showing <strong>Dining Out</strong> tables with up to 40% OFF via Zomato Gold Pay.',
+        nightlife: '<i class="fa-solid fa-martini-glass-citrus text-zomato-red mr-1.5"></i>Showing <strong>Nightlife & Breweries</strong> in Jubilee Hills & Financial District.'
+      };
+      const counts = {
+        delivery: '348 Restaurants Open',
+        dining: '192 Bookable Venues',
+        nightlife: '64 Lounges & Pubs'
+      };
+
+      modes.forEach(m => {
+        const tab = document.getElementById(`tab-${m}`);
+        const icon = document.getElementById(`tab-icon-${m}`);
+        if (m === mode) {
+          tab.classList.remove('border-transparent', 'text-zomato-gray');
+          tab.classList.add('border-zomato-red', 'text-zomato-red');
+          icon.className = `w-12 h-12 rounded-full ${iconBg[m]} flex items-center justify-center text-xl shadow-xs transition`;
+        } else {
+          tab.classList.add('border-transparent', 'text-zomato-gray');
+          tab.classList.remove('border-zomato-red', 'text-zomato-red');
+          icon.className = 'w-12 h-12 rounded-full bg-zomato-surface flex items-center justify-center text-xl transition';
+        }
+      });
+
+      document.getElementById('mode-context-banner').innerHTML = `
+        <span class="font-medium text-zomato-charcoal">${descriptions[mode]}</span>
+        <span class="hidden sm:inline font-semibold text-zomato-red">${counts[mode]}</span>
+      `;
+    }
+
+    // -----------------------------------------------------------------------
+    // 5. FILTER PILLS & BOOKMARK INTERACTIONS
+    // -----------------------------------------------------------------------
+    function toggleFilterPill(btn) {
+      const isActive = btn.getAttribute('data-active') === 'true';
+      if (isActive) {
+        btn.setAttribute('data-active', 'false');
+        btn.className = 'filter-pill inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium border border-zomato-border bg-white text-zomato-gray hover:bg-zomato-surface transition';
+        const xIcon = btn.querySelector('.fa-xmark');
+        if (xIcon) xIcon.remove();
+      } else {
+        btn.setAttribute('data-active', 'true');
+        btn.className = 'filter-pill inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold border border-zomato-red bg-zomato-red text-white shadow-xs transition';
+        if (!btn.querySelector('.fa-xmark')) {
+          btn.insertAdjacentHTML('beforeend', ' <i class="fa-solid fa-xmark text-xs"></i>');
+        }
+      }
+    }
+
+    function resetFilterPills() {
+      const pills = document.querySelectorAll('#filter-pills-container .filter-pill');
+      pills.forEach((pill, index) => {
+        if (index === 0) return;
+        pill.setAttribute('data-active', 'false');
+        pill.className = 'filter-pill inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium border border-zomato-border bg-white text-zomato-gray hover:bg-zomato-surface transition';
+        const xIcon = pill.querySelector('.fa-xmark');
+        if (xIcon) xIcon.remove();
+      });
+      showToast('All discovery filters cleared', 'info');
+    }
+
+    function toggleBookmark(btn) {
+      const icon = btn.querySelector('i');
+      if (icon.classList.contains('fa-regular')) {
+        icon.classList.remove('fa-regular');
+        icon.classList.add('fa-solid', 'text-zomato-red');
+        showToast('Saved to your Hyderabad Bookmarks!', 'success');
+      } else {
+        icon.classList.add('fa-regular');
+        icon.classList.remove('fa-solid', 'text-zomato-red');
+        showToast('Removed from Bookmarks', 'info');
+      }
+    }
+
+    function toggleReadMore(id) {
+      const dots = document.getElementById(`desc-dots-${id}`);
+      const more = document.getElementById(`desc-more-${id}`);
+      const btn = document.getElementById(`read-more-btn-${id}`);
+      if (more.classList.contains('hidden')) {
+        more.classList.remove('hidden');
+        dots.classList.add('hidden');
+        btn.textContent = 'read less';
+      } else {
+        more.classList.add('hidden');
+        dots.classList.remove('hidden');
+        btn.textContent = 'read more';
+      }
+    }
+
+    // -----------------------------------------------------------------------
+    // 6. MENU DISH STEPPER & LIVE CART SYNCHRONIZATION
+    // -----------------------------------------------------------------------
+    function updateItemQty(itemId, delta) {
+      const item = state.cart[itemId];
+      if (!item) return;
+
+      item.qty = Math.max(0, item.qty + delta);
+      renderDishButtons();
+      renderCartAndBill();
+
+      if (delta > 0) {
+        showToast(`Added ${item.name.split('[')[0].trim()} to cart`, 'success');
+      }
+    }
+
+    function renderDishButtons() {
+      Object.values(state.cart).forEach(item => {
+        const wrapper = document.getElementById(`dish-btn-wrapper-${item.id}`);
+        if (!wrapper) return;
+
+        if (item.qty === 0) {
+          wrapper.innerHTML = `
+            <button type="button" onclick="updateItemQty('${item.id}', 1)" class="w-28 py-2 px-4 rounded-xl bg-zomato-redLight hover:bg-zomato-red text-zomato-red hover:text-white border border-zomato-red font-display font-extrabold text-sm shadow-z-sm transition flex items-center justify-center gap-1.5">
+              ADD <span class="text-xs font-bold">+</span>
+            </button>
+          `;
+        } else {
+          wrapper.innerHTML = `
+            <div class="w-28 py-1.5 px-2.5 rounded-xl bg-zomato-red text-white font-display font-extrabold text-sm shadow-z-md flex items-center justify-between">
+              <button type="button" onclick="updateItemQty('${item.id}', -1)" class="w-6 h-6 rounded-lg hover:bg-black/15 flex items-center justify-center transition" aria-label="Decrease quantity">
+                <i class="fa-solid fa-minus text-xs"></i>
+              </button>
+              <span>${item.qty}</span>
+              <button type="button" onclick="updateItemQty('${item.id}', 1)" class="w-6 h-6 rounded-lg hover:bg-black/15 flex items-center justify-center transition" aria-label="Increase quantity">
+                <i class="fa-solid fa-plus text-xs"></i>
+              </button>
+            </div>
+          `;
+        }
+      });
+    }
+
+    function renderCartAndBill() {
+      const listEl = document.getElementById('cart-items-list');
+      const items = Object.values(state.cart).filter(i => i.qty > 0);
+      const totalCount = items.reduce((acc, i) => acc + i.qty, 0);
+
+      // Update top navbar badge
+      document.getElementById('nav-cart-badge').textContent = totalCount;
+
+      if (items.length === 0) {
+        listEl.innerHTML = `
+          <div class="py-8 text-center space-y-2">
+            <p class="text-sm font-semibold text-zomato-charcoal">Your cart is empty</p>
+            <p class="text-xs text-zomato-gray">Click 'ADD' on any dish card above to populate your order.</p>
+            <button type="button" onclick="updateItemQty('biryani', 1)" class="mt-2 px-4 py-2 rounded-xl bg-zomato-red text-white text-xs font-bold">
+              + Re-add Chicken Dum Biryani
+            </button>
+          </div>
+        `;
+      } else {
+        listEl.innerHTML = items.map(item => `
+          <div class="py-3.5 flex items-center justify-between gap-3">
+            <div class="flex items-start gap-2.5 min-w-0">
+              <span class="${item.type === 'veg' ? 'fssai-veg' : 'fssai-nonveg'} mt-1"></span>
+              <div class="min-w-0">
+                <p class="text-sm font-semibold text-zomato-charcoal truncate">${item.name}</p>
+                <p class="text-xs text-zomato-muted">${item.customText}</p>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3 shrink-0">
+              <div class="inline-flex items-center border border-zomato-red rounded-lg bg-zomato-redLight text-zomato-red font-bold text-xs">
+                <button type="button" onclick="updateItemQty('${item.id}', -1)" class="px-2 py-1 hover:bg-zomato-red hover:text-white rounded-l-md transition">-</button>
+                <span class="px-2 text-zomato-charcoal">${item.qty}</span>
+                <button type="button" onclick="updateItemQty('${item.id}', 1)" class="px-2 py-1 hover:bg-zomato-red hover:text-white rounded-r-md transition">+</button>
+              </div>
+              <span class="text-sm font-bold text-zomato-charcoal w-16 text-right">₹${(item.price * item.qty).toFixed(2)}</span>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // Calculate Bill Totals
+      const itemTotal = items.reduce((sum, i) => sum + i.price * i.qty, 0);
+      const gst = itemTotal * 0.05;
+      const platformFee = itemTotal > 0 ? 6 : 0;
+      const tipAmount = itemTotal > 0 ? state.tip : 0;
+
+      // Validate Coupon
+      let discount = 0;
+      const discountRow = document.getElementById('bill-discount-row');
+      if (state.couponCode && itemTotal >= 299) {
+        discount = state.couponDiscount;
+        discountRow.classList.remove('hidden');
+        discountRow.innerHTML = `
+          <span>Coupon Discount (${state.couponCode})</span>
+          <span>- ₹${discount.toFixed(2)}</span>
+        `;
+      } else {
+        discountRow.classList.add('hidden');
+      }
+
+      const grandTotal = Math.max(0, itemTotal + tipAmount + platformFee + gst - discount);
+      const totalSavings = (itemTotal > 0 ? 35 : 0) + discount;
+
+      document.getElementById('bill-item-total').textContent = `₹${itemTotal.toFixed(2)}`;
+      document.getElementById('bill-tip-amount').textContent = `₹${tipAmount.toFixed(2)}`;
+      document.getElementById('bill-gst-amount').textContent = `₹${gst.toFixed(2)}`;
+      document.getElementById('bill-grand-total').textContent = `₹${grandTotal.toFixed(2)}`;
+      document.getElementById('cta-pay-amount').textContent = `₹${grandTotal.toFixed(2)}`;
+      document.getElementById('bill-total-savings').textContent = `Total savings of ₹${totalSavings.toFixed(2)} on this order!`;
+    }
+
+    function selectTip(amount, btn) {
+      state.tip = amount;
+      document.querySelectorAll('#tip-selector-group .tip-pill').forEach(p => {
+        p.className = 'tip-pill px-4 py-2 rounded-xl border border-zomato-border bg-white text-zomato-charcoal text-xs sm:text-sm font-semibold hover:bg-zomato-surface transition';
+      });
+      btn.className = 'tip-pill px-4 py-2 rounded-xl border-2 border-zomato-red bg-zomato-redLight text-zomato-red text-xs sm:text-sm font-bold transition';
+      renderCartAndBill();
+    }
+
+    function removeCoupon() {
+      state.couponCode = null;
+      state.couponDiscount = 0;
+      document.getElementById('coupon-applied-banner').classList.add('hidden');
+      renderCartAndBill();
+      showToast('Coupon removed from order', 'info');
+    }
+
+    function applyCouponFromInput() {
+      const input = document.getElementById('coupon-code-input');
+      const code = input.value.trim().toUpperCase();
+      if (!code) return;
+
+      const itemTotal = Object.values(state.cart).reduce((sum, i) => sum + i.price * i.qty, 0);
+      if (itemTotal < 299) {
+        showToast('Add items worth ₹299 or more to apply promo codes', 'error');
+        return;
+      }
+
+      state.couponCode = code;
+      state.couponDiscount = code === 'ZOMATO100' ? 100 : 80;
+
+      const banner = document.getElementById('coupon-applied-banner');
+      banner.classList.remove('hidden');
+      banner.querySelector('p.text-sm').innerHTML = `
+        '${code}' applied
+        <span class="text-xs font-semibold text-zomato-green ml-1.5">You saved ₹${state.couponDiscount}!</span>
+      `;
+      renderCartAndBill();
+      showToast(`Promo code '${code}' applied successfully!`, 'success');
+    }
+
+    function placeDemoOrder() {
+      const total = document.getElementById('bill-grand-total').textContent;
+      showToast(`Order placed for ${total}! Jumping to Live Tracking...`, 'success');
+      document.getElementById('tracking').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // -----------------------------------------------------------------------
+    // 7. REVIEWS, TRACKING & FORM HELPERS
+    // -----------------------------------------------------------------------
+    function setStarRating(rating) {
+      const labels = {
+        1: 'Terrible (1/5)',
+        2: 'Bad (2/5)',
+        3: 'Average (3/5)',
+        4: 'Good (4/5)',
+        5: 'Loved it! (5/5)'
+      };
+      document.getElementById('star-rating-label').textContent = labels[rating];
+      const buttons = document.querySelectorAll('#interactive-star-group .star-btn');
+      buttons.forEach((btn, idx) => {
+        if (idx < rating) {
+          btn.className = 'star-btn w-10 h-10 rounded-xl border border-zomato-gold bg-[#FFFBEB] text-zomato-gold text-lg hover:scale-105 transition';
+        } else {
+          btn.className = 'star-btn w-10 h-10 rounded-xl border border-zomato-border bg-white text-gray-300 text-lg hover:scale-105 transition';
+        }
+      });
+      showToast(`Rated ${rating} stars! Thank you for your feedback.`, 'success');
+    }
+
+    function toggleHelpful(btn) {
+      const countEl = document.getElementById('helpful-count');
+      let count = parseInt(countEl.textContent, 10);
+      if (btn.classList.contains('border-zomato-red')) {
+        btn.classList.remove('border-zomato-red', 'bg-zomato-redLight', 'text-zomato-red');
+        countEl.textContent = count - 1;
+      } else {
+        btn.classList.add('border-zomato-red', 'bg-zomato-redLight', 'text-zomato-red');
+        countEl.textContent = count + 1;
+        showToast('Marked review as helpful', 'info');
+      }
+    }
+
+    function advanceOrderStage() {
+      state.trackingStage = state.trackingStage >= 4 ? 1 : state.trackingStage + 1;
+      const s = state.trackingStage;
+
+      const headlines = {
+        1: ['Order received by Paradise Biryani', 'Waiting for restaurant confirmation • Gachibowli', '32 mins'],
+        2: ['Chef is preparing your Dum Biryani', 'Freshly sealing handi with saffron & spices', '22 mins'],
+        3: ['Valet is on the way to your location', 'Picked up from Paradise Biryani • 1.2 km away', '12 mins'],
+        4: ['Order Delivered! Enjoy your meal', 'Delivered safely at Waverock SEZ Gate 2', 'Delivered']
+      };
+
+      document.getElementById('tracking-headline').textContent = headlines[s][0];
+      document.getElementById('tracking-subtext').textContent = headlines[s][1];
+      document.getElementById('tracking-eta').textContent = headlines[s][2];
+
+      for (let i = 1; i <= 4; i++) {
+        const el = document.getElementById(`step-${i}`);
+        const badge = el.querySelector('div:first-child');
+        const title = el.querySelector('p:first-child');
+
+        if (i < s || (s === 4 && i === 4)) {
+          el.className = 'flex sm:flex-col items-start sm:items-center sm:text-center gap-3 p-3 rounded-xl bg-zomato-greenLight/50 border border-zomato-green/20';
+          badge.className = 'w-9 h-9 rounded-full bg-zomato-green text-white flex items-center justify-center shrink-0 font-bold text-sm';
+          badge.innerHTML = '<i class="fa-solid fa-check"></i>';
+          title.className = 'text-xs sm:text-sm font-bold text-zomato-charcoal';
+        } else if (i === s) {
+          el.className = 'flex sm:flex-col items-start sm:items-center sm:text-center gap-3 p-3 rounded-xl bg-zomato-redLight border border-zomato-redBorder';
+          badge.className = 'w-9 h-9 rounded-full bg-zomato-red text-white flex items-center justify-center shrink-0 font-bold text-sm pulse-crimson';
+          badge.innerHTML = i === 3 ? '<i class="fa-solid fa-motorcycle"></i>' : '<i class="fa-solid fa-fire-burner"></i>';
+          title.className = 'text-xs sm:text-sm font-bold text-zomato-red';
+        } else {
+          el.className = 'flex sm:flex-col items-start sm:items-center sm:text-center gap-3 p-3 rounded-xl bg-zomato-surface border border-zomato-border opacity-65';
+          badge.className = 'w-9 h-9 rounded-full bg-white border border-zomato-border text-zomato-muted flex items-center justify-center shrink-0 font-bold text-sm';
+          badge.innerHTML = i === 4 ? '<i class="fa-solid fa-house-circle-check"></i>' : '<i class="fa-solid fa-motorcycle"></i>';
+          title.className = 'text-xs sm:text-sm font-bold text-zomato-charcoal';
+        }
+      }
+    }
+
+    function selectAddressTag(btn) {
+      document.querySelectorAll('#address-tag-group .addr-tag').forEach(b => {
+        b.className = 'addr-tag px-4 py-2 rounded-xl border border-zomato-border bg-white text-zomato-gray text-xs sm:text-sm font-semibold flex items-center gap-2 hover:bg-zomato-surface transition';
+      });
+      btn.className = 'addr-tag px-4 py-2 rounded-xl border-2 border-zomato-red bg-zomato-redLight text-zomato-red text-xs sm:text-sm font-bold flex items-center gap-2 transition';
+    }
+
+    // -----------------------------------------------------------------------
+    // 8. DISH CUSTOMIZATION MODAL LOGIC
+    // -----------------------------------------------------------------------
+    function openCustomizationModal() {
+      document.getElementById('customization-modal').classList.remove('hidden');
+      updateModalTotal();
+    }
+
+    function closeCustomizationModal() {
+      document.getElementById('customization-modal').classList.add('hidden');
+    }
+
+    function updateModalTotal() {
+      const selectedPortion = document.querySelector('input[name="portion"]:checked');
+      let total = selectedPortion ? parseInt(selectedPortion.value, 10) : 349;
+
+      document.querySelectorAll('.addon-cb:checked').forEach(cb => {
+        total += parseInt(cb.value, 10);
+      });
+
+      document.getElementById('modal-total-price').textContent = `₹${total}`;
+    }
+
+    function confirmModalAdd() {
+      closeCustomizationModal();
+      updateItemQty('biryani', 1);
+      showToast('Customized Biryani added to your cart!', 'success');
+    }
+  </script>
+</body>
+</html>

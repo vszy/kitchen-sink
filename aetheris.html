@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AETHERIS // v4.2 Design System Kitchen Sink</title>
+
+  <!-- Google Fonts: Plus Jakarta Sans, Instrument Serif, JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            serif: ['"Instrument Serif"', 'serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            obsidian: {
+              950: '#070709',
+              900: '#0C0C10',
+              850: '#121218',
+              800: '#181820',
+              700: '#23232F',
+            },
+            accent: {
+              DEFAULT: 'var(--accent)',
+              glow: 'var(--accent-glow)',
+              dim: 'var(--accent-dim)',
+              contrast: 'var(--accent-contrast)',
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    /* Dynamic Theme Tokens */
+    :root {
+      --accent: #CCFF00;
+      --accent-glow: rgba(204, 255, 0, 0.25);
+      --accent-dim: rgba(204, 255, 0, 0.1);
+      --accent-contrast: #070709;
+      --iridescent: linear-gradient(135deg, #CCFF00 0%, #00F0FF 50%, #A855F7 100%);
+    }
+
+    [data-theme="violet"] {
+      --accent: #A855F7;
+      --accent-glow: rgba(168, 85, 247, 0.3);
+      --accent-dim: rgba(168, 85, 247, 0.12);
+      --accent-contrast: #FFFFFF;
+      --iridescent: linear-gradient(135deg, #A855F7 0%, #EC4899 50%, #38BDF8 100%);
+    }
+
+    [data-theme="solar"] {
+      --accent: #FF5500;
+      --accent-glow: rgba(255, 85, 0, 0.3);
+      --accent-dim: rgba(255, 85, 0, 0.12);
+      --accent-contrast: #FFFFFF;
+      --iridescent: linear-gradient(135deg, #FF5500 0%, #FFB800 50%, #FF0055 100%);
+    }
+
+    /* Base Obsidian Styling & Subtle Ambient Noise */
+    body {
+      background-color: #070709;
+      color: #F4F4F6;
+      background-image:
+        radial-gradient(circle at 15% 0%, var(--accent-dim) 0%, transparent 40%),
+        radial-gradient(circle at 85% 30%, rgba(120, 119, 198, 0.06) 0%, transparent 45%);
+      background-attachment: fixed;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #070709;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #23232F;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent);
+    }
+
+    /* Glassmorphic Card Utility */
+    .glass-card {
+      background: linear-gradient(180deg, rgba(24, 24, 32, 0.72) 0%, rgba(12, 12, 16, 0.85) 100%);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7), inset 0 1px 0 0 rgba(255, 255, 255, 0.07);
+    }
+
+    .glass-nav {
+      background: rgba(7, 7, 9, 0.75);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    }
+
+    /* Iridescent Border Wrapper */
+    .gradient-border {
+      position: relative;
+      background: #121218;
+      border-radius: 0.75rem;
+      z-index: 1;
+    }
+    .gradient-border::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      padding: 1px;
+      background: var(--iridescent);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      z-index: -1;
+      opacity: 0.85;
+      transition: opacity 0.3s ease;
+    }
+    .gradient-border:hover::before {
+      opacity: 1;
+    }
+
+    /* Custom Range Slider */
+    input[type="range"].cyber-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      background: transparent;
+      cursor: pointer;
+    }
+    input[type="range"].cyber-slider::-webkit-slider-runnable-track {
+      height: 6px;
+      border-radius: 999px;
+      background: #23232F;
+    }
+    input[type="range"].cyber-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      margin-top: -5px;
+      background-color: var(--accent);
+      height: 16px;
+      width: 16px;
+      border-radius: 999px;
+      box-shadow: 0 0 12px var(--accent-glow);
+      transition: transform 0.15s ease;
+    }
+    input[type="range"].cyber-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    /* Shimmer Animation for Skeletons */
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+    .skeleton-shimmer {
+      position: relative;
+      overflow: hidden;
+      background-color: #181820;
+    }
+    .skeleton-shimmer::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+      animation: shimmer 1.8s infinite;
+    }
+
+    /* Smooth Accordion Transition */
+    .accordion-content {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .accordion-item.active .accordion-content {
+      grid-template-rows: 1fr;
+    }
+    .accordion-inner {
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-accent selection:text-accent-contrast min-h-screen flex flex-col">
+
+  <!-- Sticky Top Glass Header -->
+  <header class="sticky top-0 z-40 glass-nav">
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      <!-- Brand Identity -->
+      <div class="flex items-center gap-3">
+        <button id="mobileMenuBtn" class="lg:hidden p-2 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 transition" aria-label="Open menu">
+          <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+        <a href="#" class="flex items-center gap-2.5 group">
+          <div class="w-8 h-8 rounded-lg bg-accent flex items-center justify-center text-accent-contrast font-bold shadow-[0_0_20px_var(--accent-glow)] transition-transform group-hover:scale-105">
+            <i data-lucide="sparkles" class="w-4 h-4"></i>
+          </div>
+          <span class="font-bold tracking-tight text-lg">AETHERIS</span>
+          <span class="hidden sm:inline-block font-mono text-[11px] px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-zinc-400">SYS // 4.2</span>
+        </a>
+      </div>
+
+      <!-- Live Accent Theme Switcher -->
+      <div class="flex items-center gap-2 sm:gap-3 bg-obsidian-850/90 border border-white/10 p-1.5 rounded-full">
+        <span class="hidden md:inline font-mono text-[11px] uppercase tracking-wider text-zinc-400 pl-2.5">Accent:</span>
+        <button onclick="setTheme('lime')" data-theme-btn="lime" class="theme-pill flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-all bg-white/10 text-white shadow-sm">
+          <span class="w-2.5 h-2.5 rounded-full bg-[#CCFF00] shadow-[0_0_8px_#CCFF00]"></span>
+          <span class="hidden sm:inline">Cyber Lime</span>
+        </button>
+        <button onclick="setTheme('violet')" data-theme-btn="violet" class="theme-pill flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium text-zinc-400 hover:text-white transition-all">
+          <span class="w-2.5 h-2.5 rounded-full bg-[#A855F7] shadow-[0_0_8px_#A855F7]"></span>
+          <span class="hidden sm:inline">Hyper Violet</span>
+        </button>
+        <button onclick="setTheme('solar')" data-theme-btn="solar" class="theme-pill flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium text-zinc-400 hover:text-white transition-all">
+          <span class="w-2.5 h-2.5 rounded-full bg-[#FF5500] shadow-[0_0_8px_#FF5500]"></span>
+          <span class="hidden sm:inline">Solar Flare</span>
+        </button>
+      </div>
+
+      <!-- Quick Action -->
+      <div class="flex items-center gap-2">
+        <button onclick="triggerToast('System tokens exported as JSON', 'success')" class="hidden sm:inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-accent text-accent-contrast hover:brightness-110 transition shadow-[0_0_20px_var(--accent-glow)]">
+          <i data-lucide="download" class="w-3.5 h-3.5"></i>
+          <span>Export Tokens</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Shell: Sidebar + Content -->
+  <div class="max-w-[1440px] w-full mx-auto flex-1 flex relative">
+
+    <!-- Sticky Glass Sidebar (Desktop) & Slide-over (Mobile) -->
+    <aside id="sidebarNav" class="fixed inset-y-0 left-0 z-30 w-64 bg-obsidian-950/95 lg:bg-transparent backdrop-blur-xl lg:backdrop-blur-none border-r border-white/10 lg:border-white/5 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)] overflow-y-auto p-6">
+      <div class="flex items-center justify-between lg:hidden mb-6">
+        <span class="font-mono text-xs uppercase tracking-widest text-zinc-400">Navigation</span>
+        <button id="closeMobileMenuBtn" class="p-1.5 rounded-lg text-zinc-400 hover:text-white bg-white/5">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <nav class="space-y-6">
+        <div>
+          <p class="font-mono text-[11px] uppercase tracking-widest text-zinc-500 mb-3 px-2">Foundations</p>
+          <ul class="space-y-1 text-sm">
+            <li><a href="#section-tokens" class="nav-link flex items-center gap-2.5 px-3 py-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 transition"><i data-lucide="type" class="w-4 h-4 text-accent"></i> Typography & Tokens</a></li>
+            <li><a href="#section-controls" class="nav-link flex items-center gap-2.5 px-3 py-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 transition"><i data-lucide="mouse-pointer-click" class="w-4 h-4 text-accent"></i> Buttons & Badges</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="font-mono text-[11px] uppercase tracking-widest text-zinc-500 mb-3 px-2">Data Entry</p>
+          <ul class="space-y-1 text-sm">
+            <li><a href="#section-forms" class="nav-link flex items-center gap-2.5 px-3 py-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 transition"><i data-lucide="sliders" class="w-4 h-4 text-accent"></i> Forms & Inputs</a></li>
+            <li><a href="#section-navigation" class="nav-link flex items-center gap-2.5 px-3 py-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 transition"><i data-lucide="compass" class="w-4 h-4 text-accent"></i> Wayfinding & Tabs</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="font-mono text-[11px] uppercase tracking-widest text-zinc-500 mb-3 px-2">Surfaces & Feedback</p>
+          <ul class="space-y-1 text-sm">
+            <li><a href="#section-data" class="nav-link flex items-center gap-2.5 px-3 py-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 transition"><i data-lucide="layout-grid" class="w-4 h-4 text-accent"></i> Bento & Data Table</a></li>
+            <li><a href="#section-overlays" class="nav-link flex items-center gap-2.5 px-3 py-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 transition"><i data-lucide="layers" class="w-4 h-4 text-accent"></i> Overlays & Micro-UI</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <!-- System Status Card in Sidebar -->
+      <div class="mt-8 p-4 rounded-xl bg-white/[0.03] border border-white/10">
+        <div class="flex items-center justify-between mb-2">
+          <span class="font-mono text-[11px] text-zinc-400">BUILD STATUS</span>
+          <span class="flex items-center gap-1.5 font-mono text-[11px] text-accent">
+            <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span> LIVE
+          </span>
+        </div>
+        <p class="text-xs text-zinc-400 leading-relaxed">Zero-dependency primitives engineered for high-contrast obsidian interfaces.</p>
+      </div>
+    </aside>
+
+    <!-- Main Showcase Content -->
+    <main class="flex-1 min-w-0 px-4 sm:px-8 lg:px-12 py-10 space-y-24">
+
+      <!-- HERO SECTION -->
+      <section class="relative pt-4 pb-8 border-b border-white/10">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 border border-accent/30 text-accent font-mono text-xs mb-6">
+          <i data-lucide="zap" class="w-3.5 h-3.5"></i>
+          <span>EDITORIAL CYBER-LUXURY UI ARCHITECTURE</span>
+        </div>
+
+        <h1 class="font-serif italic text-5xl sm:text-7xl lg:text-8xl tracking-tight text-white leading-[0.95] mb-6">
+          Precision crafted <br />
+          <span class="not-italic font-sans font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-zinc-200 to-zinc-500">componentry.</span>
+        </h1>
+
+        <p class="max-w-2xl text-base sm:text-lg text-zinc-400 leading-relaxed mb-8">
+          A comprehensive kitchen-sink showcase uniting brutalist obsidian surfaces, iridescent glassmorphism, expressive serif headers, and reactive micro-interactions. Click any color swatch to copy its token or switch accents live above.
+        </p>
+
+        <div class="flex flex-wrap items-center gap-4">
+          <a href="#section-controls" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm bg-accent text-accent-contrast shadow-[0_0_30px_var(--accent-glow)] hover:brightness-110 transition">
+            <span>Explore Components</span>
+            <i data-lucide="arrow-down-right" class="w-4 h-4"></i>
+          </a>
+          <button onclick="openModal()" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm bg-white/5 hover:bg-white/10 border border-white/10 text-white transition">
+            <i data-lucide="command" class="w-4 h-4 text-accent"></i>
+            <span>Inspect Modal Spec</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- 1. HERO & BRAND TOKENS -->
+      <section id="section-tokens" class="scroll-mt-24 space-y-8">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-white/10 pb-4">
+          <div>
+            <span class="font-mono text-xs text-accent tracking-wider uppercase">01 // Foundations</span>
+            <h2 class="text-3xl font-bold tracking-tight mt-1">Typography, Palette & Tokens</h2>
+          </div>
+          <span class="font-mono text-xs text-zinc-500">Instrument Serif + Plus Jakarta + JetBrains Mono</span>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- Typography Scale Card -->
+          <div class="lg:col-span-7 glass-card rounded-2xl p-6 sm:p-8 space-y-6">
+            <div class="flex items-center justify-between">
+              <span class="font-mono text-xs uppercase tracking-wider text-zinc-400">Type Hierarchy</span>
+              <span class="font-mono text-xs text-accent">Fluid Scale</span>
+            </div>
+
+            <div class="space-y-5 divide-y divide-white/5">
+              <div class="pt-2">
+                <span class="font-mono text-[11px] text-zinc-500 block mb-1">DISPLAY SERIF // 64PX</span>
+                <p class="font-serif italic text-5xl sm:text-6xl text-white">Avant-Garde Digital</p>
+              </div>
+              <div class="pt-4">
+                <span class="font-mono text-[11px] text-zinc-500 block mb-1">H1 GEOMETRIC // 36PX BOLD</span>
+                <h1 class="text-3xl sm:text-4xl font-bold tracking-tight">System Architecture & Grid</h1>
+              </div>
+              <div class="pt-4">
+                <span class="font-mono text-[11px] text-zinc-500 block mb-1">H2 GEOMETRIC // 24PX SEMIBOLD</span>
+                <h2 class="text-2xl font-semibold tracking-tight text-zinc-100">Obsidian Glass Surfaces</h2>
+              </div>
+              <div class="pt-4">
+                <span class="font-mono text-[11px] text-zinc-500 block mb-1">H3–H6 // SUBHEADINGS</span>
+                <div class="flex flex-wrap items-baseline gap-4">
+                  <h3 class="text-xl font-semibold">Heading Three</h3>
+                  <h4 class="text-lg font-medium text-zinc-300">Heading Four</h4>
+                  <h5 class="text-base font-medium text-zinc-400">Heading Five</h5>
+                  <h6 class="font-mono text-xs uppercase tracking-widest text-accent">Heading Six Mono</h6>
+                </div>
+              </div>
+              <div class="pt-4 space-y-3">
+                <span class="font-mono text-[11px] text-zinc-500 block">BODY, INLINE CODE & BLOCKQUOTE</span>
+                <p class="text-sm sm:text-base text-zinc-300 leading-relaxed">
+                  Lead body copy optimized for dark-mode legibility. Pair with inline tokens like <code class="font-mono text-xs px-1.5 py-0.5 rounded bg-accent/15 text-accent border border-accent/20">--surface-obsidian-900</code> or <a href="#section-tokens" class="text-accent underline decoration-accent/40 underline-offset-4 hover:decoration-accent">interactive editorial links</a>.
+                </p>
+                <blockquote class="border-l-2 border-accent pl-4 py-1 italic font-serif text-xl text-zinc-200 bg-white/[0.02] rounded-r-lg">
+                  "High contrast is not merely accessibility—it is visual authority."
+                </blockquote>
+              </div>
+            </div>
+          </div>
+
+          <!-- Color Swatches & Radius/Spacing Tokens -->
+          <div class="lg:col-span-5 space-y-6">
+            <!-- Click-to-Copy Palette -->
+            <div class="glass-card rounded-2xl p-6 space-y-4">
+              <div class="flex items-center justify-between">
+                <span class="font-mono text-xs uppercase tracking-wider text-zinc-400">Chromatic Swatches</span>
+                <span class="font-mono text-[11px] text-zinc-500">Click to copy</span>
+              </div>
+
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                <button onclick="copyHex('#070709')" class="group text-left p-2.5 rounded-xl bg-obsidian-950 border border-white/10 hover:border-accent/50 transition">
+                  <div class="h-12 w-full rounded-lg bg-[#070709] border border-white/10 mb-2"></div>
+                  <p class="text-xs font-semibold">Obsidian Void</p>
+                  <p class="font-mono text-[11px] text-zinc-400 group-hover:text-accent">#070709</p>
+                </button>
+
+                <button onclick="copyHex('#181820')" class="group text-left p-2.5 rounded-xl bg-obsidian-950 border border-white/10 hover:border-accent/50 transition">
+                  <div class="h-12 w-full rounded-lg bg-[#181820] border border-white/10 mb-2"></div>
+                  <p class="text-xs font-semibold">Glass Slate</p>
+                  <p class="font-mono text-[11px] text-zinc-400 group-hover:text-accent">#181820</p>
+                </button>
+
+                <button onclick="copyHex('#CCFF00')" class="group text-left p-2.5 rounded-xl bg-obsidian-950 border border-white/10 hover:border-accent/50 transition">
+                  <div class="h-12 w-full rounded-lg bg-[#CCFF00] mb-2 shadow-[0_0_15px_rgba(204,255,0,0.3)]"></div>
+                  <p class="text-xs font-semibold">Cyber Lime</p>
+                  <p class="font-mono text-[11px] text-zinc-400 group-hover:text-accent">#CCFF00</p>
+                </button>
+
+                <button onclick="copyHex('#A855F7')" class="group text-left p-2.5 rounded-xl bg-obsidian-950 border border-white/10 hover:border-accent/50 transition">
+                  <div class="h-12 w-full rounded-lg bg-[#A855F7] mb-2"></div>
+                  <p class="text-xs font-semibold">Hyper Violet</p>
+                  <p class="font-mono text-[11px] text-zinc-400 group-hover:text-accent">#A855F7</p>
+                </button>
+
+                <button onclick="copyHex('#FF5500')" class="group text-left p-2.5 rounded-xl bg-obsidian-950 border border-white/10 hover:border-accent/50 transition">
+                  <div class="h-12 w-full rounded-lg bg-[#FF5500] mb-2"></div>
+                  <p class="text-xs font-semibold">Solar Flare</p>
+                  <p class="font-mono text-[11px] text-zinc-400 group-hover:text-accent">#FF5500</p>
+                </button>
+
+                <button onclick="copyHex('#00F0FF')" class="group text-left p-2.5 rounded-xl bg-obsidian-950 border border-white/10 hover:border-accent/50 transition">
+                  <div class="h-12 w-full rounded-lg bg-[#00F0FF] mb-2"></div>
+                  <p class="text-xs font-semibold">Electric Cyan</p>
+                  <p class="font-mono text-[11px] text-zinc-400 group-hover:text-accent">#00F0FF</p>
+                </button>
+              </div>
+            </div>
+
+            <!-- Spacing & Radius Tokens -->
+            <div class="glass-card rounded-2xl p-6 space-y-4">
+              <span class="font-mono text-xs uppercase tracking-wider text-zinc-400 block">Radius & Elevation Geometry</span>
+              <div class="grid grid-cols-4 gap-3 text-center">
+                <div class="p-3 bg-white/[0.03] border border-white/10 rounded-md">
+                  <div class="w-8 h-8 mx-auto bg-accent/20 border border-accent rounded-sm mb-2"></div>
+                  <span class="font-mono text-[10px] text-zinc-400">4px // sm</span>
+                </div>
+                <div class="p-3 bg-white/[0.03] border border-white/10 rounded-lg">
+                  <div class="w-8 h-8 mx-auto bg-accent/20 border border-accent rounded-lg mb-2"></div>
+                  <span class="font-mono text-[10px] text-zinc-400">8px // md</span>
+                </div>
+                <div class="p-3 bg-white/[0.03] border border-white/10 rounded-2xl">
+                  <div class="w-8 h-8 mx-auto bg-accent/20 border border-accent rounded-2xl mb-2"></div>
+                  <span class="font-mono text-[10px] text-zinc-400">16px // xl</span>
+                </div>
+                <div class="p-3 bg-white/[0.03] border border-white/10 rounded-full">
+                  <div class="w-8 h-8 mx-auto bg-accent/20 border border-accent rounded-full mb-2"></div>
+                  <span class="font-mono text-[10px] text-zinc-400">999px // pill</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. BUTTONS & INTERACTIVE CONTROLS -->
+      <section id="section-controls" class="scroll-mt-24 space-y-8">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-white/10 pb-4">
+          <div>
+            <span class="font-mono text-xs text-accent tracking-wider uppercase">02 // Actions</span>
+            <h2 class="text-3xl font-bold tracking-tight mt-1">Buttons, Badges & Micro-Controls</h2>
+          </div>
+          <span class="font-mono text-xs text-zinc-500">Interactive States + Tactile Feedback</span>
+        </div>
+
+        <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-8">
+          <!-- Variant Matrix -->
+          <div class="space-y-3">
+            <span class="font-mono text-xs uppercase tracking-wider text-zinc-400 block">Button Variants</span>
+            <div class="flex flex-wrap items-center gap-3.5">
+              <button class="px-5 py-2.5 rounded-xl font-semibold text-sm bg-accent text-accent-contrast shadow-[0_0_20px_var(--accent-glow)] hover:brightness-110 active:scale-[0.98] transition">
+                Primary Cyber
+              </button>
+              <button class="px-5 py-2.5 rounded-xl font-semibold text-sm bg-white text-obsidian-950 hover:bg-zinc-200 active:scale-[0.98] transition">
+                High Contrast
+              </button>
+              <button class="px-5 py-2.5 rounded-xl font-semibold text-sm bg-white/5 hover:bg-white/10 border border-white/10 text-white backdrop-blur-md active:scale-[0.98] transition">
+                Obsidian Glass
+              </button>
+              <button class="px-5 py-2.5 rounded-xl font-semibold text-sm border border-accent/60 text-accent hover:bg-accent/10 active:scale-[0.98] transition">
+                Outline Neon
+              </button>
+              <button class="gradient-border px-5 py-2.5 font-semibold text-sm text-white hover:brightness-110 active:scale-[0.98] transition">
+                Iridescent Border
+              </button>
+              <button class="px-4 py-2.5 rounded-xl font-medium text-sm text-zinc-400 hover:text-white hover:bg-white/5 transition">
+                Ghost Action
+              </button>
+            </div>
+          </div>
+
+          <!-- Sizes, Icon Buttons & Interactive Loading -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-white/5">
+            <div class="space-y-3">
+              <span class="font-mono text-xs uppercase tracking-wider text-zinc-400 block">Scales & Icon Triggers</span>
+              <div class="flex flex-wrap items-center gap-3">
+                <button class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-accent text-accent-contrast">Small</button>
+                <button class="px-4 py-2 rounded-xl text-sm font-semibold bg-accent text-accent-contrast">Default</button>
+                <button class="px-6 py-3 rounded-xl text-base font-semibold bg-accent text-accent-contrast">Large CTA</button>
+
+                <!-- Icon-Only Buttons -->
+                <button aria-label="Favorite" class="p-2.5 rounded-xl bg-white/5 border border-white/10 text-zinc-300 hover:text-accent hover:border-accent/50 transition">
+                  <i data-lucide="heart" class="w-4 h-4"></i>
+                </button>
+                <button aria-label="Share" class="p-2.5 rounded-full bg-accent/15 border border-accent/30 text-accent hover:bg-accent hover:text-accent-contrast transition">
+                  <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="space-y-3">
+              <span class="font-mono text-xs uppercase tracking-wider text-zinc-400 block">Interactive Async State & Button Group</span>
+              <div class="flex flex-wrap items-center gap-4">
+                <!-- Interactive Async Button -->
+                <button id="asyncDemoBtn" onclick="simulateAsyncAction(this)" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm bg-white/10 hover:bg-white/15 border border-white/15 text-white transition">
+                  <i data-lucide="cpu" class="w-4 h-4 text-accent"></i>
+                  <span>Deploy Node</span>
+                </button>
+
+                <!-- Segmented Button Group -->
+                <div class="inline-flex rounded-xl bg-obsidian-950 p-1 border border-white/10">
+                  <button class="px-3 py-1.5 rounded-lg text-xs font-medium bg-white/10 text-white">24H</button>
+                  <button class="px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 hover:text-white transition">7D</button>
+                  <button class="px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 hover:text-white transition">30D</button>
+                  <button class="px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 hover:text-white transition">ALL</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pill Badges & Tags -->
+          <div class="pt-6 border-t border-white/5 space-y-3">
+            <span class="font-mono text-xs uppercase tracking-wider text-zinc-400 block">Status Pills & Telemetry Badges</span>
+            <div class="flex flex-wrap items-center gap-2.5">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono bg-accent/15 text-accent border border-accent/30">
+                <span class="w-1.5 h-1.5 rounded-full bg-accent animate-ping"></span> ACTIVE_NODE
+              </span>
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Verified 99.9%
+              </span>
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-amber-500/15 text-amber-300 border border-amber-500/30">
+                <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i> Latency Spike
+              </span>
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-rose-500/15 text-rose-400 border border-rose-500/30">
+                <i data-lucide="x-octagon" class="w-3.5 h-3.5"></i> Deprecated
+              </span>
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono bg-white/5 text-zinc-300 border border-white/10">
+                v4.2.0-rc1
+                <button onclick="this.parentElement.remove()" class="hover:text-white ml-1" aria-label="Remove tag">&times;</button>
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. FORM ELEMENTS & INPUTS -->
+      <section id="section-forms" class="scroll-mt-24 space-y-8">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-white/10 pb-4">
+          <div>
+            <span class="font-mono text-xs text-accent tracking-wider uppercase">03 // Input Architecture</span>
+            <h2 class="text-3xl font-bold tracking-tight mt-1">Form Controls, Sliders & Dropzones</h2>
+          </div>
+          <span class="font-mono text-xs text-zinc-500">Accessible + Custom Styled</span>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- Left Column: Inputs & Validation -->
+          <div class="lg:col-span-6 glass-card rounded-2xl p-6 sm:p-8 space-y-6">
+            <span class="font-mono text-xs uppercase tracking-wider text-zinc-400 block">Text Fields & Validation</span>
+
+            <!-- Floating Label Input -->
+            <div class="relative">
+              <input type="text" id="floatingProject" placeholder=" " class="peer w-full px-4 pt-6 pb-2 rounded-xl bg-obsidian-950/90 border border-white/10 text-sm text-white focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition" value="Aetheris Neural Core" />
+              <label for="floatingProject" class="absolute left-4 top-2 text-[11px] font-mono uppercase tracking-wider text-zinc-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-placeholder-shown:font-sans peer-placeholder-shown:normal-case peer-focus:top-2 peer-focus:text-[11px] peer-focus:font-mono peer-focus:uppercase peer-focus:text-accent">
+                Workspace Identifier
+              </label>
+            </div>
+
+            <!-- Search Bar with KBD Shortcut -->
+            <div class="relative">
+              <i data-lucide="search" class="w-4 h-4 text-zinc-400 absolute left-4 top-1/2 -translate-y-1/2"></i>
+              <input type="text" placeholder="Search documentation, tokens, or nodes..." class="w-full pl-11 pr-16 py-3 rounded-xl bg-obsidian-950/90 border border-white/10 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-accent transition" />
+              <kbd class="absolute right-3 top-1/2 -translate-y-1/2 px-2 py-0.5 text-[11px] font-mono text-zinc-400 bg-white/5 border border-white/10 rounded-md">⌘K</kbd>
+            </div>
+
+            <!-- Password Input with Live Visibility Toggle -->
+            <div class="space-y-1.5">
+              <label class="text-xs font-medium text-zinc-300">API Secret Key</label>
+              <div class="relative">
+                <input id="passwordField" type="password" value="sk_live_aetheris_99812xQ7" class="w-full pl-4 pr-11 py-2.5 rounded-xl bg-obsidian-950/90 border border-white/10 font-mono text-sm text-white focus:outline-none focus:border-accent transition" />
+                <button type="button" onclick="togglePasswordVisibility()" class="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white p-1" aria-label="Toggle password">
+                  <i id="passwordEyeIcon" data-lucide="eye" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Validation States (Success & Error) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="space-y-1.5">
+                <label class="text-xs font-medium text-emerald-400 flex items-center gap-1">
+                  <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Custom Domain
+                </label>
+                <input type="text" value="ui.aetheris.studio" class="w-full px-3.5 py-2 rounded-xl bg-emerald-950/20 border border-emerald-500/40 text-sm text-emerald-200 focus:outline-none" />
+                <p class="text-[11px] text-emerald-400/90">DNS SSL certificate active.</p>
+              </div>
+
+              <div class="space-y-1.5">
+                <label class="text-xs font-medium text-rose-400 flex items-center gap-1">
+                  <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> Webhook Endpoint
+                </label>
+                <input type="text" value="http://invalid-endpoint" class="w-full px-3.5 py-2 rounded-xl bg-rose-950/20 border border-rose-500/40 text-sm text-rose-200 focus:outline-none" />
+                <p class="text-[11px] text-rose-400/90">HTTPS protocol required.</p>
+              </div>
+            </div>
+
+            <!-- Custom Select Dropdown -->
+            <div class="space-y-1.5">
+              <label class="text-xs font-medium text-zinc-300">Deployment Region</label>
+              <div class="relative">
+                <select class="w-full appearance-none px-4 py-2.5 rounded-xl bg-obsidian-950/90 border border-white/10 text-sm text-white focus:outline-none focus:border-accent transition">
+                  <option>ap-south-1 // Hyderabad Edge (12ms)</option>
+                  <option>us-east-1 // N. Virginia Core (84ms)</option>
+                  <option>eu-central-1 // Frankfurt Mesh (68ms)</option>
+                  <option>ap-northeast-1 // Tokyo Ultra (51ms)</option>
+                </select>
+                <i data-lucide="chevrons-up-down" class="w-4 h-4 text-zinc-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Sliders, Switches, Radio Cards & Dropzone -->
+          <div class="lg:col-span-6 glass-card rounded-2xl p-6 sm:p-8 space-y-6">
+            <span class="font-mono text-xs uppercase tracking-wider text-zinc-400 block">Interactive Controls & Dropzone</span>
+
+            <!-- Range Slider with Live Output -->
+            <div class="space-y-2 p-4 rounded-xl bg-obsidian-950/70 border border-white/5">
+              <div class="flex justify-between items-center">
+                <label for="gpuSlider" class="text-xs font-medium text-zinc-300">Neural Compute Allocation</label>
+                <span id="gpuSliderVal" class="font-mono text-xs font-semibold text-accent bg-accent/10 px-2 py-0.5 rounded">64 TFLOPS</span>
+              </div>
+              <input id="gpuSlider" type="range" min="8" max="128" value="64" oninput="document.getElementById('gpuSliderVal').textContent = this.value + ' TFLOPS'" class="cyber-slider w-full" />
+            </div>
+
+            <!-- Switches & Checkboxes -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <!-- Custom Toggle Switch -->
+              <label class="flex items-center justify-between p-3.5 rounded-xl bg-obsidian-950/70 border border-white/10 cursor-pointer hover:border-white/20 transition">
+                <div>
+                  <span class="text-sm font-medium block">Zero-Latency Cache</span>
+                  <span class="text-[11px] text-zinc-400">Edge memory sync</span>
+                </div>
+                <div class="relative inline-flex items-center">
+                  <input type="checkbox" checked class="sr-only peer" />
+                  <div class="w-11 h-6 bg-zinc-800 rounded-full peer peer-checked:bg-accent transition-colors after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white peer-checked:after:bg-obsidian-950 after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-5"></div>
+                </div>
+              </label>
+
+              <!-- Custom Checkbox -->
+              <label class="flex items-center gap-3 p-3.5 rounded-xl bg-obsidian-950/70 border border-white/10 cursor-pointer hover:border-white/20 transition">
+                <input type="checkbox" checked class="w-4 h-4 rounded accent-[var(--accent)] cursor-pointer" />
+                <div>
+                  <span class="text-sm font-medium block">Telemetry Stream</span>
+                  <span class="text-[11px] text-zinc-400">Real-time JSON logs</span>
+                </div>
+              </label>
+            </div>
+
+            <!-- Radio Selection Cards -->
+            <div class="space-y-2">
+              <span class="text-xs font-medium text-zinc-300 block">Runtime Environment</span>
+              <div class="grid grid-cols-2 gap-3">
+                <label class="cursor-pointer">
+                  <input type="radio" name="runtimeEnv" checked class="sr-only peer" />
+                  <div class="p-3.5 rounded-xl bg-obsidian-950/80 border border-white/10 peer-checked:border-accent peer-checked:bg-accent/5 transition">
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="text-sm font-semibold">Edge Isolate</span>
+                      <i data-lucide="zap" class="w-4 h-4 text-accent"></i>
+                    </div>
+                    <p class="text-[11px] text-zinc-400">Cold start &lt; 2ms</p>
+                  </div>
+                </label>
+
+                <label class="cursor-pointer">
+                  <input type="radio" name="runtimeEnv" class="sr-only peer" />
+                  <div class="p-3.5 rounded-xl bg-obsidian-950/80 border border-white/10 peer-checked:border-accent peer-checked:bg-accent/5 transition">
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="text-sm font-semibold">Dedicated GPU</span>
+                      <i data-lucide="server" class="w-4 h-4 text-zinc-400"></i>
+                    </div>
+                    <p class="text-[11px] text-zinc-400">H100 Tensor Cluster</p>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <!-- Interactive Drag & Drop Upload Zone -->
+            <div id="dropzone" class="border-2 border-dashed border-white/15 hover:border-accent/60 rounded-2xl p-6 text-center bg-obsidian-950/50 transition cursor-pointer group">
+              <input type="file" id="fileInput" class="hidden" onchange="handleFileSelect(this.files)" />
+              <div class="w-10 h-10 rounded-xl bg-white/5 group-hover:bg-accent/15 text-zinc-400 group-hover:text-accent mx-auto flex items-center justify-center mb-3 transition">
+                <i data-lucide="upload-cloud" class="w-5 h-5"></i>
+              </div>
+              <p id="dropzoneLabel" class="text-sm font-medium text-zinc-200">Drop design tokens or <span class="text-accent underline">browse files</span></p>
+              <p class="font-mono text-[11px] text-zinc-500 mt-1">JSON, SVG, FIGMA // MAX 25MB</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. NAVIGATION & WAYFINDING -->
+      <section id="section-navigation" class="scroll-mt-24 space-y-8">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-white/10 pb-4">
+          <div>
+            <span class="font-mono text-xs text-accent tracking-wider uppercase">04 // Wayfinding</span>
+            <h2 class="text-3xl font-bold tracking-tight mt-1">Tabs, Breadcrumbs, Pagination & Steppers</h2>
+          </div>
+          <span class="font-mono text-xs text-zinc-500">Stateful UI Transitions</span>
+        </div>
+
+        <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-8">
+          <!-- Breadcrumbs & Pagination Row -->
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-white/5">
+            <!-- Breadcrumbs -->
+            <nav aria-label="Breadcrumb" class="flex items-center gap-2 text-xs font-mono">
+              <a href="#" class="text-zinc-400 hover:text-white transition">AETHERIS</a>
+              <span class="text-zinc-600">/</span>
+              <a href="#" class="text-zinc-400 hover:text-white transition">CLUSTERS</a>
+              <span class="text-zinc-600">/</span>
+              <span class="text-accent bg-accent/10 px-2 py-0.5 rounded">HYD-CORE-01</span>
+            </nav>
+
+            <!-- Interactive Pagination -->
+            <div class="flex items-center gap-1.5" id="paginationDemo">
+              <button onclick="changePage(-1)" class="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition" aria-label="Previous page">
+                <i data-lucide="chevron-left" class="w-4 h-4"></i>
+              </button>
+              <button onclick="setPage(1)" class="page-btn w-8 h-8 rounded-lg text-xs font-mono font-semibold bg-accent text-accent-contrast">1</button>
+              <button onclick="setPage(2)" class="page-btn w-8 h-8 rounded-lg text-xs font-mono text-zinc-400 hover:bg-white/5">2</button>
+              <button onclick="setPage(3)" class="page-btn w-8 h-8 rounded-lg text-xs font-mono text-zinc-400 hover:bg-white/5">3</button>
+              <span class="text-zinc-600 px-1">...</span>
+              <button onclick="setPage(12)" class="page-btn w-8 h-8 rounded-lg text-xs font-mono text-zinc-400 hover:bg-white/5">12</button>
+              <button onclick="changePage(1)" class="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition" aria-label="Next page">
+                <i data-lucide="chevron-right" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Interactive Tabs with Sliding Pill Indicator -->
+          <div class="space-y-4">
+            <div class="relative inline-flex p-1 rounded-xl bg-obsidian-950 border border-white/10" id="tabHeader">
+              <div id="tabIndicator" class="absolute top-1 bottom-1 left-1 rounded-lg bg-white/10 border border-white/10 transition-all duration-300 ease-out"></div>
+              <button onclick="switchTab(0, this)" class="tab-trigger relative z-10 px-4 py-2 text-xs sm:text-sm font-medium text-white transition">Architecture</button>
+              <button onclick="switchTab(1, this)" class="tab-trigger relative z-10 px-4 py-2 text-xs sm:text-sm font-medium text-zinc-400 hover:text-white transition">Telemetry</button>
+              <button onclick="switchTab(2, this)" class="tab-trigger relative z-10 px-4 py-2 text-xs sm:text-sm font-medium text-zinc-400 hover:text-white transition">Security Keys</button>
+            </div>
+
+            <div class="p-5 rounded-xl bg-obsidian-950/60 border border-white/5">
+              <div id="tabPanel-0" class="tab-panel text-sm text-zinc-300 leading-relaxed">
+                <strong class="text-white block mb-1">Distributed Mesh Architecture</strong>
+                Multi-region state replication powered by CRDT conflict-free data structures with deterministic sub-15ms failover across edge nodes.
+              </div>
+              <div id="tabPanel-1" class="tab-panel hidden text-sm text-zinc-300 leading-relaxed">
+                <strong class="text-accent block mb-1">Real-Time Telemetry Stream</strong>
+                Ingesting 1.4M events/sec with zero packet loss. P99 inference latency holding steady at <span class="font-mono text-white">11.4ms</span>.
+              </div>
+              <div id="tabPanel-2" class="tab-panel hidden text-sm text-zinc-300 leading-relaxed">
+                <strong class="text-white block mb-1">Zero-Trust Hardware Enclaves</strong>
+                All tokens are signed using Ed25519 elliptic curve cryptography and rotated automatically every 24 hours.
+              </div>
+            </div>
+          </div>
+
+          <!-- Interactive Multi-Step Progress Stepper -->
+          <div class="pt-4 border-t border-white/5 space-y-5">
+            <div class="flex items-center justify-between">
+              <span class="font-mono text-xs uppercase tracking-wider text-zinc-400">Deployment Pipeline Stepper</span>
+              <div class="flex gap-2">
+                <button onclick="advanceStepper(-1)" class="px-3 py-1 rounded-lg text-xs bg-white/5 hover:bg-white/10 text-zinc-300">Prev</button>
+                <button onclick="advanceStepper(1)" class="px-3 py-1 rounded-lg text-xs bg-accent text-accent-contrast font-semibold">Next Step</button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-3" id="stepperContainer">
+              <div class="step-item p-3.5 rounded-xl border border-accent bg-accent/10 transition">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="font-mono text-[11px] text-accent">STEP 01</span>
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-accent"></i>
+                </div>
+                <p class="text-sm font-semibold text-white">Schema Lint</p>
+              </div>
+              <div class="step-item p-3.5 rounded-xl border border-accent bg-accent/10 transition">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="font-mono text-[11px] text-accent">STEP 02</span>
+                  <i data-lucide="loader-2" class="w-4 h-4 text-accent animate-spin"></i>
+                </div>
+                <p class="text-sm font-semibold text-white">Edge Compile</p>
+              </div>
+              <div class="step-item p-3.5 rounded-xl border border-white/10 bg-obsidian-950/50 transition">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="font-mono text-[11px] text-zinc-500">STEP 03</span>
+                  <span class="w-2 h-2 rounded-full bg-zinc-700"></span>
+                </div>
+                <p class="text-sm font-medium text-zinc-400">Canary Mesh</p>
+              </div>
+              <div class="step-item p-3.5 rounded-xl border border-white/10 bg-obsidian-950/50 transition">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="font-mono text-[11px] text-zinc-500">STEP 04</span>
+                  <span class="w-2 h-2 rounded-full bg-zinc-700"></span>
+                </div>
+                <p class="text-sm font-medium text-zinc-400">Global Route</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. DATA DISPLAY & BENTO CARDS -->
+      <section id="section-data" class="scroll-mt-24 space-y-8">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-white/10 pb-4">
+          <div>
+            <span class="font-mono text-xs text-accent tracking-wider uppercase">05 // Intelligence</span>
+            <h2 class="text-3xl font-bold tracking-tight mt-1">Bento Grid, Pricing & Data Table</h2>
+          </div>
+          <span class="font-mono text-xs text-zinc-500">Filterable + Sortable Telemetry</span>
+        </div>
+
+        <!-- Bento Grid Row -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+          <!-- Stat Metric Card with SVG Sparkline -->
+          <div class="md:col-span-4 glass-card rounded-2xl p-6 flex flex-col justify-between">
+            <div class="flex items-center justify-between">
+              <span class="font-mono text-xs uppercase text-zinc-400">Throughput</span>
+              <span class="text-xs font-mono text-accent bg-accent/10 px-2 py-0.5 rounded-full">+24.8%</span>
+            </div>
+            <div class="my-4">
+              <div class="text-4xl font-bold tracking-tight">984.2 <span class="text-lg font-normal text-zinc-400">req/ms</span></div>
+              <p class="text-xs text-zinc-500 mt-1">Peak global edge concurrency</p>
+            </div>
+            <!-- Crisp SVG Sparkline -->
+            <svg viewBox="0 0 200 45" class="w-full h-12 overflow-visible">
+              <defs>
+                <linearGradient id="sparkGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.35" />
+                  <stop offset="100%" stop-color="var(--accent)" stop-opacity="0" />
+                </linearGradient>
+              </defs>
+              <path d="M0,38 L30,32 L60,35 L90,20 L120,24 L150,10 L180,14 L200,3 L200,45 L0,45 Z" fill="url(#sparkGrad)" />
+              <path d="M0,38 L30,32 L60,35 L90,20 L120,24 L150,10 L180,14 L200,3" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" />
+            </svg>
+          </div>
+
+          <!-- Profile & Quota Progress Ring Card -->
+          <div class="md:col-span-4 glass-card rounded-2xl p-6 flex flex-col justify-between">
+            <div class="flex items-center gap-3.5">
+              <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-accent to-cyan-400 p-[2px]">
+                <div class="w-full h-full rounded-[14px] bg-obsidian-900 flex items-center justify-center font-serif italic text-xl text-white">
+                  AV
+                </div>
+              </div>
+              <div>
+                <h3 class="font-semibold text-base">Aria Vance</h3>
+                <p class="font-mono text-xs text-zinc-400">Principal Systems Architect</p>
+              </div>
+            </div>
+
+            <div class="mt-6 pt-5 border-t border-white/5 flex items-center justify-between">
+              <div>
+                <span class="font-mono text-[11px] text-zinc-400 block">CLUSTER QUOTA</span>
+                <span class="text-xl font-bold">78% <span class="text-xs font-normal text-zinc-400">allocated</span></span>
+              </div>
+              <!-- SVG Circular Progress Ring -->
+              <div class="relative w-14 h-14 flex items-center justify-center">
+                <svg class="w-14 h-14 -rotate-90" viewBox="0 0 36 36">
+                  <circle cx="18" cy="18" r="15" fill="none" stroke="#23232F" stroke-width="3" />
+                  <circle cx="18" cy="18" r="15" fill="none" stroke="var(--accent)" stroke-width="3" stroke-dasharray="94.2" stroke-dashoffset="20.7" stroke-linecap="round" />
+                </svg>
+                <span class="absolute font-mono text-[11px] font-semibold">78%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Featured Pricing Tier Card -->
+          <div class="md:col-span-4 gradient-border p-6 flex flex-col justify-between shadow-[0_0_40px_rgba(0,0,0,0.6)]">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <span class="font-mono text-xs uppercase tracking-wider text-accent">Enterprise Mesh</span>
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-accent text-accent-contrast">POPULAR</span>
+              </div>
+              <div class="flex items-baseline gap-1 my-2">
+                <span class="text-4xl font-bold">$299</span>
+                <span class="text-xs text-zinc-400 font-mono">/ month</span>
+              </div>
+              <ul class="space-y-2 mt-4 text-xs text-zinc-300">
+                <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-accent"></i> Unlimited global edge nodes</li>
+                <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-accent"></i> Dedicated H100 inference burst</li>
+                <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-accent"></i> 99.999% SLA with 24/7 war-room</li>
+              </ul>
+            </div>
+            <button onclick="triggerToast('Enterprise trial initialized', 'success')" class="mt-6 w-full py-2.5 rounded-xl font-semibold text-xs bg-accent text-accent-contrast hover:brightness-110 transition">
+              Provision Cluster
+            </button>
+          </div>
+        </div>
+
+        <!-- Interactive Filterable Data Table & Activity Feed -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- Filterable Node Telemetry Table -->
+          <div class="lg:col-span-8 glass-card rounded-2xl p-6 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h3 class="font-semibold text-base">Active Edge Nodes</h3>
+                <p class="text-xs text-zinc-400">Live cluster inventory with instant filtering</p>
+              </div>
+              <div class="relative">
+                <i data-lucide="filter" class="w-3.5 h-3.5 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                <input type="text" id="tableFilterInput" onkeyup="filterTable()" placeholder="Filter node or region..." class="pl-9 pr-3 py-1.5 rounded-lg bg-obsidian-950 border border-white/10 text-xs text-white focus:outline-none focus:border-accent" />
+              </div>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse" id="nodesTable">
+                <thead>
+                  <tr class="border-b border-white/10 font-mono text-[11px] uppercase text-zinc-400">
+                    <th class="py-3 px-3">Node ID</th>
+                    <th class="py-3 px-3">Region</th>
+                    <th class="py-3 px-3">Status</th>
+                    <th class="py-3 px-3 text-right">Latency</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-white/5 text-sm">
+                  <tr class="hover:bg-white/[0.02] transition">
+                    <td class="py-3 px-3 font-mono text-xs text-white">aeth-hyd-01</td>
+                    <td class="py-3 px-3 text-zinc-300">Hyderabad, IN</td>
+                    <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-full text-[11px] font-mono bg-accent/15 text-accent">OPTIMAL</span></td>
+                    <td class="py-3 px-3 text-right font-mono text-xs text-zinc-300">9ms</td>
+                  </tr>
+                  <tr class="hover:bg-white/[0.02] transition">
+                    <td class="py-3 px-3 font-mono text-xs text-white">aeth-tyo-04</td>
+                    <td class="py-3 px-3 text-zinc-300">Tokyo, JP</td>
+                    <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-full text-[11px] font-mono bg-accent/15 text-accent">OPTIMAL</span></td>
+                    <td class="py-3 px-3 text-right font-mono text-xs text-zinc-300">18ms</td>
+                  </tr>
+                  <tr class="hover:bg-white/[0.02] transition">
+                    <td class="py-3 px-3 font-mono text-xs text-white">aeth-fra-02</td>
+                    <td class="py-3 px-3 text-zinc-300">Frankfurt, DE</td>
+                    <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-full text-[11px] font-mono bg-amber-500/15 text-amber-300">SYNCING</span></td>
+                    <td class="py-3 px-3 text-right font-mono text-xs text-zinc-300">42ms</td>
+                  </tr>
+                  <tr class="hover:bg-white/[0.02] transition">
+                    <td class="py-3 px-3 font-mono text-xs text-white">aeth-nyc-09</td>
+                    <td class="py-3 px-3 text-zinc-300">New York, US</td>
+                    <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-full text-[11px] font-mono bg-accent/15 text-accent">OPTIMAL</span></td>
+                    <td class="py-3 px-3 text-right font-mono text-xs text-zinc-300">27ms</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Vertical Timeline / Activity Feed -->
+          <div class="lg:col-span-4 glass-card rounded-2xl p-6 space-y-4">
+            <span class="font-mono text-xs uppercase tracking-wider text-zinc-400 block">Audit Timeline</span>
+            <div class="relative pl-5 border-l border-white/10 space-y-5">
+              <div class="relative">
+                <span class="w-2.5 h-2.5 rounded-full bg-accent absolute -left-[25px] top-1 shadow-[0_0_10px_var(--accent-glow)]"></span>
+                <p class="text-xs font-semibold text-white">Token v4.2 Published</p>
+                <p class="text-[11px] text-zinc-400 mt-0.5">Chromatic variables synced to CDN.</p>
+                <span class="font-mono text-[10px] text-zinc-500">2 MINS AGO</span>
+              </div>
+              <div class="relative">
+                <span class="w-2.5 h-2.5 rounded-full bg-zinc-600 absolute -left-[25px] top-1"></span>
+                <p class="text-xs font-semibold text-zinc-200">SSL Key Rotation</p>
+                <p class="text-[11px] text-zinc-400 mt-0.5">Automated Ed25519 handshake verified.</p>
+                <span class="font-mono text-[10px] text-zinc-500">41 MINS AGO</span>
+              </div>
+              <div class="relative">
+                <span class="w-2.5 h-2.5 rounded-full bg-zinc-600 absolute -left-[25px] top-1"></span>
+                <p class="text-xs font-semibold text-zinc-200">Auto-Scale Triggered</p>
+                <p class="text-[11px] text-zinc-400 mt-0.5">+4 edge workers spawned in ap-south-1.</p>
+                <span class="font-mono text-[10px] text-zinc-500">3 HOURS AGO</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. FEEDBACK, OVERLAYS & MICRO-UI -->
+      <section id="section-overlays" class="scroll-mt-24 space-y-8 pb-16">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-white/10 pb-4">
+          <div>
+            <span class="font-mono text-xs text-accent tracking-wider uppercase">06 // Feedback & Overlays</span>
+            <h2 class="text-3xl font-bold tracking-tight mt-1">Alerts, Modals, Drawers, Toasts & FAQ</h2>
+          </div>
+          <span class="font-mono text-xs text-zinc-500">Interactive Overlay Primitives</span>
+        </div>
+
+        <!-- Dismissible Alert Banners -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="flex items-start justify-between gap-3 p-4 rounded-xl bg-accent/10 border border-accent/30 text-sm">
+            <div class="flex items-start gap-3">
+              <i data-lucide="sparkles" class="w-5 h-5 text-accent shrink-0 mt-0.5"></i>
+              <div>
+                <p class="font-semibold text-white">System Update Ready</p>
+                <p class="text-xs text-zinc-300 mt-0.5">Aetheris v4.2 introduces sub-pixel glass borders.</p>
+              </div>
+            </div>
+            <button onclick="this.parentElement.remove()" class="text-zinc-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
+          </div>
+
+          <div class="flex items-start justify-between gap-3 p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-sm">
+            <div class="flex items-start gap-3">
+              <i data-lucide="shield-alert" class="w-5 h-5 text-rose-400 shrink-0 mt-0.5"></i>
+              <div>
+                <p class="font-semibold text-rose-200">Rate Limit Threshold</p>
+                <p class="text-xs text-rose-300/80 mt-0.5">Burst capacity at 92% on staging endpoint.</p>
+              </div>
+            </div>
+            <button onclick="this.parentElement.remove()" class="text-rose-300/70 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
+          </div>
+        </div>
+
+        <!-- Overlay Triggers, Tooltips & Skeleton Loader -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div class="lg:col-span-6 glass-card rounded-2xl p-6 space-y-5">
+            <span class="font-mono text-xs uppercase tracking-wider text-zinc-400 block">Interactive Overlays & Toasts</span>
+
+            <div class="flex flex-wrap gap-3">
+              <button onclick="openModal()" class="px-4 py-2.5 rounded-xl text-xs font-semibold bg-white text-obsidian-950 hover:bg-zinc-200 transition">
+                Launch Modal Dialog
+              </button>
+              <button onclick="openDrawer()" class="px-4 py-2.5 rounded-xl text-xs font-semibold bg-white/10 hover:bg-white/15 border border-white/10 text-white transition">
+                Open Slide-Over Drawer
+              </button>
+              <button onclick="triggerToast('Telemetry snapshot saved to vault', 'info')" class="px-4 py-2.5 rounded-xl text-xs font-semibold border border-accent/50 text-accent hover:bg-accent/10 transition">
+                Spawn Toast Alert
+              </button>
+
+              <!-- Tooltip Hover Pill -->
+              <div class="relative group inline-block">
+                <button class="px-4 py-2.5 rounded-xl text-xs font-mono bg-obsidian-950 border border-white/10 text-zinc-300">
+                  Hover for Tooltip
+                </button>
+                <div class="pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200 absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 rounded-lg bg-zinc-900 border border-white/15 text-[11px] font-mono text-white whitespace-nowrap shadow-xl">
+                  P99 Latency: 11.4ms // Optimal
+                </div>
+              </div>
+            </div>
+
+            <!-- Skeleton Loading Card Preview -->
+            <div class="pt-4 border-t border-white/5 space-y-3">
+              <span class="font-mono text-[11px] uppercase tracking-wider text-zinc-500 block">Shimmer Skeleton Placeholder</span>
+              <div class="p-4 rounded-xl bg-obsidian-950/70 border border-white/5 flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl skeleton-shimmer shrink-0"></div>
+                <div class="flex-1 space-y-2">
+                  <div class="h-3.5 w-1/3 rounded skeleton-shimmer"></div>
+                  <div class="h-3 w-3/4 rounded skeleton-shimmer"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Interactive Accordion / FAQ -->
+          <div class="lg:col-span-6 glass-card rounded-2xl p-6 space-y-3">
+            <span class="font-mono text-xs uppercase tracking-wider text-zinc-400 block mb-2">Interactive Accordion</span>
+
+            <div class="accordion-item active rounded-xl bg-obsidian-950/70 border border-white/10">
+              <button onclick="toggleAccordion(this)" class="w-full px-4 py-3.5 flex items-center justify-between text-left text-sm font-semibold text-white">
+                <span>How do dynamic CSS variables power the accent switcher?</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-accent transition-transform duration-300"></i>
+              </button>
+              <div class="accordion-content">
+                <div class="accordion-inner px-4 pb-4 text-xs text-zinc-400 leading-relaxed">
+                  All neon highlights, glow shadows, and focus rings bind to <code class="font-mono text-accent">--accent</code> and <code class="font-mono text-accent">--accent-glow</code> on the root element, enabling instant zero-repaint theme transitions.
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-item rounded-xl bg-obsidian-950/70 border border-white/10">
+              <button onclick="toggleAccordion(this)" class="w-full px-4 py-3.5 flex items-center justify-between text-left text-sm font-semibold text-white">
+                <span>Are components accessible via keyboard navigation?</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-zinc-400 transition-transform duration-300"></i>
+              </button>
+              <div class="accordion-content">
+                <div class="accordion-inner px-4 pb-4 text-xs text-zinc-400 leading-relaxed">
+                  Yes. Interactive controls include semantic ARIA attributes, visible high-contrast focus rings, and Escape-key dismissal for modals and drawers.
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-item rounded-xl bg-obsidian-950/70 border border-white/10">
+              <button onclick="toggleAccordion(this)" class="w-full px-4 py-3.5 flex items-center justify-between text-left text-sm font-semibold text-white">
+                <span>Can I export these tokens directly into Tailwind v4?</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-zinc-400 transition-transform duration-300"></i>
+              </button>
+              <div class="accordion-content">
+                <div class="accordion-inner px-4 pb-4 text-xs text-zinc-400 leading-relaxed">
+                  Click "Export Tokens" in the top header to generate W3C-compliant JSON design tokens ready for Tailwind CSS or Figma Variables.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- MODAL DIALOG OVERLAY -->
+  <div id="demoModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/75 backdrop-blur-md">
+    <div class="glass-card max-w-md w-full rounded-2xl p-6 sm:p-8 border border-white/15 shadow-2xl transform transition-all">
+      <div class="flex items-center justify-between mb-4">
+        <span class="font-mono text-xs text-accent uppercase tracking-wider">System Spec // Modal</span>
+        <button onclick="closeModal()" class="p-1.5 rounded-lg text-zinc-400 hover:text-white bg-white/5"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+      <h3 class="font-serif italic text-3xl text-white mb-2">Initialize Neural Cluster</h3>
+      <p class="text-sm text-zinc-400 leading-relaxed mb-6">
+        Confirm allocation of dedicated obsidian edge nodes. Provisioning takes approximately 4 seconds across global regions.
+      </p>
+      <div class="flex justify-end gap-3">
+        <button onclick="closeModal()" class="px-4 py-2 rounded-xl text-xs font-medium bg-white/5 hover:bg-white/10 text-zinc-300">Cancel</button>
+        <button onclick="closeModal(); triggerToast('Cluster provisioning started', 'success')" class="px-5 py-2 rounded-xl text-xs font-semibold bg-accent text-accent-contrast">Confirm Deploy</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE-OVER DRAWER OVERLAY -->
+  <div id="demoDrawer" class="fixed inset-0 z-50 hidden justify-end bg-black/70 backdrop-blur-sm">
+    <div class="w-full max-w-md h-full bg-obsidian-900 border-l border-white/10 p-6 sm:p-8 flex flex-col justify-between shadow-2xl">
+      <div>
+        <div class="flex items-center justify-between pb-4 border-b border-white/10">
+          <div>
+            <span class="font-mono text-[11px] text-accent uppercase">Inspector</span>
+            <h3 class="text-lg font-bold">Node Configuration</h3>
+          </div>
+          <button onclick="closeDrawer()" class="p-2 rounded-lg bg-white/5 text-zinc-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
+        </div>
+
+        <div class="mt-6 space-y-5">
+          <div>
+            <label class="font-mono text-xs text-zinc-400 block mb-1.5">CLUSTER IDENTIFIER</label>
+            <input type="text" value="aeth-hyd-prime-01" class="w-full px-3.5 py-2.5 rounded-xl bg-obsidian-950 border border-white/10 font-mono text-xs text-white" />
+          </div>
+          <div>
+            <label class="font-mono text-xs text-zinc-400 block mb-1.5">MEMORY ALLOCATION</label>
+            <div class="p-3.5 rounded-xl bg-obsidian-950 border border-white/10 font-mono text-xs text-accent">
+              128 GB ECC // NVMe RAID-10
+            </div>
+          </div>
+          <p class="text-xs text-zinc-400 leading-relaxed">
+            Changes applied inside the slide-over drawer hot-reload across connected edge workers without dropping active WebSocket sessions.
+          </p>
+        </div>
+      </div>
+
+      <div class="pt-4 border-t border-white/10 flex gap-3">
+        <button onclick="closeDrawer()" class="flex-1 py-2.5 rounded-xl text-xs font-medium bg-white/5 text-zinc-300">Close</button>
+        <button onclick="closeDrawer(); triggerToast('Configuration hot-reloaded', 'success')" class="flex-1 py-2.5 rounded-xl text-xs font-semibold bg-accent text-accent-contrast">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2.5 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // 1. Dynamic Theme Accent Switcher
+    function setTheme(themeName) {
+      if (themeName === 'lime') {
+        document.documentElement.removeAttribute('data-theme');
+      } else {
+        document.documentElement.setAttribute('data-theme', themeName);
+      }
+
+      document.querySelectorAll('.theme-pill').forEach(btn => {
+        const isActive = btn.getAttribute('data-theme-btn') === themeName;
+        btn.classList.toggle('bg-white/10', isActive);
+        btn.classList.toggle('text-white', isActive);
+        btn.classList.toggle('text-zinc-400', !isActive);
+      });
+
+      const labels = { lime: 'Cyber Acid Lime', violet: 'Hyper Violet', solar: 'Solar Flare' };
+      triggerToast(`Accent switched to ${labels[themeName]}`, 'info');
+    }
+
+    // 2. Copy Hex Color Swatch with Fallback
+    function copyHex(hex) {
+      const tempInput = document.createElement('input');
+      tempInput.value = hex;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+      triggerToast(`Copied ${hex} to clipboard`, 'success');
+    }
+
+    // 3. Toast Notification Generator
+    function triggerToast(message, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = 'pointer-events-auto flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-obsidian-900/95 border border-white/15 backdrop-blur-xl shadow-2xl text-xs font-medium text-white transform transition-all duration-300 translate-y-2 opacity-0';
+
+      const dotColor = type === 'success' ? 'bg-accent shadow-[0_0_8px_var(--accent)]' : 'bg-cyan-400';
+      toast.innerHTML = `
+        <div class="flex items-center gap-2.5">
+          <span class="w-2 h-2 rounded-full ${dotColor}"></span>
+          <span>${message}</span>
+        </div>
+        <button onclick="this.parentElement.remove()" class="text-zinc-400 hover:text-white">&times;</button>
+      `;
+
+      container.appendChild(toast);
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      });
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 3200);
+    }
+
+    // 4. Async Button Demo
+    function simulateAsyncAction(btn) {
+      if (btn.dataset.loading === 'true') return;
+      btn.dataset.loading = 'true';
+      const original = btn.innerHTML;
+      btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 text-accent animate-spin"></i><span>Deploying...</span>`;
+      lucide.createIcons();
+
+      setTimeout(() => {
+        btn.innerHTML = `<i data-lucide="check" class="w-4 h-4 text-accent"></i><span>Node Active</span>`;
+        lucide.createIcons();
+        triggerToast('Edge node deployed successfully', 'success');
+        setTimeout(() => {
+          btn.innerHTML = original;
+          btn.dataset.loading = 'false';
+          lucide.createIcons();
+        }, 1800);
+      }, 1200);
+    }
+
+    // 5. Password Visibility Toggle
+    function togglePasswordVisibility() {
+      const input = document.getElementById('passwordField');
+      const icon = document.getElementById('passwordEyeIcon');
+      const isPassword = input.type === 'password';
+      input.type = isPassword ? 'text' : 'password';
+      icon.setAttribute('data-lucide', isPassword ? 'eye-off' : 'eye');
+      lucide.createIcons();
+    }
+
+    // 6. Drag & Drop File Upload Zone
+    const dropzone = document.getElementById('dropzone');
+    const fileInput = document.getElementById('fileInput');
+    dropzone.addEventListener('click', () => fileInput.click());
+    dropzone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropzone.classList.add('border-accent', 'bg-accent/5');
+    });
+    dropzone.addEventListener('dragleave', () => {
+      dropzone.classList.remove('border-accent', 'bg-accent/5');
+    });
+    dropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('border-accent', 'bg-accent/5');
+      handleFileSelect(e.dataTransfer.files);
+    });
+
+    function handleFileSelect(files) {
+      if (files && files.length > 0) {
+        document.getElementById('dropzoneLabel').innerHTML = `Loaded: <span class="text-accent font-mono">${files[0].name}</span>`;
+        triggerToast(`Attached ${files[0].name}`, 'success');
+      }
+    }
+
+    // 7. Sliding Indicator Tabs
+    function switchTab(index, btn) {
+      const indicator = document.getElementById('tabIndicator');
+      indicator.style.width = `${btn.offsetWidth}px`;
+      indicator.style.transform = `translateX(${btn.offsetLeft - 4}px)`;
+
+      document.querySelectorAll('.tab-trigger').forEach((t, i) => {
+        t.classList.toggle('text-white', i === index);
+        t.classList.toggle('text-zinc-400', i !== index);
+      });
+
+      document.querySelectorAll('.tab-panel').forEach((panel, i) => {
+        panel.classList.toggle('hidden', i !== index);
+      });
+    }
+
+    // Initialize first tab indicator width on load
+    window.addEventListener('DOMContentLoaded', () => {
+      const firstTab = document.querySelector('.tab-trigger');
+      if (firstTab) switchTab(0, firstTab);
+    });
+
+    // 8. Pagination Demo
+    let currentPage = 1;
+    function setPage(page) {
+      currentPage = page;
+      document.querySelectorAll('.page-btn').forEach(btn => {
+        const isMatch = parseInt(btn.textContent, 10) === currentPage;
+        btn.className = isMatch
+          ? 'page-btn w-8 h-8 rounded-lg text-xs font-mono font-semibold bg-accent text-accent-contrast'
+          : 'page-btn w-8 h-8 rounded-lg text-xs font-mono text-zinc-400 hover:bg-white/5';
+      });
+    }
+    function changePage(delta) {
+      const pages = [1, 2, 3, 12];
+      const idx = pages.indexOf(currentPage);
+      const nextIdx = Math.max(0, Math.min(pages.length - 1, idx + delta));
+      setPage(pages[nextIdx]);
+    }
+
+    // 9. Multi-Step Stepper
+    let activeStep = 2;
+    function advanceStepper(delta) {
+      activeStep = Math.max(1, Math.min(4, activeStep + delta));
+      const items = document.querySelectorAll('#stepperContainer .step-item');
+      items.forEach((item, idx) => {
+        const stepNum = idx + 1;
+        if (stepNum <= activeStep) {
+          item.className = 'step-item p-3.5 rounded-xl border border-accent bg-accent/10 transition';
+          item.querySelector('span').className = 'font-mono text-[11px] text-accent';
+          item.querySelector('p').className = 'text-sm font-semibold text-white';
+        } else {
+          item.className = 'step-item p-3.5 rounded-xl border border-white/10 bg-obsidian-950/50 transition';
+          item.querySelector('span').className = 'font-mono text-[11px] text-zinc-500';
+          item.querySelector('p').className = 'text-sm font-medium text-zinc-400';
+        }
+      });
+    }
+
+    // 10. Live Table Filter
+    function filterTable() {
+      const query = document.getElementById('tableFilterInput').value.toLowerCase();
+      const rows = document.querySelectorAll('#nodesTable tbody tr');
+      rows.forEach(row => {
+        row.style.display = row.textContent.toLowerCase().includes(query) ? '' : 'none';
+      });
+    }
+
+    // 11. Accordion Toggle
+    function toggleAccordion(btn) {
+      const item = btn.parentElement;
+      const icon = btn.querySelector('svg');
+      const isOpen = item.classList.contains('active');
+      item.classList.toggle('active', !isOpen);
+      if (icon) icon.style.transform = !isOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+    }
+
+    // 12. Modal & Drawer Controls + Mobile Sidebar
+    function openModal() {
+      const modal = document.getElementById('demoModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+    function closeModal() {
+      const modal = document.getElementById('demoModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+    function openDrawer() {
+      const drawer = document.getElementById('demoDrawer');
+      drawer.classList.remove('hidden');
+      drawer.classList.add('flex');
+    }
+    function closeDrawer() {
+      const drawer = document.getElementById('demoDrawer');
+      drawer.classList.add('hidden');
+      drawer.classList.remove('flex');
+    }
+
+    const sidebar = document.getElementById('sidebarNav');
+    document.getElementById('mobileMenuBtn').addEventListener('click', () => sidebar.classList.remove('-translate-x-full'));
+    document.getElementById('closeMobileMenuBtn').addEventListener('click', () => sidebar.classList.add('-translate-x-full'));
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', () => sidebar.classList.add('-translate-x-full'));
+    });
+
+    // Escape key closes overlays
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeModal();
+        closeDrawer();
+      }
+    });
+  </script>
+</body>
+</html>
