@@ -1,0 +1,2351 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NexusViz — Enterprise Data Visualization Kitchen Sink (115+ Components)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-app: #f1f5f9;
+      --bg-sidebar: #ffffff;
+      --bg-card: #ffffff;
+      --bg-subtle: #f8fafc;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --accent-primary: #4f46e5;
+      --accent-secondary: #06b6d4;
+      --grid-dot: rgba(148, 163, 184, 0.25);
+    }
+    [data-theme="dark"] {
+      --bg-app: #090d16;
+      --bg-sidebar: #0f172a;
+      --bg-card: #131c31;
+      --bg-subtle: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: #1e293b;
+      --accent-primary: #6366f1;
+      --accent-secondary: #22d3ee;
+      --grid-dot: rgba(71, 85, 105, 0.25);
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-app);
+      color: var(--text-main);
+      background-image: radial-gradient(var(--grid-dot) 1px, transparent 1px);
+      background-size: 20px 20px;
+      transition: background-color 0.25s, color 0.25s;
+    }
+    .font-mono-num { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+    .viz-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .viz-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px -8px rgba(15, 23, 42, 0.12);
+      border-color: #818cf8;
+    }
+    .viz-card.dark-panel {
+      background: linear-gradient(145deg, #0f172a 0%, #1e1b4b 100%);
+      color: #f8fafc;
+      border-color: #312e81;
+    }
+    .viz-card.soft-indigo { background: linear-gradient(180deg, rgba(238,242,255,0.85) 0%, var(--bg-card) 100%); }
+    [data-theme="dark"] .viz-card.soft-indigo { background: linear-gradient(180deg, rgba(49,46,129,0.28) 0%, var(--bg-card) 100%); }
+    .viz-card.soft-emerald { background: linear-gradient(180deg, rgba(236,253,245,0.85) 0%, var(--bg-card) 100%); }
+    [data-theme="dark"] .viz-card.soft-emerald { background: linear-gradient(180deg, rgba(6,78,59,0.28) 0%, var(--bg-card) 100%); }
+    .viz-card.soft-amber { background: linear-gradient(180deg, rgba(255,251,235,0.85) 0%, var(--bg-card) 100%); }
+    [data-theme="dark"] .viz-card.soft-amber { background: linear-gradient(180deg, rgba(120,53,15,0.25) 0%, var(--bg-card) 100%); }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.4); border-radius: 999px; }
+
+    /* Animations */
+    @keyframes stripeSlide {
+      0% { background-position: 0 0; }
+      100% { background-position: 28px 0; }
+    }
+    .progress-striped {
+      background-image: linear-gradient(45deg, rgba(255,255,255,.25) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.25) 50%, rgba(255,255,255,.25) 75%, transparent 75%, transparent);
+      background-size: 28px 28px;
+      animation: stripeSlide 1s linear infinite;
+    }
+    @keyframes indeterminateBar {
+      0% { left: -35%; right: 100%; }
+      60% { left: 100%; right: -90%; }
+      100% { left: 100%; right: -90%; }
+    }
+    .progress-indeterminate::after {
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0;
+      background: linear-gradient(90deg, #6366f1, #ec4899, #06b6d4);
+      animation: indeterminateBar 1.8s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
+    }
+    @keyframes pulseFlow {
+      to { stroke-dashoffset: -24; }
+    }
+    .flow-animated {
+      stroke-dasharray: 6 6;
+      animation: pulseFlow 0.9s linear infinite;
+    }
+    body.no-anim * {
+      animation: none !important;
+      transition: none !important;
+    }
+    body.hide-labels .chart-data-label {
+      opacity: 0 !important;
+      pointer-events: none;
+    }
+    /* Global Floating Tooltip */
+    #viz-tooltip {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      background: rgba(15, 23, 42, 0.95);
+      color: #f8fafc;
+      border: 1px solid rgba(99, 102, 241, 0.5);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      backdrop-filter: blur(6px);
+      transform: translate(-50%, -115%);
+      transition: opacity 0.12s ease;
+      opacity: 0;
+      white-space: nowrap;
+    }
+    .svg-interactive:hover {
+      filter: brightness(1.1);
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-indigo-500 selection:text-white">
+  <!-- Global Floating Tooltip -->
+  <div id="viz-tooltip"></div>
+
+  <!-- Top Control Bar -->
+  <header class="sticky top-0 z-40 border-b backdrop-blur-md" style="background-color: color-mix(in srgb, var(--bg-sidebar) 88%, transparent); border-color: var(--border-color);">
+    <div class="max-w-[1680px] mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-violet-600 to-cyan-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 13h4v8H3zm7-6h4v14h-4zm7-4h4v18h-4z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="font-extrabold text-lg tracking-tight">NexusViz <span class="text-indigo-500">Enterprise</span></h1>
+            <span id="total-badge" class="px-2 py-0.5 text-xs font-bold rounded-full bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30">116 Components</span>
+          </div>
+          <p class="text-xs" style="color: var(--text-muted)">Zero-Dependency Native HTML / SVG / Canvas Visualization Encyclopedia</p>
+        </div>
+      </div>
+
+      <!-- Search & Global Controls -->
+      <div class="flex flex-wrap items-center gap-2">
+        <div class="relative">
+          <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input id="search-input" type="text" placeholder="Filter 116 visualizations..." class="pl-9 pr-3 py-1.5 text-xs rounded-lg border focus:outline-none focus:ring-2 focus:ring-indigo-500 w-56" style="background-color: var(--bg-subtle); border-color: var(--border-color); color: var(--text-main);" />
+        </div>
+
+        <select id="timeframe-select" class="px-2.5 py-1.5 text-xs font-medium rounded-lg border cursor-pointer" style="background-color: var(--bg-subtle); border-color: var(--border-color); color: var(--text-main);">
+          <option value="Q4">FY26 · Q4 Live</option>
+          <option value="Q3">FY26 · Q3 Audit</option>
+          <option value="YTD">FY26 · YTD Rollup</option>
+        </select>
+
+        <button id="btn-randomize" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-gradient-to-r from-indigo-600 to-violet-600 text-white hover:opacity-90 shadow-sm flex items-center gap-1.5 cursor-pointer">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
+          Randomize Data
+        </button>
+
+        <button id="btn-reset" class="px-2.5 py-1.5 text-xs font-medium rounded-lg border hover:border-indigo-500 cursor-pointer" style="background-color: var(--bg-subtle); border-color: var(--border-color);">
+          Reset
+        </button>
+
+        <button id="btn-labels" class="px-2.5 py-1.5 text-xs font-medium rounded-lg border hover:border-indigo-500 cursor-pointer" style="background-color: var(--bg-subtle); border-color: var(--border-color);" title="Toggle Data Labels">
+          Labels: ON
+        </button>
+
+        <button id="btn-anim" class="px-2.5 py-1.5 text-xs font-medium rounded-lg border hover:border-indigo-500 cursor-pointer" style="background-color: var(--bg-subtle); border-color: var(--border-color);" title="Toggle Animations">
+          Anim: ON
+        </button>
+
+        <button id="btn-theme" class="p-1.5 rounded-lg border hover:border-indigo-500 cursor-pointer" style="background-color: var(--bg-subtle); border-color: var(--border-color);" title="Switch Light/Dark Theme">
+          <svg id="theme-icon" class="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="max-w-[1680px] mx-auto flex">
+    <!-- Left Category Sidebar -->
+    <aside class="hidden lg:block w-64 shrink-0 sticky top-[61px] h-[calc(100vh-61px)] overflow-y-auto border-r p-3" style="background-color: var(--bg-sidebar); border-color: var(--border-color);">
+      <div class="text-[11px] font-bold uppercase tracking-wider px-2.5 mb-2" style="color: var(--text-muted)">16 Visualization Domains</div>
+      <nav id="sidebar-nav" class="space-y-0.5 text-xs font-medium"></nav>
+    </aside>
+
+    <!-- Main Showcase Area -->
+    <main id="showcase-root" class="flex-1 p-4 md:p-6 space-y-10 min-w-0"></main>
+  </div>
+
+<script>
+/* ============================================================================
+   NEXUSVIZ ENTERPRISE KITCHEN SINK ENGINE (100% VANILLA JS + SVG + CANVAS)
+   ============================================================================ */
+
+const PALETTE = {
+  indigo: '#4f46e5', violet: '#7c3aed', cyan: '#06b6d4', emerald: '#10b981',
+  amber: '#f59e0b', rose: '#f43f5e', blue: '#2563eb', orange: '#f97316',
+  teal: '#14b8a6', fuchsia: '#d946ef', slate: '#64748b'
+};
+const SERIES_COLORS = ['#4f46e5', '#06b6d4', '#10b981', '#f59e0b', '#f43f5e', '#8b5cf6', '#ec4899'];
+
+let state = {
+  seed: 1,
+  timeframe: 'Q4',
+  anim: true,
+  labels: true,
+  search: '',
+  progressOverride: 74,
+  activeDataset: 'rev',
+  hiddenSeries: {}
+};
+
+// Deterministic pseudo-random helper so Reset restores clean baseline
+function getData(baseArr, jitter = 0.25) {
+  const mult = state.timeframe === 'Q4' ? 1 : state.timeframe === 'Q3' ? 0.88 : 1.35;
+  return baseArr.map((v, i) => {
+    if (state.seed === 1) return +(v * mult).toFixed(1);
+    const wave = Math.sin(state.seed * 13.7 + i * 2.3) * jitter;
+    return +(v * mult * (1 + wave)).toFixed(1);
+  });
+}
+
+// Tooltip Controller
+const tooltipEl = document.getElementById('viz-tooltip');
+function bindTooltips(container = document) {
+  container.querySelectorAll('[data-tip]').forEach(el => {
+    if (el.dataset.tipBound) return;
+    el.dataset.tipBound = '1';
+    el.classList.add('svg-interactive');
+    el.addEventListener('mouseenter', e => {
+      tooltipEl.innerHTML = el.getAttribute('data-tip');
+      tooltipEl.style.opacity = '1';
+    });
+    el.addEventListener('mousemove', e => {
+      tooltipEl.style.left = e.clientX + 'px';
+      tooltipEl.style.top = e.clientY + 'px';
+    });
+    el.addEventListener('mouseleave', () => {
+      tooltipEl.style.opacity = '0';
+    });
+  });
+}
+
+/* ============================================================================
+   SVG & CANVAS CHART GENERATORS
+   ============================================================================ */
+
+function svgSparkline(data, color = '#4f46e5', fill = false, w = 120, h = 34) {
+  const min = Math.min(...data) * 0.92;
+  const max = Math.max(...data) * 1.05 || 1;
+  const pts = data.map((v, i) => {
+    const x = (i / (data.length - 1)) * w;
+    const y = h - ((v - min) / (max - min)) * (h - 6) - 3;
+    return [x, y];
+  });
+  const d = pts.map((p, i) => `${i === 0 ? 'M' : 'L'}${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ');
+  const areaD = `${d} L${w},${h} L0,${h} Z`;
+  const uid = 'sp_' + Math.random().toString(36).slice(2, 8);
+  return `<svg viewBox="0 0 ${w} ${h}" class="w-full h-9 overflow-visible">
+    ${fill ? `<defs><linearGradient id="${uid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${color}" stop-opacity="0.35"/><stop offset="100%" stop-color="${color}" stop-opacity="0"/></linearGradient></defs><path d="${areaD}" fill="url(#${uid})"/>` : ''}
+    <path d="${d}" fill="none" stroke="${color}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="${pts[pts.length-1][0]}" cy="${pts[pts.length-1][1]}" r="3" fill="${color}" data-tip="Latest: ${data[data.length-1]}"/>
+  </svg>`;
+}
+
+function smoothPath(pts) {
+  if (pts.length < 2) return '';
+  let d = `M ${pts[0][0].toFixed(1)},${pts[0][1].toFixed(1)}`;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[i === 0 ? i : i - 1];
+    const p1 = pts[i];
+    const p2 = pts[i + 1];
+    const p3 = pts[i + 2 < pts.length ? i + 2 : i + 1];
+    const cp1x = p1[0] + (p2[0] - p0[0]) / 6;
+    const cp1y = p1[1] + (p2[1] - p0[1]) / 6;
+    const cp2x = p2[0] - (p3[0] - p1[0]) / 6;
+    const cp2y = p2[1] - (p3[1] - p1[1]) / 6;
+    d += ` C ${cp1x.toFixed(1)},${cp1y.toFixed(1)} ${cp2x.toFixed(1)},${cp2y.toFixed(1)} ${p2[0].toFixed(1)},${p2[1].toFixed(1)}`;
+  }
+  return d;
+}
+
+function stepPath(pts) {
+  let d = `M ${pts[0][0].toFixed(1)},${pts[0][1].toFixed(1)}`;
+  for (let i = 1; i < pts.length; i++) {
+    d += ` H ${pts[i][0].toFixed(1)} V ${pts[i][1].toFixed(1)}`;
+  }
+  return d;
+}
+
+function buildLineChart({ series, labels = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug'], mode = 'linear', fill = false, gradient = false, highlightPeak = false, dualAxis = false }) {
+  const w = 360, h = 155, padL = 28, padR = dualAxis ? 28 : 12, padT = 14, padB = 22;
+  const plotW = w - padL - padR, plotH = h - padT - padB;
+  const allVals = series.flatMap(s => s.data);
+  const maxVal = Math.max(...allVals) * 1.12 || 10;
+  const minVal = Math.min(0, Math.min(...allVals));
+
+  let gridSvg = '';
+  for (let i = 0; i <= 4; i++) {
+    const y = padT + (plotH / 4) * i;
+    const val = Math.round(maxVal - ((maxVal - minVal) / 4) * i);
+    gridSvg += `<line x1="${padL}" y1="${y}" x2="${w - padR}" y2="${y}" stroke="currentColor" stroke-opacity="0.1" stroke-dasharray="3 3"/>
+      <text x="${padL - 5}" y="${y + 3}" text-anchor="end" font-size="9" fill="currentColor" opacity="0.55">${val}</text>`;
+    if (dualAxis) {
+      gridSvg += `<text x="${w - padR + 5}" y="${y + 3}" text-anchor="start" font-size="9" fill="#06b6d4">${Math.round(val * 1.4)}%</text>`;
+    }
+  }
+  labels.forEach((lbl, i) => {
+    const x = padL + (i / (labels.length - 1)) * plotW;
+    gridSvg += `<text x="${x}" y="${h - 5}" text-anchor="middle" font-size="9" fill="currentColor" opacity="0.6">${lbl}</text>`;
+  });
+
+  let defs = '';
+  let linesSvg = '';
+  series.forEach((s, idx) => {
+    const sMax = dualAxis && idx === 1 ? Math.max(...s.data) * 1.15 : maxVal;
+    const pts = s.data.map((v, i) => [
+      padL + (i / (s.data.length - 1)) * plotW,
+      padT + plotH - ((v - minVal) / (sMax - minVal)) * plotH
+    ]);
+    let pathD = mode === 'smooth' ? smoothPath(pts) : mode === 'step' ? stepPath(pts) : pts.map((p, i) => `${i===0?'M':'L'}${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ');
+    const uid = 'lg_' + Math.random().toString(36).slice(2, 8);
+    if (fill || gradient) {
+      defs += `<linearGradient id="${uid}" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="${s.color}" stop-opacity="${gradient ? '0.45' : '0.2'}"/>
+        <stop offset="100%" stop-color="${s.color}" stop-opacity="0.01"/>
+      </linearGradient>`;
+      const areaD = `${pathD} L ${pts[pts.length-1][0].toFixed(1)},${padT+plotH} L ${pts[0][0].toFixed(1)},${padT+plotH} Z`;
+      linesSvg += `<path d="${areaD}" fill="url(#${uid})"/>`;
+    }
+    linesSvg += `<path d="${pathD}" fill="none" stroke="${s.color}" stroke-width="${s.width || 2.4}" ${s.dashed ? 'stroke-dasharray="5 4"' : ''} stroke-linecap="round"/>`;
+
+    const maxIdx = s.data.indexOf(Math.max(...s.data));
+    pts.forEach((p, i) => {
+      const isPeak = highlightPeak && i === maxIdx;
+      linesSvg += `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="${isPeak ? 5 : 3}" fill="${isPeak ? '#f43f5e' : s.color}" stroke="#fff" stroke-width="1.2" data-tip="<strong>${s.name}</strong> (${labels[i]}): ${s.data[i]}"/>`;
+      if (isPeak) {
+        linesSvg += `<text class="chart-data-label" x="${p[0]}" y="${p[1] - 9}" text-anchor="middle" font-size="9" font-weight="700" fill="#f43f5e">Peak ${s.data[i]}</text>`;
+      }
+    });
+  });
+
+  return `<svg viewBox="0 0 ${w} ${h}" class="w-full h-40 overflow-visible"><defs>${defs}</defs>${gridSvg}${linesSvg}</svg>`;
+}
+
+function buildAreaChart({ series, labels = ['W1','W2','W3','W4','W5','W6'], mode = 'smooth', stacked = false, percent = false }) {
+  const w = 360, h = 150, padL = 28, padR = 10, padT = 12, padB = 22;
+  const plotW = w - padL - padR, plotH = h - padT - padB;
+  const len = labels.length;
+
+  let computed = series.map(s => [...s.data]);
+  if (percent) {
+    for (let i = 0; i < len; i++) {
+      const sum = series.reduce((acc, s) => acc + s.data[i], 0) || 1;
+      series.forEach((s, si) => { computed[si][i] = +(s.data[i] / sum * 100).toFixed(1); });
+    }
+  } else if (stacked) {
+    for (let i = 0; i < len; i++) {
+      let acc = 0;
+      series.forEach((s, si) => { acc += s.data[i]; computed[si][i] = acc; });
+    }
+  }
+  const maxVal = percent ? 100 : Math.max(...computed.flat()) * 1.12;
+  let grid = '';
+  for (let g = 0; g <= 4; g++) {
+    const y = padT + (plotH / 4) * g;
+    const lbl = Math.round(maxVal - (maxVal / 4) * g) + (percent ? '%' : '');
+    grid += `<line x1="${padL}" y1="${y}" x2="${w-padR}" y2="${y}" stroke="currentColor" stroke-opacity="0.1"/>
+      <text x="${padL-4}" y="${y+3}" text-anchor="end" font-size="9" fill="currentColor" opacity="0.55">${lbl}</text>`;
+  }
+  labels.forEach((l, i) => {
+    const x = padL + (i / (len - 1)) * plotW;
+    grid += `<text x="${x}" y="${h-5}" text-anchor="middle" font-size="9" fill="currentColor" opacity="0.6">${l}</text>`;
+  });
+
+  let defs = '', layers = '';
+  for (let si = series.length - 1; si >= 0; si--) {
+    const s = series[si];
+    const pts = computed[si].map((v, i) => [
+      padL + (i / (len - 1)) * plotW,
+      padT + plotH - (v / maxVal) * plotH
+    ]);
+    const pathD = mode === 'smooth' ? smoothPath(pts) : pts.map((p, i) => `${i===0?'M':'L'}${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ');
+    const uid = 'ar_' + Math.random().toString(36).slice(2, 8);
+    defs += `<linearGradient id="${uid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${s.color}" stop-opacity="${stacked || percent ? '0.82' : '0.42'}"/><stop offset="100%" stop-color="${s.color}" stop-opacity="${stacked || percent ? '0.45' : '0.04'}"/></linearGradient>`;
+    const areaD = `${pathD} L ${pts[pts.length-1][0].toFixed(1)},${padT+plotH} L ${pts[0][0].toFixed(1)},${padT+plotH} Z`;
+    layers += `<path d="${areaD}" fill="url(#${uid})" data-tip="<strong>${s.name}</strong>"/>
+      <path d="${pathD}" fill="none" stroke="${s.color}" stroke-width="2"/>`;
+  }
+  return `<svg viewBox="0 0 ${w} ${h}" class="w-full h-40 overflow-visible"><defs>${defs}</defs>${grid}${layers}</svg>`;
+}
+
+function buildBarChart({ labels, datasets, horizontal = false, stacked = false, percent = false, rounded = false, gradient = false, diverging = false, waterfall = false, range = false }) {
+  const w = 360, h = 160, padL = horizontal ? 62 : 28, padR = 12, padT = 14, padB = 22;
+  const plotW = w - padL - padR, plotH = h - padT - padB;
+  const n = labels.length;
+  let bars = '', grid = '', defs = '';
+
+  if (waterfall) {
+    // Waterfall cumulative logic
+    let running = 0;
+    const steps = datasets[0].data.map((v, i) => {
+      if (i === 0 || i === n - 1) {
+        const start = 0, end = i === 0 ? v : running;
+        if (i === 0) running = v;
+        return { start, end, val: i === 0 ? v : running, isTotal: true };
+      }
+      const start = running;
+      running += v;
+      return { start, end: running, val: v, isTotal: false };
+    });
+    const maxV = Math.max(...steps.map(s => Math.max(s.start, s.end))) * 1.15;
+    const slotW = plotW / n;
+    steps.forEach((st, i) => {
+      const yTop = padT + plotH - (Math.max(st.start, st.end) / maxV) * plotH;
+      const yBot = padT + plotH - (Math.min(st.start, st.end) / maxV) * plotH;
+      const barH = Math.max(3, yBot - yTop);
+      const x = padL + i * slotW + slotW * 0.18;
+      const bw = slotW * 0.64;
+      const fill = st.isTotal ? '#4f46e5' : st.val >= 0 ? '#10b981' : '#f43f5e';
+      bars += `<rect x="${x}" y="${yTop}" width="${bw}" height="${barH}" rx="4" fill="${fill}" data-tip="${labels[i]}: ${st.val > 0 && !st.isTotal ? '+' : ''}${st.val}"/>
+        <text class="chart-data-label" x="${x + bw/2}" y="${yTop - 3}" text-anchor="middle" font-size="8.5" font-weight="700" fill="currentColor">${st.val}</text>
+        <text x="${x + bw/2}" y="${h - 5}" text-anchor="middle" font-size="8.5" fill="currentColor" opacity="0.65">${labels[i]}</text>`;
+    });
+    return `<svg viewBox="0 0 ${w} ${h}" class="w-full h-40 overflow-visible">${bars}</svg>`;
+  }
+
+  if (diverging) {
+    const midY = padT + plotH / 2;
+    const maxAbs = Math.max(...datasets[0].data.map(Math.abs)) * 1.15;
+    grid += `<line x1="${padL}" y1="${midY}" x2="${w - padR}" y2="${midY}" stroke="currentColor" stroke-opacity="0.35"/>`;
+    const slotW = plotW / n;
+    datasets[0].data.forEach((v, i) => {
+      const bh = (Math.abs(v) / maxAbs) * (plotH / 2);
+      const y = v >= 0 ? midY - bh : midY;
+      const x = padL + i * slotW + slotW * 0.2;
+      const bw = slotW * 0.6;
+      const color = v >= 0 ? '#10b981' : '#f43f5e';
+      bars += `<rect x="${x}" y="${y}" width="${bw}" height="${bh}" rx="3" fill="${color}" data-tip="${labels[i]}: ${v > 0 ? '+' : ''}${v}%"/>
+        <text x="${x + bw/2}" y="${h - 4}" text-anchor="middle" font-size="8.5" fill="currentColor" opacity="0.65">${labels[i]}</text>`;
+    });
+    return `<svg viewBox="0 0 ${w} ${h}" class="w-full h-40 overflow-visible">${grid}${bars}</svg>`;
+  }
+
+  if (range) {
+    // datasets[0] = min, datasets[1] = max
+    const maxV = Math.max(...datasets[1].data) * 1.12;
+    const slotW = plotW / n;
+    labels.forEach((lbl, i) => {
+      const lo = datasets[0].data[i], hi = datasets[1].data[i];
+      const y1 = padT + plotH - (hi / maxV) * plotH;
+      const y2 = padT + plotH - (lo / maxV) * plotH;
+      const x = padL + i * slotW + slotW * 0.25;
+      const bw = slotW * 0.5;
+      bars += `<rect x="${x}" y="${y1}" width="${bw}" height="${Math.max(4, y2 - y1)}" rx="6" fill="#06b6d4" data-tip="${lbl}: ${lo} - ${hi}"/>
+        <text class="chart-data-label" x="${x + bw/2}" y="${y1 - 3}" text-anchor="middle" font-size="8" fill="currentColor">${hi}</text>
+        <text x="${x + bw/2}" y="${h - 4}" text-anchor="middle" font-size="8.5" fill="currentColor" opacity="0.65">${lbl}</text>`;
+    });
+    return `<svg viewBox="0 0 ${w} ${h}" class="w-full h-40 overflow-visible">${bars}</svg>`;
+  }
+
+  if (horizontal) {
+    const maxV = Math.max(...datasets[0].data) * 1.15;
+    const rowH = plotH / n;
+    labels.forEach((lbl, i) => {
+      const v = datasets[0].data[i];
+      const bw = (v / maxV) * plotW;
+      const y = padT + i * rowH + rowH * 0.18;
+      const bh = rowH * 0.64;
+      const color = SERIES_COLORS[i % SERIES_COLORS.length];
+      bars += `<text x="${padL - 6}" y="${y + bh * 0.72}" text-anchor="end" font-size="9.5" fill="currentColor" opacity="0.75">${lbl}</text>
+        <rect x="${padL}" y="${y}" width="${bw}" height="${bh}" rx="4" fill="${color}" data-tip="${lbl}: ${v}"/>
+        <text class="chart-data-label" x="${padL + bw + 5}" y="${y + bh * 0.72}" font-size="9" font-weight="600" fill="currentColor">${v}</text>`;
+    });
+    return `<svg viewBox="0 0 ${w} ${h}" class="w-full h-40 overflow-visible">${bars}</svg>`;
+  }
+
+  // Vertical (single, grouped, stacked, 100% stacked)
+  let maxV = 100;
+  if (!percent) {
+    if (stacked) {
+      maxV = Math.max(...labels.map((_, i) => datasets.reduce((s, d) => s + d.data[i], 0))) * 1.12;
+    } else {
+      maxV = Math.max(...datasets.flatMap(d => d.data)) * 1.15;
+    }
+  }
+  for (let g = 0; g <= 4; g++) {
+    const y = padT + (plotH / 4) * g;
+    grid += `<line x1="${padL}" y1="${y}" x2="${w - padR}" y2="${y}" stroke="currentColor" stroke-opacity="0.1"/>
+      <text x="${padL - 4}" y="${y + 3}" text-anchor="end" font-size="8.5" fill="currentColor" opacity="0.55">${Math.round(maxV - (maxV/4)*g)}</text>`;
+  }
+
+  const slotW = plotW / n;
+  labels.forEach((lbl, i) => {
+    const slotX = padL + i * slotW;
+    grid += `<text x="${slotX + slotW/2}" y="${h - 5}" text-anchor="middle" font-size="8.5" fill="currentColor" opacity="0.65">${lbl}</text>`;
+
+    if (stacked || percent) {
+      const total = datasets.reduce((s, d) => s + d.data[i], 0) || 1;
+      let accY = padT + plotH;
+      datasets.forEach((ds, di) => {
+        const val = percent ? (ds.data[i] / total) * 100 : ds.data[i];
+        const bh = (val / maxV) * plotH;
+        accY -= bh;
+        bars += `<rect x="${slotX + slotW * 0.22}" y="${accY}" width="${slotW * 0.56}" height="${bh}" rx="${rounded ? 4 : 1}" fill="${ds.color}" data-tip="${lbl} · ${ds.name}: ${ds.data[i]}${percent ? ' ('+val.toFixed(0)+'%)' : ''}"/>`;
+      });
+    } else {
+      const groupPad = slotW * 0.16;
+      const bw = (slotW - groupPad * 2) / datasets.length;
+      datasets.forEach((ds, di) => {
+        const v = ds.data[i];
+        const bh = (v / maxV) * plotH;
+        const x = slotX + groupPad + di * bw;
+        const y = padT + plotH - bh;
+        let fill = ds.color || SERIES_COLORS[i % SERIES_COLORS.length];
+        if (gradient) {
+          const uid = 'bg_' + Math.random().toString(36).slice(2, 8);
+          defs += `<linearGradient id="${uid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient>`;
+          fill = `url(#${uid})`;
+        }
+        bars += `<rect x="${x + 1}" y="${y}" width="${Math.max(3, bw - 2)}" height="${bh}" rx="${rounded ? 6 : 2}" fill="${fill}" data-tip="${lbl} · ${ds.name}: ${v}"/>`;
+        if (datasets.length === 1) {
+          bars += `<text class="chart-data-label" x="${x + bw/2}" y="${y - 3}" text-anchor="middle" font-size="8.5" font-weight="600" fill="currentColor">${v}</text>`;
+        }
+      });
+    }
+  });
+
+  return `<svg viewBox="0 0 ${w} ${h}" class="w-full h-40 overflow-visible"><defs>${defs}</defs>${grid}${bars}</svg>`;
+}
+
+function buildCircularChart({ segments, donut = false, semi = false, centerLabel = '', centerSub = '' }) {
+  const w = 220, h = semi ? 125 : 165;
+  const cx = w / 2, cy = semi ? 110 : h / 2;
+  const r = semi ? 82 : 64;
+  const innerR = donut || semi ? r * 0.62 : 0;
+  const total = segments.reduce((a, b) => a + b.value, 0) || 1;
+  let angle = semi ? -Math.PI : -Math.PI / 2;
+  const maxSpan = semi ? Math.PI : Math.PI * 2;
+  let paths = '';
+
+  segments.forEach(seg => {
+    const span = (seg.value / total) * maxSpan;
+    const endAngle = angle + span;
+    const x1 = cx + r * Math.cos(angle), y1 = cy + r * Math.sin(angle);
+    const x2 = cx + r * Math.cos(endAngle), y2 = cy + r * Math.sin(endAngle);
+    const largeArc = span > Math.PI ? 1 : 0;
+
+    let d = '';
+    if (innerR > 0) {
+      const ix1 = cx + innerR * Math.cos(endAngle), iy1 = cy + innerR * Math.sin(endAngle);
+      const ix2 = cx + innerR * Math.cos(angle), iy2 = cy + innerR * Math.sin(angle);
+      d = `M ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} L ${ix1} ${iy1} A ${innerR} ${innerR} 0 ${largeArc} 0 ${ix2} ${iy2} Z`;
+    } else {
+      d = `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} Z`;
+    }
+    paths += `<path d="${d}" fill="${seg.color}" stroke="var(--bg-card)" stroke-width="2" data-tip="${seg.label}: ${seg.value} (${((seg.value/total)*100).toFixed(1)}%)"/>`;
+    angle = endAngle;
+  });
+
+  if (centerLabel) {
+    paths += `<text x="${cx}" y="${semi ? cy - 14 : cy - 2}" text-anchor="middle" font-size="16" font-weight="800" fill="currentColor">${centerLabel}</text>
+      <text x="${cx}" y="${semi ? cy : cy + 13}" text-anchor="middle" font-size="9.5" fill="currentColor" opacity="0.6">${centerSub}</text>`;
+  }
+  return `<svg viewBox="0 0 ${w} ${h}" class="w-full h-40">${paths}</svg>`;
+}
+
+function buildGauge(pct, color = '#4f46e5', speedometer = false) {
+  const w = 220, h = 130, cx = 110, cy = 108, r = 78;
+  const startA = -Math.PI, endA = 0;
+  const valA = startA + (pct / 100) * Math.PI;
+  const nx = cx + (r - 12) * Math.cos(valA), ny = cy + (r - 12) * Math.sin(valA);
+  const arcBg = `M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`;
+  const vx = cx + r * Math.cos(valA), vy = cy + r * Math.sin(valA);
+  const arcFg = `M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${vx} ${vy}`;
+
+  let ticks = '';
+  if (speedometer) {
+    for (let i = 0; i <= 10; i++) {
+      const a = -Math.PI + (i / 10) * Math.PI;
+      const x1 = cx + (r + 4) * Math.cos(a), y1 = cy + (r + 4) * Math.sin(a);
+      const x2 = cx + (r - 6) * Math.cos(a), y2 = cy + (r - 6) * Math.sin(a);
+      ticks += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="currentColor" stroke-opacity="0.35" stroke-width="1.5"/>`;
+    }
+  }
+  return `<svg viewBox="0 0 ${w} ${h}" class="w-full h-36">
+    <path d="${arcBg}" fill="none" stroke="currentColor" stroke-opacity="0.12" stroke-width="14" stroke-linecap="round"/>
+    <path d="${arcFg}" fill="none" stroke="${color}" stroke-width="14" stroke-linecap="round" data-tip="Score: ${pct}%"/>
+    ${ticks}
+    ${speedometer ? `<line x1="${cx}" y1="${cy}" x2="${nx}" y2="${ny}" stroke="#f43f5e" stroke-width="3" stroke-linecap="round"/><circle cx="${cx}" cy="${cy}" r="6" fill="#0f172a" stroke="#f43f5e" stroke-width="2"/>` : ''}
+    <text x="${cx}" y="${speedometer ? cy - 22 : cy - 8}" text-anchor="middle" font-size="20" font-weight="800" fill="currentColor">${pct}%</text>
+  </svg>`;
+}
+
+/* ============================================================================
+   ALL 16 VISUALIZATION SECTIONS & 116 DISTINCT COMPONENTS
+   ============================================================================ */
+
+function renderAllSections() {
+  const rev = getData([42, 55, 49, 68, 74, 89, 83, 98]);
+  const exp = getData([31, 36, 34, 42, 45, 51, 48, 54]);
+  const api = getData([120, 145, 132, 178, 195, 210, 240, 265]);
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug'];
+
+  const sections = [
+    /* ========================================================================
+       A. STATISTICAL CARDS AND KPI COMPONENTS (16 Variations)
+       ======================================================================== */
+    {
+      id: 'sec-kpi',
+      title: 'A. Statistical Cards & KPI Components',
+      badge: '16 Variations',
+      grid: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4',
+      items: [
+        {
+          name: 'Basic Enterprise KPI Card',
+          desc: 'Clean baseline revenue figure with period descriptor.',
+          style: '',
+          html: `<div class="text-xs font-medium text-slate-500">Gross Merchandise Value</div>
+            <div class="text-3xl font-extrabold font-mono-num mt-1">$${(rev[7]*14200).toLocaleString()}</div>
+            <div class="text-[11px] text-slate-400 mt-2">Settled across 14,820 invoices</div>`
+        },
+        {
+          name: 'Iconic KPI Card',
+          desc: 'Dual-tone icon container paired with operational throughput.',
+          style: 'soft-indigo',
+          html: `<div class="flex items-center justify-between">
+            <div>
+              <div class="text-xs font-semibold text-indigo-600">Active Enterprise Tenants</div>
+              <div class="text-2xl font-extrabold font-mono-num mt-1">${Math.round(rev[7]*43)}</div>
+            </div>
+            <div class="w-11 h-11 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-md shadow-indigo-500/30">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+          </div>
+          <div class="mt-3 text-xs text-slate-500">98.4% enterprise seat utilization</div>`
+        },
+        {
+          name: 'Trend Delta KPI Card',
+          desc: 'Positive momentum badge with prior-period comparison.',
+          style: '',
+          html: `<div class="flex items-center justify-between">
+            <span class="text-xs font-medium text-slate-500">Net Dollar Retention</span>
+            <span class="px-2 py-0.5 text-xs font-bold rounded-full bg-emerald-500/15 text-emerald-600 flex items-center gap-0.5">▲ +14.8%</span>
+          </div>
+          <div class="text-3xl font-extrabold font-mono-num mt-2 text-emerald-600">128.4%</div>
+          <div class="text-[11px] text-slate-400 mt-1">vs 113.6% benchmark last quarter</div>`
+        },
+        {
+          name: 'Sparkline Area KPI Card',
+          desc: 'Inline SVG area trend embedded directly under headline KPI.',
+          style: '',
+          html: `<div class="flex justify-between items-baseline">
+            <span class="text-xs font-medium text-slate-500">API Requests / Min</span>
+            <span class="text-xs font-bold text-cyan-600">+22.4%</span>
+          </div>
+          <div class="text-2xl font-extrabold font-mono-num my-1">${api[7]}k</div>
+          ${svgSparkline(api, '#06b6d4', true)}`
+        },
+        {
+          name: 'Progress Bar KPI Card',
+          desc: 'Quota attainment tracker with linear completion bar.',
+          style: '',
+          html: `<div class="flex justify-between text-xs font-semibold">
+            <span>Q4 Sales Quota</span><span class="text-indigo-600 font-mono-num">$4.2M / $5.0M</span>
+          </div>
+          <div class="text-2xl font-extrabold font-mono-num my-1.5">84.0%</div>
+          <div class="w-full h-2.5 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+            <div class="h-full rounded-full bg-gradient-to-r from-indigo-500 to-cyan-400" style="width:84%"></div>
+          </div>`
+        },
+        {
+          name: 'Vibrant Gradient KPI Card',
+          desc: 'High-contrast executive spotlight card for flagship metrics.',
+          style: '!bg-gradient-to-br !from-indigo-600 !via-purple-600 !to-pink-600 !text-white !border-0',
+          html: `<div class="flex justify-between items-center opacity-90 text-xs font-semibold">
+            <span>ANNUAL RECURRING REVENUE</span><span>FY26</span>
+          </div>
+          <div class="text-3xl font-extrabold font-mono-num mt-2">$18.94M</div>
+          <div class="mt-3 flex items-center gap-2 text-xs bg-white/15 px-2.5 py-1 rounded-lg w-fit">
+            <span>▲ $2.41M net new ARR</span>
+          </div>`
+        },
+        {
+          name: 'Solid Emerald KPI Card',
+          desc: 'High-visibility solid status card for positive cash positions.',
+          style: '!bg-emerald-600 !text-white !border-0',
+          html: `<div class="text-xs font-bold uppercase tracking-wider opacity-85">Free Cash Flow</div>
+          <div class="text-3xl font-extrabold font-mono-num mt-1">$4,820,500</div>
+          <div class="text-xs opacity-90 mt-2">Operating margin expanded +310 bps</div>`
+        },
+        {
+          name: 'Dark Cyber Telemetry KPI',
+          desc: 'Control-room aesthetic with neon cyan telemetry accents.',
+          style: 'dark-panel',
+          html: `<div class="flex justify-between items-center">
+            <span class="text-xs text-cyan-400 font-mono-num uppercase">Cluster Compute</span>
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+          </div>
+          <div class="text-3xl font-extrabold font-mono-num text-white mt-1">99.994%</div>
+          <div class="mt-2">${svgSparkline([99.9,99.95,99.92,99.98,99.99,99.994], '#22d3ee', false, 140, 26)}</div>`
+        },
+        {
+          name: 'Border-Accent Left KPI',
+          desc: 'Thick left semantic border indicating SLA warning threshold.',
+          style: '!border-l-4 !border-l-amber-500',
+          html: `<div class="text-xs font-semibold text-amber-600">Pending Claims Review</div>
+          <div class="text-2xl font-extrabold font-mono-num mt-1">1,284 Cases</div>
+          <div class="text-xs text-slate-500 mt-1">Avg queue wait: <strong class="text-amber-600">18m 40s</strong></div>`
+        },
+        {
+          name: 'Multi-Metric Split KPI',
+          desc: 'Three correlated sub-metrics inside a unified summary card.',
+          style: '',
+          html: `<div class="text-xs font-bold text-slate-500 mb-2">Order Fulfillment Velocity</div>
+          <div class="grid grid-cols-3 divide-x divide-slate-200 dark:divide-slate-700 text-center">
+            <div class="pr-1"><div class="text-lg font-extrabold font-mono-num text-indigo-600">1.4h</div><div class="text-[10px] text-slate-400">Pick</div></div>
+            <div class="px-1"><div class="text-lg font-extrabold font-mono-num text-cyan-600">3.2h</div><div class="text-[10px] text-slate-400">Pack</div></div>
+            <div class="pl-1"><div class="text-lg font-extrabold font-mono-num text-emerald-600">14h</div><div class="text-[10px] text-slate-400">Transit</div></div>
+          </div>`
+        },
+        {
+          name: 'Target vs Achieved KPI',
+          desc: 'Explicit goal benchmark with variance indicator.',
+          style: 'soft-emerald',
+          html: `<div class="flex justify-between text-xs"><span class="text-slate-500">Achieved</span><span class="font-bold text-emerald-600">106.2% of Goal</span></div>
+          <div class="flex items-baseline gap-2 mt-1">
+            <span class="text-2xl font-extrabold font-mono-num">$956K</span>
+            <span class="text-xs text-slate-400 line-through">$900K</span>
+          </div>
+          <div class="text-[11px] text-emerald-700 dark:text-emerald-400 mt-2 font-medium">+$56,000 surplus above target</div>`
+        },
+        {
+          name: 'Revenue vs Expense Dual KPI',
+          desc: 'Side-by-side gross inflow versus operating outflow.',
+          style: '',
+          html: `<div class="grid grid-cols-2 gap-2">
+            <div class="p-2 rounded-lg bg-emerald-500/10">
+              <div class="text-[10px] font-bold text-emerald-600 uppercase">Revenue</div>
+              <div class="text-base font-extrabold font-mono-num mt-0.5">$${rev[7]}0K</div>
+            </div>
+            <div class="p-2 rounded-lg bg-rose-500/10">
+              <div class="text-[10px] font-bold text-rose-600 uppercase">Expense</div>
+              <div class="text-base font-extrabold font-mono-num mt-0.5">$${exp[7]}0K</div>
+            </div>
+          </div>
+          <div class="text-xs text-slate-500 mt-2 flex justify-between"><span>Net Surplus</span><strong class="text-indigo-600 font-mono-num">+$${(rev[7]-exp[7]).toFixed(1)}0K</strong></div>`
+        },
+        {
+          name: 'Circular Ring KPI Card',
+          desc: 'Radial SVG progress ring paired with SLA compliance text.',
+          style: '',
+          html: `<div class="flex items-center gap-3">
+            <svg class="w-16 h-16 -rotate-90" viewBox="0 0 36 36">
+              <circle cx="18" cy="18" r="15" fill="none" stroke="currentColor" stroke-opacity="0.12" stroke-width="3.5"/>
+              <circle cx="18" cy="18" r="15" fill="none" stroke="#8b5cf6" stroke-width="3.5" stroke-dasharray="86 100" stroke-linecap="round"/>
+            </svg>
+            <div>
+              <div class="text-xl font-extrabold font-mono-num">86.4%</div>
+              <div class="text-xs font-semibold">Auto-Adjudicated</div>
+              <div class="text-[10px] text-slate-400">Zero manual touch</div>
+            </div>
+          </div>`
+        },
+        {
+          name: 'Animated Counter KPI',
+          desc: 'Live ticking transaction volume counter with pulse indicator.',
+          style: '',
+          html: `<div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-500">Live Ledger Events</span>
+            <span class="px-1.5 py-0.5 text-[10px] font-bold bg-indigo-500/15 text-indigo-600 rounded">STREAMING</span>
+          </div>
+          <div id="live-counter-val" class="text-3xl font-extrabold font-mono-num mt-1.5 text-indigo-600">2,849,104</div>
+          <div class="text-[11px] text-slate-400 mt-1">+42 events / sec throughput</div>`
+        },
+        {
+          name: 'Compact Pill Metric Card',
+          desc: 'High-density micro KPI tile for executive command strips.',
+          style: 'soft-amber',
+          html: `<div class="flex items-center justify-between">
+            <div>
+              <div class="text-[11px] font-bold uppercase text-amber-700 dark:text-amber-400">Churn Risk Score</div>
+              <div class="text-2xl font-extrabold font-mono-num mt-0.5">1.82%</div>
+            </div>
+            <span class="px-2.5 py-1 rounded-lg bg-amber-500 text-white text-xs font-bold">-0.4%</span>
+          </div>`
+        },
+        {
+          name: 'Large Hero Metric Card',
+          desc: 'Oversized typographic focal card with subtle grid watermark.',
+          style: '',
+          html: `<div class="text-xs uppercase tracking-widest text-slate-400 font-bold">Total Assets Under Management</div>
+          <div class="text-4xl font-black font-mono-num tracking-tight bg-gradient-to-r from-indigo-600 to-cyan-500 bg-clip-text text-transparent mt-1">$4.92B</div>
+          <div class="text-xs text-emerald-600 font-semibold mt-1">▲ +$310M YoY Net Inflows</div>`
+        }
+      ]
+    },
+
+    /* ========================================================================
+       B. LINE CHARTS (12 Variations)
+       ======================================================================== */
+    {
+      id: 'sec-line',
+      title: 'B. Line Charts (SVG & Canvas)',
+      badge: '12 Variations',
+      grid: 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4',
+      items: [
+        {
+          name: 'Basic Linear Trend Line',
+          desc: 'Crisp polygonal SVG line connecting monthly revenue checkpoints.',
+          html: buildLineChart({ series: [{ name: 'Revenue', data: rev, color: '#4f46e5' }], labels: months })
+        },
+        {
+          name: 'Smooth Cubic Bezier Line',
+          desc: 'Catmull-Rom spline interpolation for organic velocity curves.',
+          html: buildLineChart({ series: [{ name: 'Active Users', data: api, color: '#06b6d4' }], labels: months, mode: 'smooth' })
+        },
+        {
+          name: 'Multi-Series Comparison Line',
+          desc: 'Three business units plotted simultaneously with hover tooltips.',
+          html: buildLineChart({
+            series: [
+              { name: 'Enterprise', data: rev, color: '#4f46e5' },
+              { name: 'Mid-Market', data: exp, color: '#10b981' },
+              { name: 'SMB', data: getData([22,28,25,31,29,38,41,45]), color: '#f59e0b' }
+            ], labels: months, mode: 'smooth'
+          })
+        },
+        {
+          name: 'Gradient-Filled Area Line',
+          desc: 'Vertical linear gradient fade beneath primary spline curve.',
+          html: buildLineChart({ series: [{ name: 'ARR Run-Rate', data: rev, color: '#8b5cf6' }], labels: months, mode: 'smooth', gradient: true })
+        },
+        {
+          name: 'Dashed Forecast vs Actual Line',
+          desc: 'Solid historical line paired with dashed predictive projection.',
+          html: buildLineChart({
+            series: [
+              { name: 'Actual', data: rev, color: '#2563eb' },
+              { name: 'Forecast', data: getData([45,52,55,64,76,85,92,106]), color: '#f43f5e', dashed: true }
+            ], labels: months
+          })
+        },
+        {
+          name: 'Stepped Rate & Tier Line',
+          desc: 'Discrete step transitions ideal for pricing tiers and SLAs.',
+          html: buildLineChart({ series: [{ name: 'Server Nodes', data: [12,12,18,18,24,32,32,40], color: '#14b8a6' }], labels: months, mode: 'step', fill: true })
+        },
+        {
+          name: 'Peak-Highlighted Anomaly Line',
+          desc: 'Automatically flags and annotates maximum telemetry spike.',
+          html: buildLineChart({ series: [{ name: 'Latency ms', data: getData([34,41,38,89,44,39,52,41]), color: '#6366f1' }], labels: months, highlightPeak: true })
+        },
+        {
+          name: 'Dual-Axis Scale Line Chart',
+          desc: 'Left axis tracks volume ($K) while right axis tracks margin (%).',
+          html: buildLineChart({
+            series: [
+              { name: 'Volume ($K)', data: rev, color: '#4f46e5' },
+              { name: 'Margin (%)', data: getData([28,31,30,36,41,44,43,49]), color: '#06b6d4', dashed: true }
+            ], labels: months, mode: 'smooth', dualAxis: true
+          })
+        },
+        {
+          name: 'Dark Control-Center Telemetry Line',
+          desc: 'High-contrast dark panel for real-time NOC monitoring.',
+          style: 'dark-panel',
+          html: buildLineChart({
+            series: [
+              { name: 'Inbound Gbps', data: api, color: '#22d3ee' },
+              { name: 'Outbound Gbps', data: rev.map(v => +(v*1.8).toFixed(1)), color: '#f43f5e' }
+            ], labels: months, mode: 'smooth', gradient: true
+          })
+        },
+        {
+          name: 'Real-Time Live Canvas Oscilloscope',
+          desc: '60fps HTML5 Canvas streaming telemetry waveform.',
+          html: `<canvas id="live-canvas-line" width="360" height="145" class="w-full h-40 rounded-lg bg-slate-950/5 dark:bg-slate-950/50"></canvas>`
+        },
+        {
+          name: 'Minimalist Micro-Sparkline Grid',
+          desc: 'Six compact trend sparklines for rapid portfolio scanning.',
+          html: `<div class="grid grid-cols-2 gap-3 pt-1">
+            ${[
+              ['Compute', '+12%', '#4f46e5', [12,15,14,18,22,25]],
+              ['Storage', '+8%', '#06b6d4', [40,42,45,44,48,51]],
+              ['Bandwidth', '-3%', '#f43f5e', [32,30,29,31,27,26]],
+              ['IOPS', '+29%', '#10b981', [18,21,26,25,33,39]]
+            ].map(([lbl, d, col, arr]) => `<div class="p-2 rounded-lg border border-slate-200/60 dark:border-slate-700/60">
+              <div class="flex justify-between text-[11px] font-semibold"><span>${lbl}</span><span style="color:${col}">${d}</span></div>
+              ${svgSparkline(arr, col, true, 120, 28)}
+            </div>`).join('')}
+          </div>`
+        },
+        {
+          name: 'Interactive Dataset Toggle Line',
+          desc: 'Switch live SVG series between Revenue, Expenses, and API Load.',
+          html: `<div class="flex gap-1.5 mb-2">
+            <button onclick="switchLineDs('rev')" class="px-2 py-0.5 text-[11px] font-semibold rounded bg-indigo-600 text-white cursor-pointer">Revenue</button>
+            <button onclick="switchLineDs('exp')" class="px-2 py-0.5 text-[11px] font-semibold rounded bg-emerald-600 text-white cursor-pointer">Expenses</button>
+            <button onclick="switchLineDs('api')" class="px-2 py-0.5 text-[11px] font-semibold rounded bg-cyan-600 text-white cursor-pointer">API Load</button>
+          </div>
+          <div id="interactive-line-slot">${buildLineChart({ series: [{ name: 'Selected Metric', data: state.activeDataset==='exp'?exp:state.activeDataset==='api'?api:rev, color: '#4f46e5' }], labels: months, mode: 'smooth', gradient: true })}</div>`
+        }
+      ]
+    },
+
+    /* ========================================================================
+       C. AREA CHARTS (8 Variations)
+       ======================================================================== */
+    {
+      id: 'sec-area',
+      title: 'C. Area Charts',
+      badge: '8 Variations',
+      grid: 'grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4',
+      items: [
+        {
+          name: 'Basic Polygonal Area',
+          desc: 'Classic filled region highlighting total volume under curve.',
+          html: buildAreaChart({ series: [{ name: 'Sessions', data: getData([25,38,32,49,56,64]), color: '#4f46e5' }], mode: 'linear' })
+        },
+        {
+          name: 'Smooth Spline Area',
+          desc: 'Curved organic contour with translucent indigo gradient.',
+          html: buildAreaChart({ series: [{ name: 'Organic Traffic', data: getData([30,42,48,44,61,75]), color: '#06b6d4' }], mode: 'smooth' })
+        },
+        {
+          name: 'Stacked Multi-Channel Area',
+          desc: 'Cumulative contribution across Cloud, License, and Services.',
+          html: buildAreaChart({
+            series: [
+              { name: 'Cloud', data: getData([20,25,28,34,39,45]), color: '#4f46e5' },
+              { name: 'License', data: getData([15,18,19,22,24,28]), color: '#06b6d4' },
+              { name: 'Services', data: getData([10,12,14,15,18,21]), color: '#10b981' }
+            ], stacked: true
+          })
+        },
+        {
+          name: '100% Normalized Area',
+          desc: 'Proportional share evolution summing to 100% every period.',
+          html: buildAreaChart({
+            series: [
+              { name: 'North America', data: [48,46,44,42,40,39], color: '#6366f1' },
+              { name: 'EMEA', data: [32,33,34,35,36,36], color: '#f59e0b' },
+              { name: 'APAC', data: [20,21,22,23,24,25], color: '#10b981' }
+            ], percent: true
+          })
+        },
+        {
+          name: 'Overlapping Translucent Area',
+          desc: 'Unstacked alpha-blended layers comparing two cohorts.',
+          html: buildAreaChart({
+            series: [
+              { name: '2026 Cohort', data: getData([35,48,54,67,79,88]), color: '#ec4899' },
+              { name: '2025 Cohort', data: getData([28,34,39,45,51,58]), color: '#3b82f6' }
+            ], stacked: false
+          })
+        },
+        {
+          name: 'Cumulative YTD Growth Area',
+          desc: 'Monotonically rising cumulative bookings trajectory.',
+          html: buildAreaChart({ series: [{ name: 'YTD Bookings ($M)', data: [1.2,2.8,4.9,7.6,10.8,14.9], color: '#10b981' }], mode: 'smooth' })
+        },
+        {
+          name: 'Dark Neon Gradient Area',
+          desc: 'High-drama dark surface area chart for executive presentations.',
+          style: 'dark-panel',
+          html: buildAreaChart({ series: [{ name: 'GPU Utilization', data: getData([52,64,61,78,84,92]), color: '#a855f7' }], mode: 'smooth' })
+        },
+        {
+          name: 'Stepped Cumulative Area',
+          desc: 'Block-stepped area showing discrete inventory buildup.',
+          html: buildAreaChart({ series: [{ name: 'Stock Units', data: [18,26,26,41,53,68], color: '#f97316' }], mode: 'linear' })
+        }
+      ]
+    },
+
+    /* ========================================================================
+       D. BAR CHARTS (12 Variations)
+       ======================================================================== */
+    {
+      id: 'sec-bar',
+      title: 'D. Bar & Column Charts',
+      badge: '12 Variations',
+      grid: 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4',
+      items: [
+        {
+          name: 'Vertical Column Chart',
+          desc: 'Standard monthly performance bars with value labels.',
+          html: buildBarChart({ labels: ['Jan','Feb','Mar','Apr','May','Jun'], datasets: [{ name: 'Sales', data: getData([44,58,52,71,68,84]), color: '#4f46e5' }] })
+        },
+        {
+          name: 'Horizontal Ranked Bar Chart',
+          desc: 'Ideal for long category labels and regional leaderboards.',
+          html: buildBarChart({ labels: ['USA','Germany','UAE','India','Japan'], datasets: [{ name: 'ARR ($M)', data: getData([88,64,59,51,43]) }], horizontal: true })
+        },
+        {
+          name: 'Grouped Multi-Series Bar',
+          desc: 'Side-by-side Q1 vs Q2 comparison across departments.',
+          html: buildBarChart({
+            labels: ['Eng','Sales','Mktg','Ops','HR'],
+            datasets: [
+              { name: 'Budget', data: getData([80,65,50,45,30]), color: '#6366f1' },
+              { name: 'Actual', data: getData([76,72,48,43,29]), color: '#06b6d4' }
+            ]
+          })
+        },
+        {
+          name: 'Stacked Column Chart',
+          desc: 'Total height shows aggregate volume; segments show mix.',
+          html: buildBarChart({
+            labels: ['Q1','Q2','Q3','Q4'],
+            datasets: [
+              { name: 'SaaS', data: getData([35,42,48,58]), color: '#4f46e5' },
+              { name: 'API', data: getData([18,24,29,36]), color: '#10b981' },
+              { name: 'Support', data: getData([12,14,15,18]), color: '#f59e0b' }
+            ], stacked: true
+          })
+        },
+        {
+          name: '100% Stacked Composition Bar',
+          desc: 'Relative percentage breakdown across four quarters.',
+          html: buildBarChart({
+            labels: ['Q1','Q2','Q3','Q4'],
+            datasets: [
+              { name: 'Direct', data: [55,50,46,42], color: '#2563eb' },
+              { name: 'Partner', data: [30,33,36,38], color: '#8b5cf6' },
+              { name: 'Self-Serve', data: [15,17,18,20], color: '#ec4899' }
+            ], percent: true
+          })
+        },
+        {
+          name: 'Pill-Rounded Gradient Bar',
+          desc: 'Modern soft-rounded columns with indigo-to-cyan gradient.',
+          html: buildBarChart({ labels: ['Mon','Tue','Wed','Thu','Fri','Sat'], datasets: [{ name: 'Tickets', data: getData([62,85,78,94,88,45]) }], rounded: true, gradient: true })
+        },
+        {
+          name: 'Positive / Negative Diverging Bar',
+          desc: 'Visualizes net variance above and below zero baseline.',
+          html: buildBarChart({ labels: ['Jan','Feb','Mar','Apr','May','Jun'], datasets: [{ name: 'Variance', data: [14, -8, 22, -12, 19, 28] }], diverging: true })
+        },
+        {
+          name: 'Financial Bridge Waterfall Chart',
+          desc: 'Explains cumulative bridge from Starting ARR to Ending ARR.',
+          html: buildBarChart({ labels: ['Start','New','Expn','Churn','End'], datasets: [{ data: [60, 28, 16, -14, 0] }], waterfall: true })
+        },
+        {
+          name: 'Floating Min-Max Range Bar',
+          desc: 'Displays daily latency spread between P10 and P99 bounds.',
+          html: buildBarChart({
+            labels: ['Mon','Tue','Wed','Thu','Fri'],
+            datasets: [
+              { name: 'Min', data: [18, 22, 15, 25, 19] },
+              { name: 'Max', data: [64, 78, 59, 92, 71] }
+            ], range: true
+          })
+        },
+        {
+          name: 'Multicolor Category Spectrum Bar',
+          desc: 'Distinct vibrant hue per product line for instant recognition.',
+          html: buildBarChart({ labels: ['Core','AI','Pay','Vault','Edge'], datasets: [{ name: 'Score', data: getData([91,84,76,68,82]) }], rounded: true })
+        },
+        {
+          name: 'Dark Telemetry Bar Panel',
+          desc: 'High-contrast dark card for infrastructure throughput bars.',
+          style: 'dark-panel',
+          html: buildBarChart({ labels: ['US-E','EU-C','AP-S','ME-1','US-W'], datasets: [{ name: 'Nodes', data: getData([94,82,76,65,88]), color: '#22d3ee' }], rounded: true })
+        },
+        {
+          name: 'Compact Inline Spark-Bars',
+          desc: 'Ultra-dense mini bar strips for tabular and sidebar widgets.',
+          html: `<div class="space-y-3 pt-1">
+            ${[
+              ['CPU Cluster A', [45,62,58,74,81,69,88,92], '#4f46e5'],
+              ['Memory Pool B', [52,55,60,58,64,71,73,76], '#10b981'],
+              ['Disk I/O Queue', [22,38,45,31,68,54,42,39], '#f59e0b']
+            ].map(([name, arr, col]) => `<div>
+              <div class="flex justify-between text-xs font-semibold mb-1"><span>${name}</span><span class="font-mono-num">${arr[arr.length-1]}%</span></div>
+              <div class="flex items-end gap-1 h-7">${arr.map(v => `<div class="flex-1 rounded-t" style="height:${v}%;background:${col}" data-tip="${name}: ${v}%"></div>`).join('')}</div>
+            </div>`).join('')}
+          </div>`
+        }
+      ]
+    },
+
+    /* ========================================================================
+       E. CIRCULAR AND RADIAL CHARTS (10 Variations)
+       ======================================================================== */
+    {
+      id: 'sec-radial',
+      title: 'E. Circular, Donut & Gauge Charts',
+      badge: '10 Variations',
+      grid: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4',
+      items: [
+        {
+          name: 'Classic Pie Chart',
+          desc: 'Solid wedge breakdown of cloud infrastructure spend.',
+          html: buildCircularChart({ segments: [
+            { label: 'Compute', value: 44, color: '#4f46e5' },
+            { label: 'Storage', value: 26, color: '#06b6d4' },
+            { label: 'Network', value: 18, color: '#10b981' },
+            { label: 'AI GPU', value: 12, color: '#f59e0b' }
+          ]})
+        },
+        {
+          name: 'Executive Donut Chart',
+          desc: 'Hollow center displaying total portfolio valuation.',
+          html: buildCircularChart({ donut: true, centerLabel: '$8.4M', centerSub: 'Total Spend', segments: [
+            { label: 'R&D', value: 48, color: '#6366f1' },
+            { label: 'Sales', value: 32, color: '#ec4899' },
+            { label: 'G&A', value: 20, color: '#14b8a6' }
+          ]})
+        },
+        {
+          name: 'Semi-Donut Arch Chart',
+          desc: '180-degree half-ring ideal for compact top-level summaries.',
+          html: buildCircularChart({ semi: true, centerLabel: '92.4%', centerSub: 'CSAT Score', segments: [
+            { label: 'Promoters', value: 68, color: '#10b981' },
+            { label: 'Passives', value: 24, color: '#f59e0b' },
+            { label: 'Detractors', value: 8, color: '#f43f5e' }
+          ]})
+        },
+        {
+          name: 'Arc Gauge Meter',
+          desc: 'Clean rounded arc showing current capacity utilization.',
+          html: buildGauge(78, '#4f46e5', false)
+        },
+        {
+          name: 'Speedometer Needle Gauge',
+          desc: 'Tick-marked dial with physical needle pointer.',
+          html: buildGauge(86, '#10b981', true)
+        },
+        {
+          name: 'Concentric Multi-Ring Radial',
+          desc: 'Three nested circular rings comparing departmental OKRs.',
+          html: `<svg viewBox="0 0 180 155" class="w-full h-40">
+            ${[
+              [58, '#4f46e5', 85, 'Product 85%'],
+              [44, '#06b6d4', 72, 'Growth 72%'],
+              [30, '#f59e0b', 91, 'Ops 91%']
+            ].map(([r, col, pct, tip]) => {
+              const c = 2 * Math.PI * r;
+              return `<circle cx="90" cy="78" r="${r}" fill="none" stroke="currentColor" stroke-opacity="0.1" stroke-width="9"/>
+                <circle cx="90" cy="78" r="${r}" fill="none" stroke="${col}" stroke-width="9" stroke-dasharray="${(pct/100)*c} ${c}" stroke-linecap="round" transform="rotate(-90 90 78)" data-tip="${tip}"/>`;
+            }).join('')}
+          </svg>`
+        },
+        {
+          name: 'Segmented Radial Battery',
+          desc: '20 discrete radial ticks representing server health.',
+          html: `<svg viewBox="0 0 180 155" class="w-full h-40">
+            ${Array.from({length: 20}).map((_, i) => {
+              const a = (i / 20) * 360 - 90;
+              const active = i < 16;
+              return `<rect x="87" y="14" width="6" height="16" rx="3" fill="${active ? '#10b981' : 'rgba(148,163,184,0.25)'}" transform="rotate(${a} 90 78)" data-tip="Segment ${i+1}/20"/>`;
+            }).join('')}
+            <text x="90" y="83" text-anchor="middle" font-size="18" font-weight="800" fill="currentColor">80%</text>
+          </svg>`
+        },
+        {
+          name: 'Dark Neon Radial Ring',
+          desc: 'Glowing cyan circular gauge on dark slate panel.',
+          style: 'dark-panel',
+          html: buildGauge(94, '#22d3ee', false)
+        },
+        {
+          name: 'Dual-Metric Donut Pair',
+          desc: 'Side-by-side mini rings comparing SLA vs Error Budget.',
+          html: `<div class="grid grid-cols-2 gap-2 pt-3">
+            ${[['SLA', 99, '#10b981'], ['Budget', 64, '#f59e0b']].map(([lbl, pct, col]) => `<div class="text-center">
+              <svg viewBox="0 0 80 80" class="w-20 h-20 mx-auto">
+                <circle cx="40" cy="40" r="30" fill="none" stroke="currentColor" stroke-opacity="0.12" stroke-width="8"/>
+                <circle cx="40" cy="40" r="30" fill="none" stroke="${col}" stroke-width="8" stroke-dasharray="${(pct/100)*188.5} 188.5" stroke-linecap="round" transform="rotate(-90 40 40)"/>
+                <text x="40" y="44" text-anchor="middle" font-size="13" font-weight="800" fill="currentColor">${pct}%</text>
+              </svg>
+              <div class="text-xs font-semibold mt-1">${lbl}</div>
+            </div>`).join('')}
+          </div>`
+        },
+        {
+          name: 'Radar Spider Polygon Chart',
+          desc: '5-axis capability scorecard comparing Vendor A vs Vendor B.',
+          html: `<svg viewBox="0 0 180 155" class="w-full h-40">
+            ${[20,40,60].map(r => `<polygon points="${[0,1,2,3,4].map(i => {
+              const a = (i * 72 - 90) * Math.PI / 180;
+              return `${90 + r*Math.cos(a)},${78 + r*Math.sin(a)}`;
+            }).join(' ')}" fill="none" stroke="currentColor" stroke-opacity="0.15"/>`).join('')}
+            <polygon points="${[52,48,56,42,50].map((r,i) => {
+              const a = (i * 72 - 90) * Math.PI / 180;
+              return `${90 + r*Math.cos(a)},${78 + r*Math.sin(a)}`;
+            }).join(' ')}" fill="rgba(79,70,229,0.28)" stroke="#4f46e5" stroke-width="2" data-tip="Enterprise Suite: 88 avg"/>
+            <polygon points="${[38,54,35,49,40].map((r,i) => {
+              const a = (i * 72 - 90) * Math.PI / 180;
+              return `${90 + r*Math.cos(a)},${78 + r*Math.sin(a)}`;
+            }).join(' ')}" fill="rgba(6,182,212,0.25)" stroke="#06b6d4" stroke-width="2" data-tip="Legacy Core: 74 avg"/>
+          </svg>`
+        }
+      ]
+    },
+
+    /* ========================================================================
+       F. PROGRESS VISUALIZATIONS (10 Variations)
+       ======================================================================== */
+    {
+      id: 'sec-progress',
+      title: 'F. Progress & Completion Indicators',
+      badge: '10 Variations',
+      grid: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4',
+      items: [
+        {
+          name: 'Interactive Slider Progress',
+          desc: 'Drag slider to test live bar width and percentage readout.',
+          html: `<div class="flex justify-between text-xs font-bold mb-1"><span>Interactive Load</span><span id="prog-live-lbl" class="text-indigo-600 font-mono-num">${state.progressOverride}%</span></div>
+            <div class="w-full h-3 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden mb-3">
+              <div id="prog-live-bar" class="h-full bg-indigo-600 transition-all" style="width:${state.progressOverride}%"></div>
+            </div>
+            <input type="range" min="5" max="100" value="${state.progressOverride}" oninput="updateInteractiveProgress(this.value)" class="w-full accent-indigo-600 cursor-pointer"/>`
+        },
+        {
+          name: 'Animated Striped Progress',
+          desc: 'Diagonal barber-pole animation indicating active batch job.',
+          html: `<div class="flex justify-between text-xs font-semibold mb-1.5"><span>ETL Pipeline Sync</span><span>68%</span></div>
+            <div class="w-full h-4 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+              <div class="h-full bg-emerald-500 progress-striped rounded-full" style="width:68%"></div>
+            </div>
+            <div class="text-[11px] text-slate-400 mt-2">Processing 1.4M rows...</div>`
+        },
+        {
+          name: 'Segmented Block Progress',
+          desc: '10 discrete pill blocks for milestone-based completion.',
+          html: `<div class="flex justify-between text-xs font-semibold mb-2"><span>Security Audit</span><span class="text-cyan-600">8 / 10</span></div>
+            <div class="grid grid-cols-10 gap-1">
+              ${Array.from({length:10}).map((_,i) => `<div class="h-5 rounded ${i<8 ? 'bg-cyan-500' : 'bg-slate-200 dark:bg-slate-700'}"></div>`).join('')}
+            </div>`
+        },
+        {
+          name: 'Multi-Color Stacked Bar',
+          desc: 'Single horizontal bar partitioned by storage allocation.',
+          html: `<div class="text-xs font-semibold mb-2">Cluster Storage (4.0 TB)</div>
+            <div class="w-full h-4 rounded-full overflow-hidden flex gap-0.5">
+              <div class="bg-indigo-600 h-full" style="width:42%" data-tip="Databases: 42%"></div>
+              <div class="bg-cyan-500 h-full" style="width:28%" data-tip="Backups: 28%"></div>
+              <div class="bg-amber-500 h-full" style="width:16%" data-tip="Logs: 16%"></div>
+              <div class="bg-slate-300 dark:bg-slate-700 h-full" style="width:14%" data-tip="Free: 14%"></div>
+            </div>
+            <div class="flex justify-between text-[10px] text-slate-400 mt-2"><span>DB 42%</span><span>Bak 28%</span><span>Log 16%</span><span>Free 14%</span></div>`
+        },
+        {
+          name: 'Target Benchmark Marker Bar',
+          desc: 'Vertical threshold marker showing expected pace vs actual.',
+          html: `<div class="flex justify-between text-xs font-semibold mb-2"><span>Sprint Velocity</span><span class="text-emerald-600">82% (Goal 75%)</span></div>
+            <div class="relative w-full h-4 rounded-full bg-slate-200 dark:bg-slate-700">
+              <div class="h-full rounded-full bg-gradient-to-r from-violet-600 to-indigo-500" style="width:82%"></div>
+              <div class="absolute -top-1 -bottom-1 w-1 bg-rose-500 rounded" style="left:75%" data-tip="Target Pace: 75%"></div>
+            </div>`
+        },
+        {
+          name: 'Vertical Column Progress',
+          desc: 'Four vertical tank indicators for regional warehouse fill.',
+          html: `<div class="grid grid-cols-4 gap-2 h-24 items-end text-center">
+            ${[['DXB',88,'#4f46e5'],['FRA',64,'#06b6d4'],['SIN',92,'#10b981'],['NYC',51,'#f59e0b']].map(([c,p,col]) => `<div>
+              <div class="w-6 mx-auto h-16 rounded-lg bg-slate-200 dark:bg-slate-700 flex items-end overflow-hidden">
+                <div class="w-full rounded-t" style="height:${p}%;background:${col}"></div>
+              </div>
+              <div class="text-[10px] font-bold mt-1">${c}</div>
+            </div>`).join('')}
+          </div>`
+        },
+        {
+          name: 'Multi-Stage Step Wizard',
+          desc: 'Connected node stepper tracking invoice approval workflow.',
+          html: `<div class="flex items-center justify-between pt-3">
+            ${['Draft','Audit','Sign','Paid'].map((st, i) => `
+              <div class="flex flex-col items-center z-10">
+                <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${i<3 ? 'bg-indigo-600 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-500'}">${i<3 ? '✓' : '4'}</div>
+                <span class="text-[10px] font-semibold mt-1">${st}</span>
+              </div>
+              ${i<3 ? `<div class="flex-1 h-1 -mx-2 mb-4 ${i<2 ? 'bg-indigo-600' : 'bg-slate-200 dark:bg-slate-700'}"></div>` : ''}
+            `).join('')}
+          </div>`
+        },
+        {
+          name: 'Indeterminate Stream Loader',
+          desc: 'Continuous sliding gradient bar for unknown queue lengths.',
+          html: `<div class="text-xs font-semibold mb-2">Syncing Webhook Stream...</div>
+            <div class="relative w-full h-2.5 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden progress-indeterminate"></div>
+            <div class="text-[11px] text-slate-400 mt-2">Awaiting upstream acknowledgment</div>`
+        },
+        {
+          name: 'Thin & Thick Micro-Bars',
+          desc: 'Contrasting stroke weights for primary vs secondary tasks.',
+          html: `<div class="space-y-3 pt-1">
+            <div><div class="text-[11px] flex justify-between mb-1"><span>Primary Index (Thick)</span><span>91%</span></div>
+            <div class="w-full h-4 rounded-md bg-slate-200 dark:bg-slate-700 overflow-hidden"><div class="h-full bg-pink-600" style="width:91%"></div></div></div>
+            <div><div class="text-[11px] flex justify-between mb-1"><span>Replica Sync (Hairline)</span><span>63%</span></div>
+            <div class="w-full h-1 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden"><div class="h-full bg-cyan-500" style="width:63%"></div></div></div>
+          </div>`
+        },
+        {
+          name: 'Milestone Flag Progress',
+          desc: 'Launch readiness bar annotated with Q1–Q4 gate markers.',
+          html: `<div class="text-xs font-semibold mb-3">Cloud Migration Readiness: 72%</div>
+            <div class="w-full h-3 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-amber-500 via-emerald-500 to-cyan-500" style="width:72%"></div>
+            </div>
+            <div class="flex justify-between text-[10px] font-bold text-slate-400 mt-1.5"><span>M1 ✓</span><span>M2 ✓</span><span>M3 ▶</span><span>Go-Live</span></div>`
+        }
+      ]
+    },
+
+    /* ========================================================================
+       G. COMPARISON VISUALIZATIONS (6 Variations)
+       ======================================================================== */
+    {
+      id: 'sec-compare',
+      title: 'G. Comparison, Bullet & Variance Charts',
+      badge: '6 Variations',
+      grid: 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4',
+      items: [
+        {
+          name: 'Before vs After Transformation',
+          desc: 'Latency reduction after edge caching deployment.',
+          html: `<div class="grid grid-cols-2 gap-3 items-center pt-1">
+            <div class="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-center">
+              <div class="text-[10px] font-bold text-rose-600 uppercase">Before</div>
+              <div class="text-2xl font-extrabold font-mono-num mt-1">412 ms</div>
+            </div>
+            <div class="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-center">
+              <div class="text-[10px] font-bold text-emerald-600 uppercase">After (-79%)</div>
+              <div class="text-2xl font-extrabold font-mono-num mt-1 text-emerald-600">86 ms</div>
+            </div>
+          </div>`
+        },
+        {
+          name: 'Stephen Few Bullet Chart',
+          desc: 'Qualitative performance bands with actual bar and target marker.',
+          html: `<div class="space-y-3 pt-1">
+            ${[['Revenue', 84, 78, '#4f46e5'], ['Margin', 68, 75, '#06b6d4'], ['NPS', 91, 85, '#10b981']].map(([lbl, act, tgt, col]) => `<div>
+              <div class="flex justify-between text-xs font-semibold mb-1"><span>${lbl}</span><span class="font-mono-num">${act}% / ${tgt}%</span></div>
+              <div class="relative h-5 rounded bg-slate-200 dark:bg-slate-700 overflow-hidden">
+                <div class="absolute inset-y-0 left-0 bg-slate-300/70 dark:bg-slate-600/60" style="width:85%"></div>
+                <div class="relative h-2.5 mt-1.5 rounded-r" style="width:${act}%;background:${col}"></div>
+                <div class="absolute top-0.5 bottom-0.5 w-1 bg-rose-600" style="left:${tgt}%"></div>
+              </div>
+            </div>`).join('')}
+          </div>`
+        },
+        {
+          name: 'Two-Sided Butterfly Comparison',
+          desc: 'Opposing horizontal bars comparing Male vs Female demographics.',
+          html: `<div class="space-y-2 pt-1 text-xs">
+            ${[['18-24', 42, 48], ['25-34', 78, 84], ['35-44', 65, 61], ['45+', 38, 34]].map(([age, l, r]) => `<div class="grid grid-cols-9 items-center gap-1">
+              <div class="col-span-3 flex justify-end"><div class="h-3.5 rounded-l bg-indigo-500" style="width:${l}%"></div></div>
+              <div class="col-span-3 text-center font-mono-num text-[11px] font-bold">${age}</div>
+              <div class="col-span-3 flex justify-start"><div class="h-3.5 rounded-r bg-pink-500" style="width:${r}%"></div></div>
+            </div>`).join('')}
+          </div>`
+        },
+        {
+          name: 'Year-over-Year (YoY) Delta Matrix',
+          desc: 'Quarterly revenue comparison with percentage delta badges.',
+          html: `<div class="space-y-2 text-xs">
+            ${[['Q1', '$2.1M', '$2.6M', '+23.8%'], ['Q2', '$2.4M', '$2.9M', '+20.8%'], ['Q3', '$2.3M', '$3.1M', '+34.7%']].map(([q, y25, y26, d]) => `<div class="flex items-center justify-between p-2 rounded-lg bg-slate-500/5">
+              <span class="font-bold">${q}</span>
+              <span class="text-slate-400 font-mono-num">${y25} → <strong class="text-slate-800 dark:text-white">${y26}</strong></span>
+              <span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-600 font-bold">${d}</span>
+            </div>`).join('')}
+          </div>`
+        },
+        {
+          name: 'This Month vs Last Month Overlay',
+          desc: 'Overlapping progress bars showing current month pace.',
+          html: `<div class="space-y-3 pt-1">
+            ${[['New Signups', 88, 72], ['Upgrades', 64, 79], ['Renewals', 94, 86]].map(([m, cur, prev]) => `<div>
+              <div class="flex justify-between text-xs mb-1"><span>${m}</span><span class="font-mono-num">Now ${cur}% vs Prev ${prev}%</span></div>
+              <div class="relative h-3 rounded-full bg-slate-200 dark:bg-slate-700">
+                <div class="absolute inset-y-0 left-0 rounded-full bg-slate-400/50" style="width:${prev}%"></div>
+                <div class="relative h-2 mt-0.5 rounded-full bg-indigo-600" style="width:${cur}%"></div>
+              </div>
+            </div>`).join('')}
+          </div>`
+        },
+        {
+          name: 'Positive vs Negative Sentiment Split',
+          desc: 'Opposing polarity bar for customer feedback classification.',
+          html: `<div class="pt-2">
+            <div class="flex justify-between text-xs font-bold mb-1.5"><span class="text-emerald-600">Positive 76%</span><span class="text-rose-600">Negative 24%</span></div>
+            <div class="w-full h-5 rounded-lg overflow-hidden flex">
+              <div class="bg-emerald-500 h-full flex items-center pl-2 text-[10px] font-bold text-white" style="width:76%">14,210</div>
+              <div class="bg-rose-500 h-full flex items-center justify-end pr-2 text-[10px] font-bold text-white" style="width:24%">4,480</div>
+            </div>
+          </div>`
+        }
+      ]
+    },
+
+    /* ========================================================================
+       H. FUNNEL AND PIPELINE CHARTS (6 Variations)
+       ======================================================================== */
+    {
+      id: 'sec-funnel',
+      title: 'H. Funnel & Pipeline Visualizations',
+      badge: '6 Variations',
+      grid: 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4',
+      items: [
+        {
+          name: 'Classic Tapered Sales Funnel',
+          desc: 'Trapezoid SVG stages showing B2B lead-to-close conversion.',
+          html: `<svg viewBox="0 0 320 155" class="w-full h-40">
+            ${[
+              ['Leads (12,400)', 290, 230, 0, '#4f46e5'],
+              ['Qualified (6,820)', 230, 175, 38, '#6366f1'],
+              ['Proposal (3,190)', 175, 125, 76, '#06b6d4'],
+              ['Closed Won (1,480)', 125, 85, 114, '#10b981']
+            ].map(([lbl, w1, w2, y, col]) => `<polygon points="${160-w1/2},${y} ${160+w1/2},${y} ${160+w2/2},${y+34} ${160-w2/2},${y+34}" fill="${col}" rx="4" data-tip="${lbl}"/>
+              <text x="160" y="${y+21}" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">${lbl}</text>`).join('')}
+          </svg>`
+        },
+        {
+          name: 'Claims Adjudication Funnel',
+          desc: 'Insurance claim intake through automated settlement.',
+          html: `<div class="space-y-1.5 pt-1">
+            ${[
+              ['Submitted Claims', '18,500', '100%', '#3b82f6'],
+              ['Policy Verified', '16,940', '91.5%', '#6366f1'],
+              ['Medical Audit Passed', '14,120', '76.3%', '#8b5cf6'],
+              ['Disbursed & Settled', '13,480', '72.8%', '#10b981']
+            ].map(([st, cnt, pct, col]) => `<div class="mx-auto rounded-lg px-3 py-1.5 text-white text-xs font-semibold flex justify-between" style="width:${pct};background:${col}">
+              <span class="truncate">${st}</span><span class="font-mono-num">${cnt}</span>
+            </div>`).join('')}
+          </div>`
+        },
+        {
+          name: 'Horizontal Pipeline Stages',
+          desc: 'Left-to-right chevron stage flow with drop-off rates.',
+          html: `<div class="grid grid-cols-4 gap-1.5 pt-4 text-center">
+            ${[['Visit','100%','#4f46e5'],['Trial','42%','#06b6d4'],['Demo','19%','#8b5cf6'],['Paid','8.4%','#10b981']].map(([s,p,c]) => `<div class="p-2.5 rounded-xl text-white" style="background:${c}">
+              <div class="text-[10px] uppercase opacity-85">${s}</div>
+              <div class="text-lg font-extrabold font-mono-num mt-1">${p}</div>
+            </div>`).join('')}
+          </div>`
+        },
+        {
+          name: 'Inverted Expansion Pyramid',
+          desc: 'Bottom-up revenue expansion from Free tier to Enterprise.',
+          html: `<svg viewBox="0 0 320 150" class="w-full h-36">
+            ${[
+              ['Enterprise ($9.2M)', 280, 220, 112, '#4f46e5'],
+              ['Business ($4.8M)', 220, 160, 75, '#06b6d4'],
+              ['Pro ($2.1M)', 160, 100, 38, '#10b981'],
+              ['Starter ($0.6M)', 100, 45, 1, '#f59e0b']
+            ].map(([lbl, w2, w1, y, col]) => `<polygon points="${160-w1/2},${y} ${160+w1/2},${y} ${160+w2/2},${y+34} ${160-w2/2},${y+34}" fill="${col}"/>
+              <text x="160" y="${y+21}" text-anchor="middle" font-size="10.5" font-weight="700" fill="#fff">${lbl}</text>`).join('')}
+          </svg>`
+        },
+        {
+          name: 'Stage Drop-Off Leakage Bar',
+          desc: 'Explicitly highlights lost vs retained users at every step.',
+          html: `<div class="space-y-2.5 pt-1 text-xs">
+            ${[['Cart → Shipping', 78], ['Shipping → Payment', 64], ['Payment → Confirmed', 91]].map(([step, keep]) => `<div>
+              <div class="flex justify-between mb-1"><span>${step}</span><span class="text-rose-500 font-bold">-${100-keep}% drop</span></div>
+              <div class="w-full h-3 rounded-full bg-rose-500/20 overflow-hidden"><div class="h-full bg-emerald-500" style="width:${keep}%"></div></div>
+            </div>`).join('')}
+          </div>`
+        },
+        {
+          name: 'Deal Velocity Kanban Pipeline',
+          desc: 'Weighted pipeline dollar value across active CRM columns.',
+          html: `<div class="grid grid-cols-3 gap-2 text-xs pt-1">
+            ${[['Discovery','$1.4M','24 deals','border-indigo-500'],['Negotiation','$2.8M','11 deals','border-amber-500'],['Commit','$1.9M','7 deals','border-emerald-500']].map(([st,val,cnt,b]) => `<div class="p-2.5 rounded-lg border-t-4 ${b} bg-slate-500/5">
+              <div class="font-semibold text-[11px]">${st}</div>
+              <div class="text-base font-extrabold font-mono-num mt-1">${val}</div>
+              <div class="text-[10px] text-slate-400 mt-0.5">${cnt}</div>
+            </div>`).join('')}
+          </div>`
+        }
+      ]
+    },
+
+    /* ========================================================================
+       I. HIERARCHICAL VISUALIZATIONS (6 Variations)
+       ======================================================================== */
+    {
+      id: 'sec-hierarchy',
+      title: 'I. Hierarchical & Structural Visualizations',
+      badge: '6 Variations',
+      grid: 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4',
+      items: [
+        {
+          name: 'Proportional Portfolio Treemap',
+          desc: 'Area-encoded nested rectangles representing asset allocation.',
+          html: `<svg viewBox="0 0 320 150" class="w-full h-40 rounded-lg overflow-hidden">
+            <rect x="0" y="0" width="175" height="150" fill="#4f46e5" stroke="#fff" stroke-width="2" data-tip="Cloud Core: 54%"/>
+            <text x="12" y="24" fill="#fff" font-size="12" font-weight="700">Cloud Core (54%)</text>
+            <rect x="175" y="0" width="145" height="85" fill="#06b6d4" stroke="#fff" stroke-width="2" data-tip="AI Platform: 26%"/>
+            <text x="185" y="22" fill="#fff" font-size="11" font-weight="700">AI Platform (26%)</text>
+            <rect x="175" y="85" width="85" height="65" fill="#10b981" stroke="#fff" stroke-width="2" data-tip="Security: 12%"/>
+            <text x="183" y="106" fill="#fff" font-size="10" font-weight="700">Sec (12%)</text>
+            <rect x="260" y="85" width="60" height="65" fill="#f59e0b" stroke="#fff" stroke-width="2" data-tip="Edge: 8%"/>
+            <text x="267" y="106" fill="#fff" font-size="10" font-weight="700">Edge</text>
+          </svg>`
+        },
+        {
+          name: 'Multi-Tier Sunburst Chart',
+          desc: 'Concentric inner/outer rings mapping Division → Sub-product.',
+          html: `<svg viewBox="0 0 220 155" class="w-full h-40">
+            <circle cx="110" cy="78" r="24" fill="#4f46e5"/>
+            <text x="110" y="81" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">GROUP</text>
+            <path d="M110,42 A36,36 0 1,1 74,78" fill="none" stroke="#6366f1" stroke-width="18" data-tip="Americas 75%"/>
+            <path d="M74,78 A36,36 0 0,1 110,42" fill="none" stroke="#06b6d4" stroke-width="18" data-tip="EMEA 25%"/>
+            <path d="M110,20 A58,58 0 0,1 168,78" fill="none" stroke="#10b981" stroke-width="14" data-tip="US Enterprise"/>
+            <path d="M168,78 A58,58 0 0,1 110,136" fill="none" stroke="#f59e0b" stroke-width="14" data-tip="LATAM"/>
+            <path d="M110,136 A58,58 0 0,1 52,78" fill="none" stroke="#ec4899" stroke-width="14" data-tip="Canada"/>
+          </svg>`
+        },
+        {
+          name: 'Executive Org Chart Tree',
+          desc: 'Parent-child reporting hierarchy with connector lines.',
+          html: `<div class="flex flex-col items-center text-xs pt-1">
+            <div class="px-3 py-1 rounded-lg bg-indigo-600 text-white font-bold">CEO · Sarah Lin</div>
+            <div class="w-0.5 h-3 bg-slate-400"></div>
+            <div class="w-48 h-0.5 bg-slate-400"></div>
+            <div class="grid grid-cols-3 gap-2 w-full mt-2 text-center">
+              <div class="p-1.5 rounded bg-cyan-500/15 border border-cyan-500/30 font-semibold">CTO<div class="text-[10px] text-slate-400">142 eng</div></div>
+              <div class="p-1.5 rounded bg-emerald-500/15 border border-emerald-500/30 font-semibold">CRO<div class="text-[10px] text-slate-400">88 reps</div></div>
+              <div class="p-1.5 rounded bg-amber-500/15 border border-amber-500/30 font-semibold">CFO<div class="text-[10px] text-slate-400">34 fin</div></div>
+            </div>
+          </div>`
+        },
+        {
+          name: 'Nested Budget Containment Blocks',
+          desc: 'Visualizes sub-budgets nested inside parent department pool.',
+          html: `<div class="p-2.5 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-xs">
+            <div class="font-bold text-indigo-600 mb-1.5">Engineering CapEx ($12.0M)</div>
+            <div class="grid grid-cols-2 gap-2">
+              <div class="p-2 rounded-lg bg-indigo-600 text-white font-semibold">Cloud Infra<div class="text-sm font-mono-num">$7.4M</div></div>
+              <div class="p-2 rounded-lg bg-cyan-600 text-white font-semibold">AI Compute<div class="text-sm font-mono-num">$4.6M</div></div>
+            </div>
+          </div>`
+        },
+        {
+          name: 'Folder & Taxonomy Tree List',
+          desc: 'Indented enterprise cost-center tree with roll-up totals.',
+          html: `<div class="text-xs space-y-1.5 font-mono-num">
+            <div class="font-bold text-indigo-600">▼ 1000 · Global Operations ($9.4M)</div>
+            <div class="pl-4 flex justify-between"><span>├─ 1100 · Supply Chain</span><span>$5.1M</span></div>
+            <div class="pl-4 flex justify-between"><span>├─ 1200 · Fulfillment</span><span>$2.8M</span></div>
+            <div class="pl-4 flex justify-between"><span>└─ 1300 · Quality Assurance</span><span>$1.5M</span></div>
+          </div>`
+        },
+        {
+          name: 'Dendrogram Cluster Diagram',
+          desc: 'Horizontal branching tree grouping correlated customer segments.',
+          html: `<svg viewBox="0 0 300 135" class="w-full h-36">
+            <path d="M20,68 H90 V32 H160 M90,68 V104 H160 M160,32 V16 H220 M160,32 V48 H220 M160,104 V88 H220 M160,104 V120 H220" fill="none" stroke="#6366f1" stroke-width="2"/>
+            <circle cx="20" cy="68" r="5" fill="#4f46e5"/>
+            ${[[220,16,'Enterprise','#10b981'],[220,48,'Mid-Market','#06b6d4'],[220,88,'Self-Serve','#f59e0b'],[220,120,'Agency','#ec4899']].map(([x,y,t,c]) => `<circle cx="${x}" cy="${y}" r="4.5" fill="${c}"/><text x="${x+8}" y="${y+3}" font-size="10" font-weight="600" fill="currentColor">${t}</text>`).join('')}
+          </svg>`
+        }
+      ]
+    },
+
+    /* ========================================================================
+       J. GEOGRAPHIC VISUALIZATIONS (6 Variations)
+       ======================================================================== */
+    {
+      id: 'sec-geo',
+      title: 'J. Geographic & Regional Visualizations',
+      badge: '6 Variations',
+      grid: 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4',
+      items: [
+        {
+          name: 'Global Data-Center Pulse Map',
+          desc: 'Stylized SVG world continents with live latency beacons.',
+          style: 'dark-panel',
+          html: `<svg viewBox="0 0 340 150" class="w-full h-40">
+            <path d="M35,42 L85,35 L95,65 L65,85 L40,70 Z M145,32 L195,28 L205,62 L165,70 L145,55 Z M155,75 L190,75 L185,125 L160,120 Z M215,38 L285,35 L295,80 L235,85 Z M265,98 L305,98 L300,128 L268,125 Z" fill="#1e293b" stroke="#334155" stroke-width="1.5"/>
+            ${[[68,55,'US-East: 12ms','#22d3ee'],[168,48,'Frankfurt: 14ms','#10b981'],[195,68,'Dubai: 18ms','#f59e0b'],[265,62,'Singapore: 21ms','#ec4899']].map(([x,y,tip,col]) => `
+              <circle cx="${x}" cy="${y}" r="8" fill="${col}" opacity="0.28"/>
+              <circle cx="${x}" cy="${y}" r="4" fill="${col}" data-tip="${tip}"/>
+            `).join('')}
+          </svg>`
+        },
+        {
+          name: 'UAE Emirates Regional Map',
+          desc: 'Stylized Emirates distribution across Abu Dhabi, Dubai & Northern Emirates.',
+          html: `<svg viewBox="0 0 320 150" class="w-full h-40">
+            <path d="M30,115 L95,65 L165,68 L145,125 L45,130 Z" fill="#4f46e5" opacity="0.85" stroke="#fff" stroke-width="1.5" data-tip="Abu Dhabi: 46% Share"/>
+            <path d="M165,68 L205,45 L220,65 L180,85 Z" fill="#06b6d4" stroke="#fff" stroke-width="1.5" data-tip="Dubai: 38% Share"/>
+            <path d="M205,45 L265,22 L272,58 L220,65 Z" fill="#10b981" stroke="#fff" stroke-width="1.5" data-tip="Sharjah & N. Emirates: 16%"/>
+            <text x="88" y="104" fill="#fff" font-size="10" font-weight="700">Abu Dhabi</text>
+            <text x="176" y="66" fill="#fff" font-size="9" font-weight="700">DXB</text>
+            <text x="225" y="47" fill="#fff" font-size="8.5" font-weight="700">SHJ/RAK</text>
+          </svg>`
+        },
+        {
+          name: 'Country Revenue Choropleth Grid',
+          desc: 'Tile-grid cartogram encoding revenue intensity by country.',
+          html: `<div class="grid grid-cols-5 gap-1.5 pt-2 text-center text-[11px] font-bold text-white">
+            ${[
+              ['US','#312e81'],['CA','#4338ca'],['UK','#4f46e5'],['DE','#4f46e5'],['AE','#0891b2'],
+              ['FR','#6366f1'],['SA','#06b6d4'],['IN','#0d9488'],['SG','#10b981'],['JP','#3b82f6']
+            ].map(([cc,bg]) => `<div class="py-2.5 rounded-lg" style="background:${bg}" data-tip="${cc} Market Active">${cc}</div>`).join('')}
+          </div>`
+        },
+        {
+          name: 'Regional Distribution Bars',
+          desc: 'EMEA, Americas, and APAC revenue contribution breakdown.',
+          html: `<div class="space-y-3 pt-1 text-xs">
+            ${[['Americas','$8.4M',48,'#4f46e5'],['EMEA','$5.9M',34,'#06b6d4'],['APAC','$3.1M',18,'#10b981']].map(([r,v,p,c]) => `<div>
+              <div class="flex justify-between font-semibold mb-1"><span>${r}</span><span class="font-mono-num">${v} (${p}%)</span></div>
+              <div class="w-full h-2.5 rounded-full bg-slate-200 dark:bg-slate-700"><div class="h-full rounded-full" style="width:${p}%;background:${c}"></div></div>
+            </div>`).join('')}
+          </div>`
+        },
+        {
+          name: 'Location Beacon Proximity List',
+          desc: 'Active logistics hubs with live fleet counts and status.',
+          html: `<div class="space-y-2 text-xs">
+            ${[['Jebel Ali Hub, AE','142 Trucks','Optimal','bg-emerald-500'],['Rotterdam Port, NL','98 Trucks','Busy','bg-amber-500'],['Austin Hub, US','215 Trucks','Optimal','bg-emerald-500']].map(([hub,fl,st,dot]) => `<div class="flex items-center justify-between p-2 rounded-lg bg-slate-500/5">
+              <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full ${dot}"></span><span class="font-semibold">${hub}</span></div>
+              <span class="font-mono-num text-slate-500">${fl}</span>
+            </div>`).join('')}
+          </div>`
+        },
+        {
+          name: 'Heat Intensity Concentric Radar',
+          desc: 'Radial distance-from-hub delivery density visualization.',
+          html: `<svg viewBox="0 0 220 145" class="w-full h-36">
+            <circle cx="110" cy="72" r="60" fill="#4f46e5" opacity="0.1"/>
+            <circle cx="110" cy="72" r="40" fill="#4f46e5" opacity="0.22"/>
+            <circle cx="110" cy="72" r="20" fill="#4f46e5" opacity="0.45"/>
+            <circle cx="110" cy="72" r="6" fill="#4f46e5"/>
+            <text x="110" y="140" text-anchor="middle" font-size="9.5" fill="currentColor" opacity="0.7">5km · 15km · 30km Radius Zones</text>
+          </svg>`
+        }
+      ]
+    },
+
+    /* ========================================================================
+       K. HEATMAPS AND MATRIX VISUALIZATIONS (6 Variations)
+       ======================================================================== */
+    {
+      id: 'sec-heatmap',
+      title: 'K. Heatmaps & Matrix Grids',
+      badge: '6 Variations',
+      grid: 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4',
+      items: [
+        {
+          name: 'GitHub-Style Contribution Calendar',
+          desc: '84-day deployment frequency density grid.',
+          html: `<div class="grid grid-cols-14 gap-1 pt-2" style="grid-template-columns:repeat(14,minmax(0,1fr))">
+            ${Array.from({length:70}).map((_,i) => {
+              const lvl = (i * 7 + state.seed * 3) % 5;
+              const cols = ['bg-slate-200 dark:bg-slate-800','bg-emerald-200','bg-emerald-400','bg-emerald-500','bg-emerald-700'];
+              return `<div class="aspect-square rounded-sm ${cols[lvl]}" data-tip="Day ${i+1}: ${lvl*4} commits"></div>`;
+            }).join('')}
+          </div>`
+        },
+        {
+          name: '5x5 Enterprise Risk Matrix',
+          desc: 'Likelihood vs Impact severity grid with plotted risk items.',
+          html: `<div class="grid grid-cols-5 gap-1 pt-1 text-center text-[10px] font-bold text-white">
+            ${[
+              ['bg-amber-400',''],['bg-orange-500','R2'],['bg-rose-500',''],['bg-rose-600','R1'],['bg-rose-700',''],
+              ['bg-emerald-400',''],['bg-amber-400',''],['bg-orange-500','R4'],['bg-rose-500',''],['bg-rose-600',''],
+              ['bg-emerald-500',''],['bg-emerald-400',''],['bg-amber-400','R3'],['bg-orange-500',''],['bg-rose-500',''],
+              ['bg-emerald-600',''],['bg-emerald-500',''],['bg-emerald-400',''],['bg-amber-400',''],['bg-orange-500','']
+            ].map(([bg, tag]) => `<div class="h-7 rounded flex items-center justify-center ${bg}">${tag}</div>`).join('')}
+          </div>`
+        },
+        {
+          name: 'Metric Correlation Matrix',
+          desc: 'Pairwise Pearson correlation coefficients across 4 KPIs.',
+          html: `<div class="grid grid-cols-4 gap-1 text-center text-[11px] font-mono-num font-bold pt-1">
+            ${[1.0,0.84,0.62,-0.41, 0.84,1.0,0.71,-0.29, 0.62,0.71,1.0,-0.18, -0.41,-0.29,-0.18,1.0].map(v => {
+              const bg = v === 1 ? 'bg-indigo-600 text-white' : v > 0.5 ? 'bg-indigo-500/30' : v > 0 ? 'bg-indigo-500/15' : 'bg-rose-500/25 text-rose-600';
+              return `<div class="py-2 rounded ${bg}">${v.toFixed(2)}</div>`;
+            }).join('')}
+          </div>`
+        },
+        {
+          name: 'Hourly Traffic Load Heatmap',
+          desc: 'Peak API concurrency across 24-hour operational blocks.',
+          html: `<div class="grid grid-cols-8 gap-1 pt-2">
+            ${Array.from({length:24}).map((_,hr) => {
+              const load = Math.round(20 + Math.sin(hr/3.5)*40 + 35);
+              return `<div class="h-8 rounded flex items-center justify-center text-[10px] font-mono-num text-white font-bold" style="background:rgba(79,70,229,${load/100})" data-tip="${hr}:00 · ${load}% load">${hr}h</div>`;
+            }).join('')}
+          </div>`
+        },
+        {
+          name: 'Cohort Retention Heatmap',
+          desc: 'Monthly user stickiness decay from Month 0 to Month 4.',
+          html: `<div class="space-y-1 text-[10px] font-mono-num pt-1">
+            ${[
+              ['Jan', [100, 74, 62, 55, 51]],
+              ['Feb', [100, 78, 66, 59, null]],
+              ['Mar', [100, 81, 70, null, null]]
+            ].map(([m, vals]) => `<div class="grid grid-cols-6 gap-1 items-center">
+              <span class="font-bold">${m}</span>
+              ${vals.map(v => v ? `<div class="py-1.5 text-center rounded text-white font-bold" style="background:rgba(6,182,212,${v/100})">${v}%</div>` : `<div class="py-1.5 text-center rounded bg-slate-200/40 dark:bg-slate-800">-</div>`).join('')}
+            </div>`).join('')}
+          </div>`
+        },
+        {
+          name: 'SLA Uptime Status Matrix',
+          desc: '30-day multi-region availability tile strip.',
+          html: `<div class="space-y-2 pt-2 text-xs">
+            ${['Core API','Auth SSO','Webhooks'].map((svc, idx) => `<div>
+              <div class="text-[11px] font-semibold mb-1">${svc}</div>
+              <div class="grid grid-cols-15 gap-0.5" style="grid-template-columns:repeat(15,minmax(0,1fr))">
+                ${Array.from({length:15}).map((_,d) => `<div class="h-3 rounded-xs ${(idx===1 && d===9) ? 'bg-amber-400' : 'bg-emerald-500'}" data-tip="${svc} Day ${d+1}: Operational"></div>`).join('')}
+              </div>
+            </div>`).join('')}
+          </div>`
+        }
+      ]
+    },
+
+    /* ========================================================================
+       L. TABLES AND DATA GRIDS (6 Variations)
+       ======================================================================== */
+    {
+      id: 'sec-table',
+      title: 'L. Enterprise Tables & Data Grids',
+      badge: '6 Variations',
+      grid: 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4',
+      items: [
+        {
+          name: 'Inline Sparkline Analytics Table',
+          desc: 'Combines tabular KPIs with embedded SVG trendlines.',
+          html: `<table class="w-full text-xs">
+            <thead><tr class="text-left text-slate-400 border-b border-slate-200 dark:border-slate-700"><th class="pb-1.5">Service</th><th>7d Trend</th><th class="text-right">MRR</th></tr></thead>
+            <tbody class="divide-y divide-slate-200/50 dark:divide-slate-800">
+              ${[['Cloud DB',[12,15,14,19,24],'#4f46e5','$142K'],['AI Search',[8,11,16,22,29],'#06b6d4','$98K'],['Vault KMS',[14,14,15,17,18],'#10b981','$64K']].map(([n,arr,c,m]) => `<tr>
+                <td class="py-1.5 font-semibold">${n}</td>
+                <td class="w-20">${svgSparkline(arr, c, false, 80, 22)}</td>
+                <td class="text-right font-mono-num font-bold">${m}</td>
+              </tr>`).join('')}
+            </tbody>
+          </table>`
+        },
+        {
+          name: 'Progress-Bar Quota Grid',
+          desc: 'Account executive attainment table with embedded progress.',
+          html: `<table class="w-full text-xs">
+            <thead><tr class="text-left text-slate-400 border-b border-slate-200 dark:border-slate-700"><th class="pb-1.5">Rep</th><th>Quota Attainment</th><th class="text-right">%</th></tr></thead>
+            <tbody class="divide-y divide-slate-200/50 dark:divide-slate-800">
+              ${[['A. Vance',94,'bg-emerald-500'],['M. Chen',78,'bg-indigo-500'],['K. Patel',61,'bg-amber-500']].map(([rep,pct,bg]) => `<tr>
+                <td class="py-2 font-semibold">${rep}</td>
+                <td class="px-2"><div class="w-full h-2 rounded-full bg-slate-200 dark:bg-slate-700"><div class="h-full rounded-full ${bg}" style="width:${pct}%"></div></div></td>
+                <td class="text-right font-mono-num font-bold">${pct}%</td>
+              </tr>`).join('')}
+            </tbody>
+          </table>`
+        },
+        {
+          name: 'Status Badge Ledger Table',
+          desc: 'Settlement transactions with semantic pill badges.',
+          html: `<table class="w-full text-xs">
+            <tbody class="divide-y divide-slate-200/50 dark:divide-slate-800">
+              ${[
+                ['#INV-9041','$24,500','Settled','bg-emerald-500/15 text-emerald-600'],
+                ['#INV-9042','$11,200','Pending','bg-amber-500/15 text-amber-600'],
+                ['#INV-9043','$8,900','Flagged','bg-rose-500/15 text-rose-600']
+              ].map(([id,amt,st,cls]) => `<tr>
+                <td class="py-2 font-mono-num font-semibold">${id}</td>
+                <td class="font-mono-num">${amt}</td>
+                <td class="text-right"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${cls}">${st}</span></td>
+              </tr>`).join('')}
+            </tbody>
+          </table>`
+        },
+        {
+          name: 'Zebra-Striped Financial P&L',
+          desc: 'Alternating row shading for crisp accounting readability.',
+          html: `<table class="w-full text-xs font-mono-num">
+            <tbody>
+              ${[['Gross Revenue','$4,820,000'],['Cost of Revenue','($1,140,000)'],['Gross Profit','$3,680,000'],['Operating EBITDA','$1,490,000']].map(([k,v],i) => `<tr class="${i%2===0 ? 'bg-slate-500/5' : ''}">
+                <td class="p-1.5 font-sans font-semibold">${k}</td>
+                <td class="p-1.5 text-right font-bold">${v}</td>
+              </tr>`).join('')}
+            </tbody>
+          </table>`
+        },
+        {
+          name: 'Expandable Hierarchical Cost Table',
+          desc: 'Click row to expand department sub-ledger breakdown.',
+          html: `<div class="text-xs space-y-1.5">
+            <button onclick="document.getElementById('sub-ledger').classList.toggle('hidden')" class="w-full flex justify-between items-center p-2 rounded-lg bg-indigo-500/10 font-bold text-indigo-600 cursor-pointer">
+              <span>▾ Cloud Infrastructure (Click to Toggle)</span><span class="font-mono-num">$412,000</span>
+            </button>
+            <div id="sub-ledger" class="pl-4 space-y-1 text-slate-500">
+              <div class="flex justify-between"><span>Kubernetes Clusters</span><span class="font-mono-num">$248,000</span></div>
+              <div class="flex justify-between"><span>Managed PostgreSQL</span><span class="font-mono-num">$164,000</span></div>
+            </div>
+          </div>`
+        },
+        {
+          name: 'Comparison Variance Data Grid',
+          desc: 'Actual vs Budget with color-coded basis-point deltas.',
+          html: `<table class="w-full text-xs font-mono-num">
+            <thead><tr class="text-slate-400 border-b border-slate-200 dark:border-slate-700"><th class="text-left pb-1 font-sans">Unit</th><th class="text-right">Act</th><th class="text-right">Var</th></tr></thead>
+            <tbody class="divide-y divide-slate-200/50 dark:divide-slate-800">
+              <tr><td class="py-1.5 font-sans font-semibold">NA Sales</td><td class="text-right">$3.4M</td><td class="text-right text-emerald-600 font-bold">+8.2%</td></tr>
+              <tr><td class="py-1.5 font-sans font-semibold">EU Sales</td><td class="text-right">$2.1M</td><td class="text-right text-rose-500 font-bold">-2.4%</td></tr>
+              <tr><td class="py-1.5 font-sans font-semibold">APAC</td><td class="text-right">$1.8M</td><td class="text-right text-emerald-600 font-bold">+14.1%</td></tr>
+            </tbody>
+          </table>`
+        }
+      ]
+    },
+
+    /* ========================================================================
+       M. TIMELINE AND OPERATIONAL VISUALIZATIONS (6 Variations)
+       ======================================================================== */
+    {
+      id: 'sec-timeline',
+      title: 'M. Timelines, Gantt & Operational Schedules',
+      badge: '6 Variations',
+      grid: 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4',
+      items: [
+        {
+          name: 'Project Gantt Schedule Bar',
+          desc: 'Multi-track sprint timeline with duration bars.',
+          html: `<div class="space-y-2.5 text-xs pt-1">
+            ${[
+              ['Schema Design', '0%', '35%', 'bg-indigo-600'],
+              ['Core API Build', '25%', '50%', 'bg-cyan-500'],
+              ['Security Audit', '60%', '30%', 'bg-amber-500'],
+              ['Prod Cutover', '85%', '15%', 'bg-emerald-500']
+            ].map(([task, left, width, col]) => `<div>
+              <div class="text-[11px] font-semibold mb-0.5">${task}</div>
+              <div class="w-full h-3 rounded bg-slate-200 dark:bg-slate-800 relative">
+                <div class="absolute top-0 bottom-0 rounded ${col}" style="left:${left};width:${width}"></div>
+              </div>
+            </div>`).join('')}
+          </div>`
+        },
+        {
+          name: 'Vertical Incident Audit Timeline',
+          desc: 'Chronological operational event log with status nodes.',
+          html: `<div class="relative pl-5 border-l-2 border-indigo-500/40 space-y-3 text-xs">
+            <div><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 absolute -left-[6px] mt-1"></span><div class="font-bold">09:42 · Auto-Scaling Resolved</div><div class="text-slate-400">Added 12 worker nodes in us-east-1</div></div>
+            <div><span class="w-2.5 h-2.5 rounded-full bg-amber-500 absolute -left-[6px] mt-1"></span><div class="font-bold">09:38 · Spike Threshold Triggered</div><div class="text-slate-400">Queue depth exceeded 5,000 msg</div></div>
+            <div><span class="w-2.5 h-2.5 rounded-full bg-indigo-500 absolute -left-[6px] mt-1"></span><div class="font-bold">09:15 · Batch Ingestion Started</div><div class="text-slate-400">Partner settlement feed v4.2</div></div>
+          </div>`
+        },
+        {
+          name: 'Horizontal Release Milestone Track',
+          desc: 'Quarterly product roadmap checkpoints.',
+          html: `<div class="pt-4">
+            <div class="relative flex justify-between items-center">
+              <div class="absolute left-0 right-0 h-1 bg-indigo-500/30 top-3"></div>
+              ${[['Jan','v4.0',true],['Apr','v4.2',true],['Jul','v4.5',true],['Oct','v5.0',false]].map(([m,v,done]) => `<div class="relative z-10 flex flex-col items-center">
+                <div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold ${done ? 'bg-indigo-600 text-white' : 'bg-slate-300 dark:bg-slate-700'}">${done ? '✓' : '•'}</div>
+                <div class="text-xs font-bold mt-1">${v}</div>
+                <div class="text-[10px] text-slate-400">${m}</div>
+              </div>`).join('')}
+            </div>
+          </div>`
+        },
+        {
+          name: 'Claim Processing SLA Tracker',
+          desc: 'Elapsed turnaround duration per adjudication stage.',
+          html: `<div class="space-y-2 text-xs">
+            ${[['1. OCR Extraction','12 sec','bg-emerald-500'],['2. Fraud Scoring','1.4 sec','bg-cyan-500'],['3. Actuarial Sign-Off','14 min','bg-indigo-500']].map(([s,t,c]) => `<div class="flex items-center justify-between p-2 rounded-lg bg-slate-500/5">
+              <span class="font-semibold">${s}</span>
+              <span class="px-2 py-0.5 rounded text-white font-mono-num text-[11px] ${c}">${t}</span>
+            </div>`).join('')}
+          </div>`
+        },
+        {
+          name: 'Live Enterprise Activity Feed',
+          desc: 'Real-time user actions with avatar initials.',
+          html: `<div class="space-y-2.5 text-xs">
+            ${[['SL','Sarah Lin','approved PO #8821','2m ago','bg-indigo-600'],['RK','Raj Kapoor','deployed billing-v2','11m ago','bg-emerald-600'],['AM','Amira Mansoor','exported Q4 audit','24m ago','bg-pink-600']].map(([ini,u,act,tm,bg]) => `<div class="flex items-center gap-2.5">
+              <div class="w-7 h-7 rounded-full ${bg} text-white flex items-center justify-center font-bold text-[10px] shrink-0">${ini}</div>
+              <div class="flex-1 min-w-0 truncate"><strong>${u}</strong> ${act}</div>
+              <span class="text-[10px] text-slate-400">${tm}</span>
+            </div>`).join('')}
+          </div>`
+        },
+        {
+          name: 'Shift & Resource Roster Grid',
+          desc: '24/7 NOC engineer coverage schedule across shifts.',
+          html: `<div class="grid grid-cols-4 gap-1.5 text-center text-[11px] pt-1">
+            <div class="font-bold text-slate-400">Team</div><div class="font-bold">00-08</div><div class="font-bold">08-16</div><div class="font-bold">16-24</div>
+            <div class="font-semibold text-left">SRE-1</div><div class="py-1 rounded bg-indigo-500/20 text-indigo-600 font-bold">On</div><div class="py-1 rounded bg-slate-500/10">-</div><div class="py-1 rounded bg-indigo-500/20 text-indigo-600 font-bold">On</div>
+            <div class="font-semibold text-left">SRE-2</div><div class="py-1 rounded bg-slate-500/10">-</div><div class="py-1 rounded bg-emerald-500/20 text-emerald-600 font-bold">On</div><div class="py-1 rounded bg-slate-500/10">-</div>
+          </div>`
+        }
+      ]
+    },
+
+    /* ========================================================================
+       N. NETWORK AND RELATIONSHIP VISUALIZATIONS (6 Variations)
+       ======================================================================== */
+    {
+      id: 'sec-network',
+      title: 'N. Network, Sankey & Architecture Flows',
+      badge: '6 Variations',
+      grid: 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4',
+      items: [
+        {
+          name: 'Sankey Revenue Allocation Flow',
+          desc: 'Curved proportional ribbons tracing $10M inflow to cost buckets.',
+          html: `<svg viewBox="0 0 340 150" class="w-full h-40">
+            <rect x="8" y="20" width="16" height="110" rx="4" fill="#4f46e5"/>
+            <path d="M24,42 C140,42 180,28 310,28" fill="none" stroke="#4f46e5" stroke-opacity="0.35" stroke-width="36" data-tip="Gross Profit: $6.2M (62%)"/>
+            <path d="M24,88 C140,88 180,82 310,82" fill="none" stroke="#06b6d4" stroke-opacity="0.4" stroke-width="24" data-tip="R&D Spend: $2.4M (24%)"/>
+            <path d="M24,116 C140,116 180,124 310,124" fill="none" stroke="#f59e0b" stroke-opacity="0.45" stroke-width="14" data-tip="Ops & Infra: $1.4M (14%)"/>
+            <text x="304" y="32" text-anchor="end" font-size="10" font-weight="700" fill="currentColor">Profit $6.2M</text>
+            <text x="304" y="86" text-anchor="end" font-size="10" font-weight="700" fill="currentColor">R&D $2.4M</text>
+            <text x="304" y="128" text-anchor="end" font-size="10" font-weight="700" fill="currentColor">Infra $1.4M</text>
+          </svg>`
+        },
+        {
+          name: 'Animated Microservice Mesh',
+          desc: 'Live dashed packet streams flowing between API Gateway and pods.',
+          style: 'dark-panel',
+          html: `<svg viewBox="0 0 320 145" class="w-full h-40">
+            <line x1="70" y1="72" x2="160" y2="30" stroke="#22d3ee" stroke-width="2" class="flow-animated"/>
+            <line x1="70" y1="72" x2="160" y2="115" stroke="#a855f7" stroke-width="2" class="flow-animated"/>
+            <line x1="160" y1="30" x2="260" y2="72" stroke="#10b981" stroke-width="2" class="flow-animated"/>
+            <line x1="160" y1="115" x2="260" y2="72" stroke="#f59e0b" stroke-width="2" class="flow-animated"/>
+            ${[[70,72,'Gateway','#4f46e5'],[160,30,'Auth','#06b6d4'],[160,115,'Billing','#8b5cf6'],[260,72,'Ledger','#10b981']].map(([x,y,lbl,col]) => `
+              <circle cx="${x}" cy="${y}" r="22" fill="${col}" stroke="#fff" stroke-width="1.5"/>
+              <text x="${x}" y="${y+3}" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">${lbl}</text>
+            `).join('')}
+          </svg>`
+        },
+        {
+          name: 'Hub-and-Spoke ERP Topology',
+          desc: 'Central ERP core connected to 6 satellite enterprise modules.',
+          html: `<svg viewBox="0 0 300 145" class="w-full h-40">
+            ${[0,60,120,180,240,300].map((deg, i) => {
+              const a = deg * Math.PI / 180;
+              const x = 150 + 95 * Math.cos(a), y = 72 + 52 * Math.sin(a);
+              const names = ['CRM','HRIS','WMS','POS','TAX','BI'];
+              return `<line x1="150" y1="72" x2="${x}" y2="${y}" stroke="#94a3b8" stroke-width="1.5"/>
+                <circle cx="${x}" cy="${y}" r="16" fill="${SERIES_COLORS[i]}"/><text x="${x}" y="${y+3}" text-anchor="middle" fill="#fff" font-size="8.5" font-weight="700">${names[i]}</text>`;
+            }).join('')}
+            <circle cx="150" cy="72" r="24" fill="#0f172a" stroke="#6366f1" stroke-width="3"/>
+            <text x="150" y="75" text-anchor="middle" fill="#fff" font-size="10" font-weight="800">ERP</text>
+          </svg>`
+        },
+        {
+          name: 'Dependency Impact Graph',
+          desc: 'Directed acyclic graph (DAG) for upstream service dependencies.',
+          html: `<svg viewBox="0 0 320 135" class="w-full h-36">
+            <defs><marker id="arr" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#6366f1"/></marker></defs>
+            <path d="M75,35 L145,65 M75,100 L145,70 M195,68 L250,68" stroke="#6366f1" stroke-width="2" marker-end="url(#arr)"/>
+            <rect x="15" y="20" width="60" height="28" rx="6" fill="#4f46e5"/><text x="45" y="38" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">Kafka</text>
+            <rect x="15" y="86" width="60" height="28" rx="6" fill="#06b6d4"/><text x="45" y="104" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">Redis</text>
+            <rect x="145" y="54" width="52" height="28" rx="6" fill="#8b5cf6"/><text x="171" y="72" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">Worker</text>
+            <rect x="250" y="54" width="58" height="28" rx="6" fill="#10b981"/><text x="279" y="72" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">Snowflake</text>
+          </svg>`
+        },
+        {
+          name: 'API Integration Throughput Links',
+          desc: 'Bidirectional webhook volume badges between partner systems.',
+          html: `<div class="space-y-2.5 pt-2 text-xs">
+            ${[['Stripe Connect','48.2k req/m','bg-indigo-600'],['Salesforce CRM','19.4k req/m','bg-cyan-600'],['SAP S/4HANA','12.8k req/m','bg-emerald-600']].map(([sys,rate,bg]) => `<div class="flex items-center justify-between p-2 rounded-lg border border-slate-200 dark:border-slate-700">
+              <span class="font-bold">${sys}</span>
+              <span class="text-indigo-500 font-bold">⇄</span>
+              <span class="px-2 py-0.5 rounded text-white font-mono-num text-[11px] ${bg}">${rate}</span>
+            </div>`).join('')}
+          </div>`
+        },
+        {
+          name: 'Interactive Force-Node Cluster',
+          desc: 'Connected stakeholder graph with weighted relationship edges.',
+          html: `<svg viewBox="0 0 300 135" class="w-full h-36">
+            ${[[60,40,150,30],[150,30,240,45],[60,40,110,105],[110,105,210,100],[150,30,110,105],[240,45,210,100]].map(([x1,y1,x2,y2]) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#cbd5e1" stroke-width="2"/>`).join('')}
+            ${[[60,40,14,'#4f46e5','A'],[150,30,18,'#ec4899','HQ'],[240,45,13,'#06b6d4','B'],[110,105,15,'#10b981','C'],[210,100,14,'#f59e0b','D']].map(([x,y,r,c,l]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${c}" data-tip="Cluster Node ${l}"/><text x="${x}" y="${y+3}" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">${l}</text>`).join('')}
+          </svg>`
+        }
+      ]
+    },
+
+    /* ========================================================================
+       O. SPECIALIZED BUSINESS & INSURANCE VISUALIZATIONS (8 Variations)
+       ======================================================================== */
+    {
+      id: 'sec-business',
+      title: 'O. Specialized Financial, Insurance & SRE Modules',
+      badge: '8 Variations',
+      grid: 'grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4',
+      items: [
+        {
+          name: 'Claims Settlement Ratio',
+          desc: 'Approved vs Rejected insurance claim adjudication split.',
+          html: `<div class="pt-1">
+            <div class="flex justify-between items-baseline mb-2">
+              <span class="text-2xl font-extrabold font-mono-num text-emerald-600">94.6%</span>
+              <span class="text-xs text-slate-400">Approved (17,490)</span>
+            </div>
+            <div class="w-full h-4 rounded-full overflow-hidden flex">
+              <div class="bg-emerald-500 h-full" style="width:94.6%" data-tip="Approved: 94.6%"></div>
+              <div class="bg-rose-500 h-full" style="width:5.4%" data-tip="Rejected: 5.4%"></div>
+            </div>
+            <div class="text-[11px] text-slate-400 mt-2">Avg payout cycle: 1.8 business days</div>
+          </div>`
+        },
+        {
+          name: 'Claims Aging Buckets',
+          desc: 'Open reserve liability segmented by days outstanding.',
+          html: buildBarChart({ labels: ['0-15d','16-30d','31-60d','60d+'], datasets: [{ name: 'Claims', data: getData([420, 210, 95, 34]), color: '#f59e0b' }], rounded: true })
+        },
+        {
+          name: 'Insurance Policy Mix',
+          desc: 'Active written premium distribution across policy lines.',
+          html: buildCircularChart({ donut: true, centerLabel: '48.2K', centerSub: 'Policies', segments: [
+            { label: 'Health', value: 52, color: '#4f46e5' },
+            { label: 'Motor', value: 28, color: '#06b6d4' },
+            { label: 'Life', value: 20, color: '#10b981' }
+          ]})
+        },
+        {
+          name: 'API Latency Percentile Ladder',
+          desc: 'P50, P95, and P99 response-time SLA compliance thresholds.',
+          html: `<div class="space-y-2.5 pt-1 text-xs font-mono-num">
+            ${[['P50 Median','24 ms',24,'bg-emerald-500'],['P95 Tail','82 ms',58,'bg-cyan-500'],['P99 Extreme','164 ms',86,'bg-amber-500']].map(([p,ms,w,c]) => `<div>
+              <div class="flex justify-between mb-1"><span class="font-sans font-semibold">${p}</span><span>${ms}</span></div>
+              <div class="w-full h-2.5 rounded-full bg-slate-200 dark:bg-slate-700"><div class="h-full rounded-full ${c}" style="width:${w}%"></div></div>
+            </div>`).join('')}
+          </div>`
+        },
+        {
+          name: 'Budget Burn & Runway',
+          desc: 'Departmental OpEx utilization against annual cap.',
+          html: `<div class="text-xs space-y-2 pt-1">
+            <div class="flex justify-between font-bold"><span>OpEx Consumed</span><span class="font-mono-num">$3.42M / $4.50M</span></div>
+            <div class="w-full h-4 rounded-lg bg-slate-200 dark:bg-slate-700 overflow-hidden"><div class="h-full bg-indigo-600" style="width:76%"></div></div>
+            <div class="flex justify-between text-[11px] text-slate-400"><span>76% Utilized</span><span>Runway: 19.4 Months</span></div>
+          </div>`
+        },
+        {
+          name: 'Member Enrollment Growth',
+          desc: 'Net active beneficiaries added over the past 6 months.',
+          html: buildAreaChart({ series: [{ name: 'Members (K)', data: getData([112,119,128,136,149,164]), color: '#10b981' }], mode: 'smooth' })
+        },
+        {
+          name: 'Provider Network Tiering',
+          desc: 'Hospital & clinic distribution across Platinum, Gold, Silver.',
+          html: `<div class="grid grid-cols-3 gap-2 text-center pt-2">
+            <div class="p-2 rounded-xl bg-indigo-500/15"><div class="text-lg font-extrabold font-mono-num text-indigo-600">310</div><div class="text-[10px] font-bold">Platinum</div></div>
+            <div class="p-2 rounded-xl bg-amber-500/15"><div class="text-lg font-extrabold font-mono-num text-amber-600">640</div><div class="text-[10px] font-bold">Gold</div></div>
+            <div class="p-2 rounded-xl bg-slate-500/15"><div class="text-lg font-extrabold font-mono-num">890</div><div class="text-[10px] font-bold">Silver</div></div>
+          </div>`
+        },
+        {
+          name: 'Cash Flow Inflow vs Outflow',
+          desc: 'Monthly treasury liquidity net cash movement.',
+          html: buildBarChart({ labels: ['Jan','Feb','Mar','Apr','May'], datasets: [{ name: 'Net Cash', data: [42, 58, -18, 64, 79] }], diverging: true })
+        }
+      ]
+    },
+
+    /* ========================================================================
+       P. ADDITIONAL VISUAL MICRO-ELEMENTS & WIDGETS (10 Variations)
+       ======================================================================== */
+    {
+      id: 'sec-micro',
+      title: 'P. Micro-Widgets, Dot Matrices, Ratings & Badges',
+      badge: '10 Variations',
+      grid: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4',
+      items: [
+        {
+          name: '100-Dot Waffle Matrix',
+          desc: 'Each dot represents 1% of total customer satisfaction.',
+          html: `<div class="grid grid-cols-10 gap-1 pt-1">
+            ${Array.from({length:100}).map((_,i) => `<div class="w-2.5 h-2.5 rounded-full ${i<87 ? 'bg-indigo-600' : 'bg-slate-200 dark:bg-slate-700'}"></div>`).join('')}
+          </div>
+          <div class="text-xs font-bold text-indigo-600 mt-2">87% Positive Sentiment</div>`
+        },
+        {
+          name: 'Traffic Light Operational Signal',
+          desc: 'Executive RAG (Red-Amber-Green) governance panel.',
+          html: `<div class="space-y-2 text-xs pt-1">
+            <div class="flex items-center justify-between"><span>Core Ledger</span><span class="flex gap-1"><i class="w-3 h-3 rounded-full bg-emerald-500"></i><i class="w-3 h-3 rounded-full bg-slate-300 dark:bg-slate-700"></i><i class="w-3 h-3 rounded-full bg-slate-300 dark:bg-slate-700"></i></span></div>
+            <div class="flex items-center justify-between"><span>FX Gateway</span><span class="flex gap-1"><i class="w-3 h-3 rounded-full bg-slate-300 dark:bg-slate-700"></i><i class="w-3 h-3 rounded-full bg-amber-400"></i><i class="w-3 h-3 rounded-full bg-slate-300 dark:bg-slate-700"></i></span></div>
+            <div class="flex items-center justify-between"><span>Legacy Sync</span><span class="flex gap-1"><i class="w-3 h-3 rounded-full bg-slate-300 dark:bg-slate-700"></i><i class="w-3 h-3 rounded-full bg-slate-300 dark:bg-slate-700"></i><i class="w-3 h-3 rounded-full bg-rose-500"></i></span></div>
+          </div>`
+        },
+        {
+          name: 'Star & Score Rating Breakdown',
+          desc: '4.86 / 5.0 enterprise app marketplace rating.',
+          html: `<div class="text-2xl font-extrabold font-mono-num">4.86 <span class="text-amber-400 text-lg">★★★★★</span></div>
+          <div class="space-y-1 mt-2 text-[10px]">
+            ${[[5,84],[4,12],[3,4]].map(([s,p]) => `<div class="flex items-center gap-1.5"><span>${s}★</span><div class="flex-1 h-1.5 rounded bg-slate-200 dark:bg-slate-700"><div class="h-full bg-amber-400 rounded" style="width:${p}%"></div></div><span>${p}%</span></div>`).join('')}
+          </div>`
+        },
+        {
+          name: 'Leaderboard Rank Badges',
+          desc: 'Top-performing regional branches with medal ranks.',
+          html: `<div class="space-y-1.5 text-xs pt-1">
+            ${[['#1','Dubai DIFC','$4.2M','bg-amber-500'],['#2','London City','$3.9M','bg-slate-400'],['#3','New York HQ','$3.6M','bg-orange-600']].map(([rk,city,val,bg]) => `<div class="flex items-center justify-between">
+              <div class="flex items-center gap-2"><span class="w-5 h-5 rounded-full ${bg} text-white text-[10px] font-bold flex items-center justify-center">${rk}</span><span class="font-semibold">${city}</span></div>
+              <span class="font-mono-num font-bold">${val}</span>
+            </div>`).join('')}
+          </div>`
+        },
+        {
+          name: 'Semantic Alert Counter Chips',
+          desc: 'Incident severity counters for SecOps triage.',
+          html: `<div class="grid grid-cols-2 gap-2 pt-2 text-center">
+            <div class="p-2 rounded-lg bg-rose-500/15 text-rose-600"><div class="text-lg font-extrabold font-mono-num">2</div><div class="text-[10px] font-bold">CRITICAL</div></div>
+            <div class="p-2 rounded-lg bg-amber-500/15 text-amber-600"><div class="text-lg font-extrabold font-mono-num">9</div><div class="text-[10px] font-bold">WARNING</div></div>
+            <div class="p-2 rounded-lg bg-cyan-500/15 text-cyan-600"><div class="text-lg font-extrabold font-mono-num">24</div><div class="text-[10px] font-bold">INFO</div></div>
+            <div class="p-2 rounded-lg bg-emerald-500/15 text-emerald-600"><div class="text-lg font-extrabold font-mono-num">148</div><div class="text-[10px] font-bold">RESOLVED</div></div>
+          </div>`
+        },
+        {
+          name: 'Threshold Limit Indicator',
+          desc: 'Visualizes safe operating zone vs upper danger cap.',
+          html: `<div class="text-xs font-semibold mb-2">API Rate Limit: 7,400 / 10,000</div>
+            <div class="h-4 rounded-full bg-gradient-to-r from-emerald-500 via-amber-400 to-rose-500 relative">
+              <div class="w-3.5 h-5 bg-white border-2 border-slate-900 rounded-sm absolute -top-0.5" style="left:74%"></div>
+            </div>
+            <div class="flex justify-between text-[10px] text-slate-400 mt-1.5"><span>Safe</span><span>Throttle (8k)</span><span>Cap</span></div>`
+        },
+        {
+          name: 'Comparison Delta Chips',
+          desc: 'Compact trend pills for dense executive dashboards.',
+          html: `<div class="flex flex-wrap gap-2 pt-2">
+            <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-600">▲ +18.4% ARR</span>
+            <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-rose-500/15 text-rose-600">▼ -4.2% CAC</span>
+            <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-indigo-500/15 text-indigo-600">● 99.9% SLA</span>
+            <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-500/15 text-amber-600">◆ 42d DSO</span>
+          </div>`
+        },
+        {
+          name: 'Iconic Population Pictogram',
+          desc: '10-person icon array showing 70% enterprise adoption.',
+          html: `<div class="grid grid-cols-5 gap-1.5 pt-2">
+            ${Array.from({length:10}).map((_,i) => `<svg class="w-5 h-5 mx-auto ${i<7 ? 'text-indigo-600' : 'text-slate-300 dark:text-slate-700'}" fill="currentColor" viewBox="0 0 20 20"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/></svg>`).join('')}
+          </div>
+          <div class="text-xs font-semibold text-center mt-2">7 of 10 Fortune 500 Teams</div>`
+        },
+        {
+          name: 'Composite Mini-Dashboard Card',
+          desc: 'Self-contained micro widget combining KPI, ring, and bars.',
+          style: 'dark-panel',
+          html: `<div class="flex items-center justify-between">
+            <div><div class="text-[10px] text-cyan-400 uppercase">Edge Node</div><div class="text-xl font-extrabold font-mono-num">1.24M/s</div></div>
+            <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 text-[10px] font-bold">HEALTHY</span>
+          </div>
+          <div class="mt-2">${svgSparkline([45,52,49,64,71,85], '#22d3ee', true, 140, 32)}</div>`
+        },
+        {
+          name: 'Executive Balanced Scorecard',
+          desc: 'Four-pillar strategic health summary with status dots.',
+          html: `<div class="grid grid-cols-2 gap-2 text-xs pt-1">
+            ${[['Financial','A+','text-emerald-600'],['Customer','A','text-indigo-600'],['Process','B+','text-cyan-600'],['Learning','A','text-violet-600']].map(([p,g,c]) => `<div class="p-2 rounded-lg bg-slate-500/5 flex justify-between items-center">
+              <span class="font-semibold">${p}</span><span class="font-extrabold font-mono-num ${c}">${g}</span>
+            </div>`).join('')}
+          </div>`
+        }
+      ]
+    }
+  ];
+
+  // Populate Sidebar & Main Grid
+  const sidebarNav = document.getElementById('sidebar-nav');
+  const root = document.getElementById('showcase-root');
+  let totalCount = 0;
+
+  sidebarNav.innerHTML = sections.map(sec => {
+    totalCount += sec.items.length;
+    return `<a href="#${sec.id}" class="flex items-center justify-between px-2.5 py-2 rounded-lg hover:bg-indigo-500/10 hover:text-indigo-600 transition-colors">
+      <span class="truncate pr-2">${sec.title}</span>
+      <span class="text-[10px] font-mono-num px-1.5 py-0.5 rounded bg-slate-500/10">${sec.items.length}</span>
+    </a>`;
+  }).join('');
+
+  document.getElementById('total-badge').textContent = `${totalCount} Components`;
+
+  const q = state.search.trim().toLowerCase();
+  root.innerHTML = sections.map(sec => {
+    const filtered = sec.items.filter(it =>
+      !q || it.name.toLowerCase().includes(q) || it.desc.toLowerCase().includes(q) || sec.title.toLowerCase().includes(q)
+    );
+    if (filtered.length === 0) return '';
+    return `<section id="${sec.id}" class="scroll-mt-20">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-4 pb-2 border-b" style="border-color: var(--border-color)">
+        <div class="flex items-center gap-2.5">
+          <h2 class="text-base md:text-lg font-extrabold tracking-tight">${sec.title}</h2>
+          <span class="px-2 py-0.5 text-[11px] font-bold rounded-md bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">${filtered.length} Shown</span>
+        </div>
+        <button onclick="this.closest('section').querySelector('.sec-grid').classList.toggle('hidden')" class="text-xs font-semibold text-slate-400 hover:text-indigo-500 cursor-pointer">Collapse / Expand</button>
+      </div>
+      <div class="sec-grid grid ${sec.grid}">
+        ${filtered.map(item => `<article class="viz-card p-4 flex flex-col justify-between ${item.style || ''}">
+          <div class="mb-3">
+            <h3 class="text-xs font-bold tracking-tight">${item.name}</h3>
+            <p class="text-[11px] opacity-65 mt-0.5 leading-snug">${item.desc}</p>
+          </div>
+          <div class="mt-auto">${item.html}</div>
+        </article>`).join('')}
+      </div>
+    </section>`;
+  }).join('');
+
+  bindTooltips();
+  startLiveCanvasLine();
+}
+
+/* ============================================================================
+   INTERACTIVE HANDLERS & LIVE STREAMING ANIMATIONS
+   ============================================================================ */
+
+function updateInteractiveProgress(val) {
+  state.progressOverride = val;
+  const bar = document.getElementById('prog-live-bar');
+  const lbl = document.getElementById('prog-live-lbl');
+  if (bar) bar.style.width = val + '%';
+  if (lbl) lbl.textContent = val + '%';
+}
+
+function switchLineDs(ds) {
+  state.activeDataset = ds;
+  renderAllSections();
+}
+
+let canvasRaf = null;
+let waveData = Array.from({length: 48}, (_, i) => 50 + Math.sin(i * 0.35) * 24);
+function startLiveCanvasLine() {
+  if (canvasRaf) cancelAnimationFrame(canvasRaf);
+  const canvas = document.getElementById('live-canvas-line');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let tick = 0;
+
+  function draw() {
+    tick++;
+    if (state.anim && tick % 4 === 0) {
+      waveData.shift();
+      waveData.push(50 + Math.sin(tick * 0.12) * 26 + (Math.random() - 0.5) * 14);
+    }
+    const w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    // Subtle grid
+    ctx.strokeStyle = 'rgba(148,163,184,0.15)';
+    ctx.lineWidth = 1;
+    for (let y = 25; y < h; y += 30) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+    }
+
+    // Line & Gradient Fill
+    const grad = ctx.createLinearGradient(0, 0, 0, h);
+    grad.addColorStop(0, 'rgba(6, 182, 212, 0.42)');
+    grad.addColorStop(1, 'rgba(6, 182, 212, 0.0)');
+
+    ctx.beginPath();
+    waveData.forEach((v, i) => {
+      const x = (i / (waveData.length - 1)) * w;
+      const y = h - (v / 100) * (h - 20) - 10;
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    });
+    ctx.strokeStyle = '#06b6d4';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+
+    ctx.lineTo(w, h); ctx.lineTo(0, h); ctx.closePath();
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    canvasRaf = requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+// Live KPI Ticker Counter
+setInterval(() => {
+  if (!state.anim) return;
+  const el = document.getElementById('live-counter-val');
+  if (el) {
+    const cur = parseInt(el.textContent.replace(/,/g, ''), 10) || 2849104;
+    el.textContent = (cur + Math.floor(Math.random() * 19 + 7)).toLocaleString();
+  }
+}, 900);
+
+// Top Toolbar Controls
+document.getElementById('search-input').addEventListener('input', e => {
+  state.search = e.target.value;
+  renderAllSections();
+});
+
+document.getElementById('timeframe-select').addEventListener('change', e => {
+  state.timeframe = e.target.value;
+  renderAllSections();
+});
+
+document.getElementById('btn-randomize').addEventListener('click', () => {
+  state.seed = Math.floor(Math.random() * 999) + 2;
+  renderAllSections();
+});
+
+document.getElementById('btn-reset').addEventListener('click', () => {
+  state.seed = 1;
+  state.timeframe = 'Q4';
+  state.search = '';
+  document.getElementById('search-input').value = '';
+  document.getElementById('timeframe-select').value = 'Q4';
+  renderAllSections();
+});
+
+document.getElementById('btn-labels').addEventListener('click', e => {
+  state.labels = !state.labels;
+  document.body.classList.toggle('hide-labels', !state.labels);
+  e.target.textContent = `Labels: ${state.labels ? 'ON' : 'OFF'}`;
+});
+
+document.getElementById('btn-anim').addEventListener('click', e => {
+  state.anim = !state.anim;
+  document.body.classList.toggle('no-anim', !state.anim);
+  e.target.textContent = `Anim: ${state.anim ? 'ON' : 'OFF'}`;
+});
+
+document.getElementById('btn-theme').addEventListener('click', () => {
+  const html = document.documentElement;
+  const next = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  html.setAttribute('data-theme', next);
+});
+
+// Initial Render
+renderAllSections();
+</script>
+</body>
+</html>
