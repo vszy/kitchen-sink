@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NexusViz — Enterprise Data Visualization Kitchen Sink (115+ Components)</title>
+  <title>Visualization Kitchen Sink (115+ Components)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -149,7 +149,7 @@
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <h1 class="font-extrabold text-lg tracking-tight">NexusViz <span class="text-indigo-500">Enterprise</span></h1>
+            <h1 class="font-extrabold text-lg tracking-tight">Visualization <span class="text-indigo-500">Kitchen Sink</span></h1>
             <span id="total-badge" class="px-2 py-0.5 text-xs font-bold rounded-full bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30">116 Components</span>
           </div>
           <p class="text-xs" style="color: var(--text-muted)">Zero-Dependency Native HTML / SVG / Canvas Visualization Encyclopedia</p>
@@ -206,7 +206,7 @@
 
 <script>
 /* ============================================================================
-   NEXUSVIZ ENTERPRISE KITCHEN SINK ENGINE (100% VANILLA JS + SVG + CANVAS)
+   VISUALIZATION KITCHEN SINK ENGINE (100% VANILLA JS + SVG + CANVAS)
    ============================================================================ */
 
 const PALETTE = {
@@ -630,7 +630,7 @@ function renderAllSections() {
       grid: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4',
       items: [
         {
-          name: 'Basic Enterprise KPI Card',
+          name: 'Basic KPI Card',
           desc: 'Clean baseline revenue figure with period descriptor.',
           style: '',
           html: `<div class="text-xs font-medium text-slate-500">Gross Merchandise Value</div>
@@ -643,14 +643,14 @@ function renderAllSections() {
           style: 'soft-indigo',
           html: `<div class="flex items-center justify-between">
             <div>
-              <div class="text-xs font-semibold text-indigo-600">Active Enterprise Tenants</div>
+              <div class="text-xs font-semibold text-indigo-600">Active Accounts</div>
               <div class="text-2xl font-extrabold font-mono-num mt-1">${Math.round(rev[7]*43)}</div>
             </div>
             <div class="w-11 h-11 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-md shadow-indigo-500/30">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             </div>
           </div>
-          <div class="mt-3 text-xs text-slate-500">98.4% enterprise seat utilization</div>`
+          <div class="mt-3 text-xs text-slate-500">98.4% seat utilization</div>`
         },
         {
           name: 'Trend Delta KPI Card',
@@ -837,7 +837,7 @@ function renderAllSections() {
           desc: 'Three business units plotted simultaneously with hover tooltips.',
           html: buildLineChart({
             series: [
-              { name: 'Enterprise', data: rev, color: '#4f46e5' },
+              { name: 'Primary', data: rev, color: '#4f46e5' },
               { name: 'Mid-Market', data: exp, color: '#10b981' },
               { name: 'SMB', data: getData([22,28,25,31,29,38,41,45]), color: '#f59e0b' }
             ], labels: months, mode: 'smooth'
@@ -1205,7 +1205,7 @@ function renderAllSections() {
             <polygon points="${[52,48,56,42,50].map((r,i) => {
               const a = (i * 72 - 90) * Math.PI / 180;
               return `${90 + r*Math.cos(a)},${78 + r*Math.sin(a)}`;
-            }).join(' ')}" fill="rgba(79,70,229,0.28)" stroke="#4f46e5" stroke-width="2" data-tip="Enterprise Suite: 88 avg"/>
+            }).join(' ')}" fill="rgba(79,70,229,0.28)" stroke="#4f46e5" stroke-width="2" data-tip="Product A: 88 avg"/>
             <polygon points="${[38,54,35,49,40].map((r,i) => {
               const a = (i * 72 - 90) * Math.PI / 180;
               return `${90 + r*Math.cos(a)},${78 + r*Math.sin(a)}`;
@@ -1459,10 +1459,10 @@ function renderAllSections() {
         },
         {
           name: 'Inverted Expansion Pyramid',
-          desc: 'Bottom-up revenue expansion from Free tier to Enterprise.',
+          desc: 'Bottom-up revenue expansion from Free tier to Premium.',
           html: `<svg viewBox="0 0 320 150" class="w-full h-36">
             ${[
-              ['Enterprise ($9.2M)', 280, 220, 112, '#4f46e5'],
+              ['Premium ($9.2M)', 280, 220, 112, '#4f46e5'],
               ['Business ($4.8M)', 220, 160, 75, '#06b6d4'],
               ['Pro ($2.1M)', 160, 100, 38, '#10b981'],
               ['Starter ($0.6M)', 100, 45, 1, '#f59e0b']
@@ -1525,7 +1525,7 @@ function renderAllSections() {
             <text x="110" y="81" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">GROUP</text>
             <path d="M110,42 A36,36 0 1,1 74,78" fill="none" stroke="#6366f1" stroke-width="18" data-tip="Americas 75%"/>
             <path d="M74,78 A36,36 0 0,1 110,42" fill="none" stroke="#06b6d4" stroke-width="18" data-tip="EMEA 25%"/>
-            <path d="M110,20 A58,58 0 0,1 168,78" fill="none" stroke="#10b981" stroke-width="14" data-tip="US Enterprise"/>
+            <path d="M110,20 A58,58 0 0,1 168,78" fill="none" stroke="#10b981" stroke-width="14" data-tip="US Region"/>
             <path d="M168,78 A58,58 0 0,1 110,136" fill="none" stroke="#f59e0b" stroke-width="14" data-tip="LATAM"/>
             <path d="M110,136 A58,58 0 0,1 52,78" fill="none" stroke="#ec4899" stroke-width="14" data-tip="Canada"/>
           </svg>`
@@ -1557,7 +1557,7 @@ function renderAllSections() {
         },
         {
           name: 'Folder & Taxonomy Tree List',
-          desc: 'Indented enterprise cost-center tree with roll-up totals.',
+          desc: 'Indented cost-center tree with roll-up totals.',
           html: `<div class="text-xs space-y-1.5 font-mono-num">
             <div class="font-bold text-indigo-600">▼ 1000 · Global Operations ($9.4M)</div>
             <div class="pl-4 flex justify-between"><span>├─ 1100 · Supply Chain</span><span>$5.1M</span></div>
@@ -1571,7 +1571,7 @@ function renderAllSections() {
           html: `<svg viewBox="0 0 300 135" class="w-full h-36">
             <path d="M20,68 H90 V32 H160 M90,68 V104 H160 M160,32 V16 H220 M160,32 V48 H220 M160,104 V88 H220 M160,104 V120 H220" fill="none" stroke="#6366f1" stroke-width="2"/>
             <circle cx="20" cy="68" r="5" fill="#4f46e5"/>
-            ${[[220,16,'Enterprise','#10b981'],[220,48,'Mid-Market','#06b6d4'],[220,88,'Self-Serve','#f59e0b'],[220,120,'Agency','#ec4899']].map(([x,y,t,c]) => `<circle cx="${x}" cy="${y}" r="4.5" fill="${c}"/><text x="${x+8}" y="${y+3}" font-size="10" font-weight="600" fill="currentColor">${t}</text>`).join('')}
+            ${[[220,16,'Segment A','#10b981'],[220,48,'Mid-Market','#06b6d4'],[220,88,'Self-Serve','#f59e0b'],[220,120,'Agency','#ec4899']].map(([x,y,t,c]) => `<circle cx="${x}" cy="${y}" r="4.5" fill="${c}"/><text x="${x+8}" y="${y+3}" font-size="10" font-weight="600" fill="currentColor">${t}</text>`).join('')}
           </svg>`
         }
       ]
@@ -1675,7 +1675,7 @@ function renderAllSections() {
           </div>`
         },
         {
-          name: '5x5 Enterprise Risk Matrix',
+          name: '5x5 Risk Matrix',
           desc: 'Likelihood vs Impact severity grid with plotted risk items.',
           html: `<div class="grid grid-cols-5 gap-1 pt-1 text-center text-[10px] font-bold text-white">
             ${[
@@ -1740,7 +1740,7 @@ function renderAllSections() {
        ======================================================================== */
     {
       id: 'sec-table',
-      title: 'L. Enterprise Tables & Data Grids',
+      title: 'L. Tables & Data Grids',
       badge: '6 Variations',
       grid: 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4',
       items: [
@@ -1889,7 +1889,7 @@ function renderAllSections() {
           </div>`
         },
         {
-          name: 'Live Enterprise Activity Feed',
+          name: 'Live Activity Feed',
           desc: 'Real-time user actions with avatar initials.',
           html: `<div class="space-y-2.5 text-xs">
             ${[['SL','Sarah Lin','approved PO #8821','2m ago','bg-indigo-600'],['RK','Raj Kapoor','deployed billing-v2','11m ago','bg-emerald-600'],['AM','Amira Mansoor','exported Q4 audit','24m ago','bg-pink-600']].map(([ini,u,act,tm,bg]) => `<div class="flex items-center gap-2.5">
@@ -1950,7 +1950,7 @@ function renderAllSections() {
         },
         {
           name: 'Hub-and-Spoke ERP Topology',
-          desc: 'Central ERP core connected to 6 satellite enterprise modules.',
+          desc: 'Central hub connected to 6 satellite modules.',
           html: `<svg viewBox="0 0 300 145" class="w-full h-40">
             ${[0,60,120,180,240,300].map((deg, i) => {
               const a = deg * Math.PI / 180;
@@ -2104,7 +2104,7 @@ function renderAllSections() {
         },
         {
           name: 'Star & Score Rating Breakdown',
-          desc: '4.86 / 5.0 enterprise app marketplace rating.',
+          desc: '4.86 / 5.0 app marketplace rating.',
           html: `<div class="text-2xl font-extrabold font-mono-num">4.86 <span class="text-amber-400 text-lg">★★★★★</span></div>
           <div class="space-y-1 mt-2 text-[10px]">
             ${[[5,84],[4,12],[3,4]].map(([s,p]) => `<div class="flex items-center gap-1.5"><span>${s}★</span><div class="flex-1 h-1.5 rounded bg-slate-200 dark:bg-slate-700"><div class="h-full bg-amber-400 rounded" style="width:${p}%"></div></div><span>${p}%</span></div>`).join('')}
@@ -2151,7 +2151,7 @@ function renderAllSections() {
         },
         {
           name: 'Iconic Population Pictogram',
-          desc: '10-person icon array showing 70% enterprise adoption.',
+          desc: '10-person icon array showing 70% adoption.',
           html: `<div class="grid grid-cols-5 gap-1.5 pt-2">
             ${Array.from({length:10}).map((_,i) => `<svg class="w-5 h-5 mx-auto ${i<7 ? 'text-indigo-600' : 'text-slate-300 dark:text-slate-700'}" fill="currentColor" viewBox="0 0 20 20"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/></svg>`).join('')}
           </div>
